@@ -6,11 +6,11 @@ import copy
 import random
 sys.path.append(".")
 sys.path.append("./pygame_functions")
-sys.path.append("../RPG2v3/RPG2v3_functions")
-sys.path.append("../RPG2v3/RPG2v3_functions/RPG2v3_quest")
-sys.path.append("../RPG2v3/RPG2v3_functions/RPG2v3_def")
-sys.path.append("../RPG2v3/RPG2v3_functions/RPG2v3_battle")
-sys.path.append("../RPG2v3/RPG2v3_functions/bossbattles")
+sys.path.append("./RPG2v3/RPG2v3_functions")
+sys.path.append("./RPG2v3/RPG2v3_functions/RPG2v3_quest")
+sys.path.append("./RPG2v3/RPG2v3_functions/RPG2v3_def")
+sys.path.append("./RPG2v3/RPG2v3_functions/RPG2v3_battle")
+sys.path.append("./RPG2v3/RPG2v3_functions/bossbattles")
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
                                    Spell_PC, Monster_NPC, Weapon_PC,
                                    Armor_PC, QuestItems_NPC, Access_NPC)
