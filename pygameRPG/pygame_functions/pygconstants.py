@@ -16,6 +16,7 @@ class PYGConstants:
                 self.FPS = 30
                 self.SLOWFPS = 3
                 self.TIMEDELAY = 5000
+                self.SMALLDELAY = 1000
                 self.RED = (255, 0, 0)
                 self.GREEN = (0, 255, 0)
                 self.BLUE = (0, 0, 255)
