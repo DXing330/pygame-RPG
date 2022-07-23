@@ -6,11 +6,11 @@ import copy
 import random
 sys.path.append(".")
 sys.path.append("./pygame_functions")
-sys.path.append("./RPG2v3/RPG2v3_functions")
-sys.path.append("./RPG2v3/RPG2v3_functions/RPG2v3_quest")
-sys.path.append("./RPG2v3/RPG2v3_functions/RPG2v3_def")
-sys.path.append("./RPG2v3/RPG2v3_functions/RPG2v3_battle")
-sys.path.append("./RPG2v3/RPG2v3_functions/bossbattles")
+sys.path.append("../RPG2v3/RPG2v3_functions")
+sys.path.append("../RPG2v3/RPG2v3_functions/RPG2v3_quest")
+sys.path.append("../RPG2v3/RPG2v3_functions/RPG2v3_def")
+sys.path.append("../RPG2v3/RPG2v3_functions/RPG2v3_battle")
+sys.path.append("../RPG2v3/RPG2v3_functions/bossbattles")
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
                                    Spell_PC, Monster_NPC, Weapon_PC,
                                    Armor_PC, QuestItems_NPC, Access_NPC)
@@ -36,6 +36,7 @@ P = PYGConstants()
 import draw_functions as draw_func
 import pybattle_functions as pybattle_func
 import pycity_functions as pycity_func
+import pymage_tower_functions as pymage_func
 #clock
 clock = pygame.time.Clock()
 #makes fonts
@@ -83,6 +84,9 @@ def RPG(h_party, h_magic, h_bag, h_ally, h_wpn, h_amr, quest, access):
                                                              h_magic, h_wpn, h_amr)
                                 if event.key == pygame.K_c:
                                         pycity_func.city(h_party, h_bag, h_wpn, h_amr)
+                                if event.key == pygame.K_t:
+                                        pymage_func.mage_tower(h_party, h_ally, h_bag,
+                                                               h_magic, h_wpn, h_amr)
                                 if event.key == pygame.K_r:
                                         save_func.write_to_files(h_party, h_magic,
                                                                  h_bag, h_ally,

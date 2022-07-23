@@ -136,6 +136,7 @@ def draw_battle_menu(h_p, m_p, h_ally, h_m, h_w, h_a):
 	WIN.blit(skill_text, (P.WIDTH//2 - skill_text.get_width(),
 			    P.PADDING * 2))
 
+
 #function that will list options in the city
 def draw_city_menu():
 	inn_text = REG_FONT.render("Go to INN: I", 1, P.BLACK)
@@ -263,6 +264,19 @@ def draw_recruit_menu(h_p):
                 summoner_text = REG_FONT.render("SUMMONER: S", 1, P.BLUE)
                 WIN.blit(summoner_text, ((P.WIDTH - summoner_text.get_width())//2, P.PADDING * 4))
         
+#function that will list options in the mage tower
+def draw_mage_menu():
+        train_magic = REG_FONT.render("TRAIN Magic: T", 1, P.BLACK)
+        WIN.blit(train_magic, ((P.WIDTH - train_magic.get_width())//2, P.PADDING * 1))
+        summoning_fields = REG_FONT.render("SUMMONING Fields: S", 1, P.BLACK)
+        WIN.blit(summoning_fields, ((P.WIDTH - summoning_fields.get_width())//2, P.PADDING * 2))
+        enchanter = REG_FONT.render("ENCHANT Equipment: E", 1, P.BLACK)
+        WIN.blit(enchanter, ((P.WIDTH - enchanter.get_width())//2, P.PADDING * 3))
+        library = REG_FONT.render("BOOKSTORE: B", 1, P.BLACK)
+        WIN.blit(library, ((P.WIDTH - library.get_width())//2, P.PADDING * 4))
+        leave_text = REG_FONT.render("LEAVE: L", 1, P.BLACK)
+        WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 5))
+        
 #function will list options for the player
 def draw_menu():
 	attack_text = REG_FONT.render("ATTACK monsters: A", 1, P.RED)
@@ -270,10 +284,13 @@ def draw_menu():
 	save_text = REG_FONT.render("RECORD journey: R", 1, P.BLACK)
 	WIN.blit(save_text, (P.WIDTH//2 - save_text.get_width(),
 			     P.PADDING * 2))
-	city_text = REG_FONT.render("return to CITY: C", 1, P.BLACK)
-	WIN.blit(city_text, (P.WIDTH//2 - city_text.get_width(),
+	mage_text = REG_FONT.render("Vist Mage TOWER: T", 1, P.BLACK)
+	WIN.blit(mage_text, (P.WIDTH//2 - mage_text.get_width(),
 			     P.PADDING * 3))
+	city_text = REG_FONT.render("Return to CITY: C", 1, P.BLACK)
+	WIN.blit(city_text, (P.WIDTH//2 - city_text.get_width(),
+			     P.PADDING * 4))
 	leave_text = REG_FONT.render("SLEEP: S", 1, P.RED)
 	WIN.blit(leave_text, (P.WIDTH//2 - leave_text.get_width(),
-			      P.PADDING * 4))
+			      P.PADDING * 5))
 	
