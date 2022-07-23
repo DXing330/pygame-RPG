@@ -5,6 +5,8 @@ sys.path.append("..")
 sys.path.append("../Assets")
 from pygconstants import PYGConstants
 P = PYGConstants()
+from rpg2_constants import Constants
+C = Constants()
 REG_FONT = pygame.font.SysFont("comicsans", 20)
 WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT))
 pygame.display.set_caption("RPG")
@@ -276,6 +278,30 @@ def draw_mage_menu():
         WIN.blit(library, ((P.WIDTH - library.get_width())//2, P.PADDING * 4))
         leave_text = REG_FONT.render("LEAVE: L", 1, P.BLACK)
         WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 5))
+        
+def draw_summon_menu(h_ally):
+        angel = None
+        for ally in h_ally:
+                if "Angel" in ally.name:
+                        angel = ally
+        if angel == None:
+                summon_text = REG_FONT.render("SUMMON Angel: S", 1, P.BLACK)
+                WIN.blit(summon_text, ((P.WIDTH - summon_text.get_width())//2, P.PADDING * 1))
+        elif angel != None:
+                if angel.stage < C.STAGE_LIMIT:
+                        train_text = REG_FONT.render("Train SUMMON: S", 1, P.BLACK)
+                        WIN.blit(train_text, ((P.WIDTH - train_text.get_width())//2, P.PADDING * 1))
+                        price_text = REG_FONT.render("PRICE: "+str(angel.atk**angel.stage), 1, P.BLACK)
+                        WIN.blit(price_text, ((P.WIDTH - price_text.get_width())//2, P.PADDING * 2))
+                        leave_text = REG_FONT.render("LEAVE: L", 1, P.BLACK)
+                        WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 3))
+                elif angel.stage >= C.STAGE_LIMIT:
+                        train_text = REG_FONT.render("Train SUMMON: S", 1, P.BLACK)
+                        WIN.blit(train_text, ((P.WIDTH - train_text.get_width())//2, P.PADDING * 1))
+                        price_text = REG_FONT.render("PRICE: "+str((angel.atk * angel.stage) ** C.INCREASE_EXPONENT), 1, P.BLACK)
+                        WIN.blit(price_text, ((P.WIDTH - price_text.get_width())//2, P.PADDING * 2))
+                        leave_text = REG_FONT.render("LEAVE: L", 1, P.BLACK)
+                        WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 3))
         
 #function will list options for the player
 def draw_menu():
