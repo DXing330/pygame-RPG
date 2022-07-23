@@ -49,8 +49,10 @@ tactician = Player_PC("Tactician", 1, 10, 10, 1, 1, 5, 0, 0)
 def forge(h_b, h_w, h_a):
         weapon = None
         armor = None
-        upgrade = False
-        buy = False
+        upgrade_power = False
+        upgrade_stat = False
+        pick_wpn = False
+        pck_amr = False
         choose = True
         while choose:
                 clock.tick(P.FPS)
@@ -88,8 +90,213 @@ def forge(h_b, h_w, h_a):
                                                 WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
                                                 pygame.display.update()
                                                 pygame.time.delay(P.SMALLDELAY)
-
-
+                                #when this happens, first pick the weapon
+                                #then go to the upgrade screen
+                                if event.key == pygame.K_s and len(h_w) > 0:
+                                        pick_wpn = True
+                                        upgrade_stat = True
+                                        choose = False
+                                if event.key == pygame.K_i and len(h_w) > 0:
+                                        pick_wpn = True
+                                        upgrade_power = True
+                                        choose = False
+                                if event.key == pygame.K_e and len(h_a) > 0:
+                                        pick_armor = True
+                                        upgrade_stat = True
+                                        choose = False
+                                if event.key == pygame.K_b and len(h_a) > 0:
+                                        pick_armor = True
+                                        upgrade_power = True
+                                        choose = False
+        while pick_wpn:
+                clock.tick(P.FPS)
+                WIN.fill(P.WHITE)
+                WIN.blit(FORGE_IMG, P.ORIGIN)
+                draw_func.draw_reorder_eqp_menu(h_w)
+                pygame.display.update()
+                for event in pygame.event.get():
+                        if event.type == pygame.KEYDOWN:
+                                if event.key == pygame.K_l:
+                                        pick_wpn = False
+                                if event.key == pygame.K_1:
+                                        weapon = h_w[0]
+                                        pick_wpn = False
+                                if event.key == pygame.K_2 and len(h_w) > 1:
+                                        weapon = h_w[1]
+                                        pick_wpn = False
+                                if event.key == pygame.K_3 and len(h_w) > 2:
+                                        weapon = h_w[2]
+                                        pick_wpn = False
+                                if event.key == pygame.K_4 and len(h_w) > 3:
+                                        weapon = h_w[3]
+                                        pick_wpn = False
+                                if event.key == pygame.K_5 and len(h_w) > 4:
+                                        weapon = h_w[4]
+                                        pick_wpn = False
+                                if event.key == pygame.K_6 and len(h_w) > 5:
+                                        weapon = h_w[5]
+                                        pick_wpn = False
+                                if event.key == pygame.K_7 and len(h_w) > 6:
+                                        weapon = h_w[6]
+                                        pick_wpn = False
+                                if event.key == pygame.K_8 and len(h_w) > 7:
+                                        weapon = h_w[7]
+                                        pick_wpn = False
+                                if event.key == pygame.K_9 and len(h_w) > 8:
+                                        weapon = h_w[8]
+                                        pick_wpn = False
+        while pick_amr:
+                clock.tick(P.FPS)
+                WIN.fill(P.WHITE)
+                WIN.blit(FORGE_IMG, P.ORIGIN)
+                draw_func.draw_reorder_eqp_menu(h_a)
+                pygame.display.update()
+                for event in pygame.event.get():
+                        if event.type == pygame.KEYDOWN:
+                                if event.key == pygame.K_l:
+                                        pick_amr = False
+                                if event.key == pygame.K_1:
+                                        armor = h_a[0]
+                                        pick_amr = False
+                                if event.key == pygame.K_2 and len(h_a) > 1:
+                                        armor = h_a[1]
+                                        pick_amr = False
+                                if event.key == pygame.K_3 and len(h_a) > 2:
+                                        armor = h_a[2]
+                                        pick_amr = False
+                                if event.key == pygame.K_4 and len(h_a) > 3:
+                                        armor = h_a[3]
+                                        pick_amr = False
+                                if event.key == pygame.K_5 and len(h_a) > 4:
+                                        armor = h_a[4]
+                                        pick_amr = False
+                                if event.key == pygame.K_6 and len(h_a) > 5:
+                                        armor = h_a[5]
+                                        pick_amr = False
+                                if event.key == pygame.K_7 and len(h_a) > 6:
+                                        armor = h_a[6]
+                                        pick_amr = False
+                                if event.key == pygame.K_8 and len(h_a) > 7:
+                                        armor = h_a[7]
+                                        pick_amr = False
+                                if event.key == pygame.K_9 and len(h_a) > 8:
+                                        armor = h_a[8]
+                                        pick_amr = False
+        while upgrade_power:
+                clock.tick(P.FPS)
+                WIN.fill(P.WHITE)
+                WIN.blit(FORGE_IMG, P.ORIGIN)
+                pygame.display.update()
+                if weapon != None:
+                        wpn_stats = REG_FONT.render("EFFECT: " + weapon.effect + " POWER: " + str(weapon.strength), 1, P.WHITE)
+                        WIN.blit(wpn_stats, ((P.WIDTH - wpn_stats.get_width())//2, P.PADDING))
+                        upgrade_text = REG_FONT.render("U/UPGRADE PRICE: " + str(C.WEAPON_PRICE * (weapon.strength ** C.INCREASE_EXPONENT)),
+                                                       1, P.WHITE)
+                        WIN.blit(upgrade_text, ((P.WIDTH - upgrade_text.get_width())//2, P.PADDING * 2))
+                        leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+                        WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 3))
+                        pygame.display.update()
+                        for event in pygame.event.get():
+                                if event.type == pygame.KEYDOWN:
+                                        if event.key == pygame.K_l:
+                                                upgrade_power = False
+                                        if event.key == pygame.K_u:
+                                                if h_b.coins >= C.WEAPON_PRICE * (weapon.strength ** C.INCREASE_EXPONENT):
+                                                        h_b.coins -= C.WEAPON_PRICE * (weapon.strength ** C.INCREASE_EXPONENT)
+                                                        weapon.strength += 1
+                                                else:
+                                                        WIN.fill(P.WHITE)
+                                                        WIN.blit(ARENA_IMG, P.ORIGIN)
+                                                        poor_text = REG_FONT.render("You can't afford that much training right now. ",
+                                                                                    1, P.RED)
+                                                        WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
+                                                        pygame.display.update()
+                                                        pygame.time.delay(P.SMALLDELAY)
+							upgrade_power = False
+                elif armor != None:
+                        amr_stats = REG_FONT.render("EFFECT: " + armor.effect + " POWER: " + str(armor.strength), 1, P.WHITE)
+                        WIN.blit(amr_stats, ((P.WIDTH - amr_stats.get_width())//2, P.PADDING))
+                        upgrade_text = REG_FONT.render("U/UPGRADE PRICE: " + str(C.ARMOR_PRICE * (armor.strength ** C.INCREASE_EXPONENT)),
+                                                       1, P.WHITE)
+                        WIN.blit(upgrade_text, ((P.WIDTH - upgrade_text.get_width())//2, P.PADDING * 2))
+                        leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+                        WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 3))
+                        pygame.display.update()
+                        for event in pygame.event.get():
+                                if event.type == pygame.KEYDOWN:
+                                        if event.key == pygame.K_l:
+                                                upgrade_power = False
+                                        if event.key == pygame.K_u:
+                                                if h_b.coins >= C.ARMOR_PRICE * (armor.strength ** C.INCREASE_EXPONENT):
+                                                        h_b.coins -= C.ARMOR_PRICE * (armor.strength ** C.INCREASE_EXPONENT)
+                                                        armor.strength += 1
+                                                else:
+                                                        WIN.fill(P.WHITE)
+                                                        WIN.blit(ARENA_IMG, P.ORIGIN)
+                                                        poor_text = REG_FONT.render("You can't afford that much training right now. ",
+                                                                                    1, P.RED)
+                                                        WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
+                                                        pygame.display.update()
+                                                        pygame.time.delay(P.SMALLDELAY)
+							upgrade_power = False
+                                                        
+        while upgrade_stat:
+                clock.tick(P.FPS)
+                WIN.fill(P.WHITE)
+                WIN.blit(FORGE_IMG, P.ORIGIN)
+                pygame.display.update()
+                if weapon != None:
+                        wpn_stats = REG_FONT.render("ATK POWER: " + str(weapon.atk), 1, P.WHITE)
+                        WIN.blit(wpn_stats, ((P.WIDTH - wpn_stats.get_width())//2, P.PADDING))
+                        upgrade_text = REG_FONT.render("U/UPGRADE PRICE: " + str(C.WEAPON_PRICE * (weapon.atk ** C.INCREASE_EXPONENT)),
+                                                       1, P.WHITE)
+                        WIN.blit(upgrade_text, ((P.WIDTH - upgrade_text.get_width())//2, P.PADDING * 2))
+                        leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+                        WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 3))
+                        pygame.display.update()
+                        for event in pygame.event.get():
+                                if event.type == pygame.KEYDOWN:
+                                        if event.key == pygame.K_l:
+                                                upgrade_stat = False
+                                        if event.key == pygame.K_u:
+                                                if h_b.coins >= C.WEAPON_PRICE * (weapon.atk ** C.INCREASE_EXPONENT):
+                                                        h_b.coins -= C.WEAPON_PRICE * (weapon.atk ** C.INCREASE_EXPONENT)
+                                                        weapon.atk += 1
+                                                else:
+                                                        WIN.fill(P.WHITE)
+                                                        WIN.blit(ARENA_IMG, P.ORIGIN)
+                                                        poor_text = REG_FONT.render("You can't afford that much training right now. ",
+                                                                                    1, P.RED)
+                                                        WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
+                                                        pygame.display.update()
+                                                        pygame.time.delay(P.SMALLDELAY)
+							upgrade_stat = False
+                elif armor != None:
+                        amr_stats = REG_FONT.render("DEFENSE: " + str(armor.defense), 1, P.WHITE)
+                        WIN.blit(amr_stats, ((P.WIDTH - amr_stats.get_width())//2, P.PADDING))
+                        upgrade_text = REG_FONT.render("U/UPGRADE PRICE: " + str(C.ARMOR_PRICE * (armor.defense ** C.INCREASE_EXPONENT)),
+                                                       1, P.WHITE)
+                        WIN.blit(upgrade_text, ((P.WIDTH - upgrade_text.get_width())//2, P.PADDING * 2))
+                        leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+                        WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 3))
+                        pygame.display.update()
+                        for event in pygame.event.get():
+                                if event.type == pygame.KEYDOWN:
+                                        if event.key == pygame.K_l:
+                                                upgrade_stat = False
+                                        if event.key == pygame.K_u:
+                                                if h_b.coins >= C.ARMOR_PRICE * (armor.defense ** C.INCREASE_EXPONENT):
+                                                        h_b.coins -= C.ARMOR_PRICE * (armor.defense ** C.INCREASE_EXPONENT)
+                                                        armor.strength += 1
+                                                else:
+                                                        WIN.fill(P.WHITE)
+                                                        WIN.blit(ARENA_IMG, P.ORIGIN)
+                                                        poor_text = REG_FONT.render("You can't afford that much training right now. ",
+                                                                                    1, P.RED)
+                                                        WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
+                                                        pygame.display.update()
+                                                        pygame.time.delay(P.SMALLDELAY)
+							upgrade_stat = False
 
 #function that will train hero stats
 def practice_arena(h_p, h_b):
