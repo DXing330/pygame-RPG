@@ -206,7 +206,7 @@ def draw_forge_menu():
 def draw_reorder_eqp_menu(h_e):
         #list out the heroes and ask the player who should act last
         x = 1
-        ask_text = REG_FONT.render("Which one do you want to reassign?", 1, P.WHITE)
+        ask_text = REG_FONT.render("Which one?", 1, P.WHITE)
         WIN.blit(ask_text, ((P.WIDTH - ask_text.get_width())//2, P.PADDING))
         for eqp in h_e:
                 eqp_text = REG_FONT.render(str(x) + " USER: " + eqp.user + " EFFECT: " + eqp.effect + " POWER: " + str(eqp.strength), 1, P.WHITE)
@@ -273,7 +273,7 @@ def draw_menu():
 	city_text = REG_FONT.render("return to CITY: C", 1, P.BLACK)
 	WIN.blit(city_text, (P.WIDTH//2 - city_text.get_width(),
 			     P.PADDING * 3))
-	leave_text = REG_FONT.render("LEAVE: L", 1, P.RED)
+	leave_text = REG_FONT.render("SLEEP: S", 1, P.RED)
 	WIN.blit(leave_text, (P.WIDTH//2 - leave_text.get_width(),
 			      P.PADDING * 4))
 	
