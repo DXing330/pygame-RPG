@@ -1,4 +1,5 @@
 import pygame
+pygame.init()
 import os
 import sys
 import json
@@ -44,6 +45,7 @@ pygame.font.init()
 #makes sound
 pygame.mixer.init()
 WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT))
+ww, wh = WIN.get_size()
 pygame.display.set_caption("RPG")
 REG_FONT = pygame.font.SysFont("comicsans", 20)
 #images used
@@ -84,7 +86,7 @@ def RPG(h_party, h_magic, h_bag, h_ally, h_wpn, h_amr, quest, access):
                                                              h_magic, h_wpn, h_amr)
                                 if event.key == pygame.K_c:
                                         pycity_func.city(h_party, h_bag, h_wpn, h_amr)
-                                if event.key == pygame.K_t:
+                                if event.key == pygame.K_w:
                                         pymage_func.mage_tower(h_party, h_ally, h_bag,
                                                                h_magic, h_wpn, h_amr)
                                 if event.key == pygame.K_r:
@@ -93,7 +95,7 @@ def RPG(h_party, h_magic, h_bag, h_ally, h_wpn, h_amr, quest, access):
                                                                  h_wpn, h_amr,
                                                                  quest, access,
                                                                  "RPG2_ \n ")
-                                if event.key == pygame.K_s:
+                                if event.key == pygame.K_l:
                                         game = False
                                         pygame.quit()
                                         

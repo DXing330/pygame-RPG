@@ -207,7 +207,7 @@ def draw_forge_menu():
         
         
 def draw_reorder_eqp_menu(h_e):
-        #list out the heroes and ask the player who should act last
+        #list out the equipment
         x = 1
         ask_text = REG_FONT.render("Which one?", 1, P.WHITE)
         WIN.blit(ask_text, ((P.WIDTH - ask_text.get_width())//2, P.PADDING))
@@ -288,20 +288,80 @@ def draw_summon_menu(h_ally):
                 summon_text = REG_FONT.render("SUMMON Angel: S", 1, P.BLACK)
                 WIN.blit(summon_text, ((P.WIDTH - summon_text.get_width())//2, P.PADDING * 1))
         elif angel != None:
+                stat_text = REG_FONT.render("STAGE: " + str(angel.stage) + " ATK: " + str(angel.atk), 1, P.BLACK)
+                WIN.blit(stat_text, ((P.WIDTH - stat_text.get_width())//2, P.PADDING * 1))
                 if angel.stage < C.STAGE_LIMIT:
                         train_text = REG_FONT.render("Train SUMMON: S", 1, P.BLACK)
-                        WIN.blit(train_text, ((P.WIDTH - train_text.get_width())//2, P.PADDING * 1))
+                        WIN.blit(train_text, ((P.WIDTH - train_text.get_width())//2, P.PADDING * 2))
                         price_text = REG_FONT.render("PRICE: "+str(angel.atk**angel.stage), 1, P.BLACK)
-                        WIN.blit(price_text, ((P.WIDTH - price_text.get_width())//2, P.PADDING * 2))
+                        WIN.blit(price_text, ((P.WIDTH - price_text.get_width())//2, P.PADDING * 3))
                         leave_text = REG_FONT.render("LEAVE: L", 1, P.BLACK)
-                        WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 3))
+                        WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 4))
                 elif angel.stage >= C.STAGE_LIMIT:
                         train_text = REG_FONT.render("Train SUMMON: S", 1, P.BLACK)
-                        WIN.blit(train_text, ((P.WIDTH - train_text.get_width())//2, P.PADDING * 1))
+                        WIN.blit(train_text, ((P.WIDTH - train_text.get_width())//2, P.PADDING * 2))
                         price_text = REG_FONT.render("PRICE: "+str((angel.atk * angel.stage) ** C.INCREASE_EXPONENT), 1, P.BLACK)
-                        WIN.blit(price_text, ((P.WIDTH - price_text.get_width())//2, P.PADDING * 2))
+                        WIN.blit(price_text, ((P.WIDTH - price_text.get_width())//2, P.PADDING * 3))
                         leave_text = REG_FONT.render("LEAVE: L", 1, P.BLACK)
-                        WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 3))
+                        WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 4))
+        
+def draw_spell_list(h_magic):
+        x = 2
+        ask_text = REG_FONT.render("Which one?", 1, P.RED)
+        WIN.blit(ask_text, ((P.WIDTH - ask_text.get_width())//2, P.PADDING))
+        for spell in h_magic:
+                stat_text = REG_FONT.render(str(x-1) + " ELEMENT: " + spell.element + " POWER: " + str(spell.power) +
+                                            " COST: " + str(spell.cost) + " TARGETS: " + str(spell.targets),
+                                            1, P.RED)
+                WIN.blit(stat_text, ((P.WIDTH - stat_text.get_width())//2, P.PADDING * x))
+                x += 1
+        leave_text = REG_FONT.render("LEAVE: L", 1, P.BLACK)
+        WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * x))
+def draw_train_spell_menu(spell, h_b):
+        stat_text = REG_FONT.render("POWER: " + str(spell.power) + "  COST: " + str(spell.cost) +
+                                    "  COINS: " + str(h_b.coins), 1, P.RED)
+        WIN.blit(stat_text, ((P.WIDTH - stat_text.get_width())//2, P.PADDING))
+        if spell.targets == 1:
+                target_text = REG_FONT.render("AOE: NO", 1, P.RED)
+        elif spell.targets >= 1:
+                target_text = REG_FONT.render("AOE: YES", 1, P.RED)
+        WIN.blit(target_text, ((P.WIDTH - target_text.get_width())//2, P.PADDING * 2))
+        ask_text = REG_FONT.render("What do you want to train?", 1, P.RED)
+        WIN.blit(ask_text, ((P.WIDTH - ask_text.get_width())//2, P.PADDING * 3))
+        power_text = REG_FONT.render("P/POWER  PRICE: " + str(spell.power**C.INCREASE_EXPONENT)
+                                     , 1, P.RED)
+        WIN.blit(power_text, ((P.WIDTH - power_text.get_width())//2, P.PADDING * 4))
+        if spell.cost > 1:
+                cupgrade_text = REG_FONT.render("C/COST  PRICE: " + str(spell.power**C.INCREASE_EXPONENT),
+                                                1, P.RED)
+                WIN.blit(cupgrade_text, ((P.WIDTH - cupgrade_text.get_width())//2, P.PADDING * 5))
+        if spell.targets == 1:
+                tupgrade_text = REG_FONT.render("A/AOE  PRICE: 100", 1, P.RED)
+                WIN.blit(tupgrade_text, ((P.WIDTH - tupgrade_text.get_width())//2, P.PADDING * 6))
+        leave_text = REG_FONT.render("LEAVE: L", 1, P.RED)
+        WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 7))
+        
+                
+def draw_enchanter_menu():
+        amr_def = REG_FONT.render("Enchant ARMOR: A", 1, P.WHITE)
+        WIN.blit(amr_def, ((P.WIDTH - amr_def.get_width())//2, P.PADDING * 1))
+        amr_effect = REG_FONT.render("Enchant WEAPON: W", 1, P.WHITE)
+        WIN.blit(amr_effect, ((P.WIDTH - amr_effect.get_width())//2, P.PADDING * 2))
+        leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+        WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 3))
+        
+#function that will tell the player they don't have enough money
+def poor_text():
+        poor_text = REG_FONT.render("You can't afford that. ", 1, P.BLACK)
+        WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
+        pygame.display.update()
+        pygame.time.delay(P.SMALLDELAY)
+        
+def poor_text_2():
+        poor_text = REG_FONT.render("I don't talk to poor people. ", 1, P.BLACK)
+        WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
+        pygame.display.update()
+        pygame.time.delay(P.SMALLDELAY)
         
 #function will list options for the player
 def draw_menu():
@@ -310,7 +370,7 @@ def draw_menu():
 	save_text = REG_FONT.render("RECORD journey: R", 1, P.BLACK)
 	WIN.blit(save_text, (P.WIDTH//2 - save_text.get_width(),
 			     P.PADDING * 2))
-	mage_text = REG_FONT.render("Vist Mage TOWER: T", 1, P.BLACK)
+	mage_text = REG_FONT.render("Vist WIZARD Tower: W", 1, P.BLACK)
 	WIN.blit(mage_text, (P.WIDTH//2 - mage_text.get_width(),
 			     P.PADDING * 3))
 	city_text = REG_FONT.render("Return to CITY: C", 1, P.BLACK)
@@ -319,4 +379,4 @@ def draw_menu():
 	leave_text = REG_FONT.render("SLEEP: S", 1, P.RED)
 	WIN.blit(leave_text, (P.WIDTH//2 - leave_text.get_width(),
 			      P.PADDING * 5))
-	
+
