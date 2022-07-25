@@ -25,4 +25,6 @@ class PYGConstants:
                 self.BLACK = (0, 0, 0)
                 self.SPRITE_WIDTH = 80
                 self.SPRITE_HEIGHT = 80
+                self.BIG_SPRITE = 90
+                self.SMALL_SPRITE = 70
         

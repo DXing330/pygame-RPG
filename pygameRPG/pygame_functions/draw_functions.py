@@ -67,14 +67,16 @@ def draw_monster_stats(m_p):
 	x = 2
 	for mon in m_p:
 		if mon.buff == None:
-			stats_text = REG_FONT.render((mon.name+" ATK: "+str(mon.atk)+" DEF: "+str(mon.defense)+
-						 " SKILL: "+str(mon.skill)+" ELEMENT: "+mon.element),
-						1, P.RED)
+			stats_text = REG_FONT.render((mon.name+" HP: "+str(mon.health)+
+						      " ATK: "+str(mon.atk)+" DEF: "+str(mon.defense)+
+						      " SKILL: "+str(mon.skill)+" ELEMENT: "+mon.element),
+						     1, P.RED)
 		elif mon.buff != None:
-			stats_text = REG_FONT.render((mon.name+" ATK: "+str(mon.atk)+" DEF: "+str(mon.defense)+
-						 " SKILL: "+str(mon.skill)+" ELEMENT: "+mon.element+
-						 " BUFF: "+mon.buff),
-						1, P.RED)
+			stats_text = REG_FONT.render((mon.name+" HP: "+str(mon.health)+
+						      " ATK: "+str(mon.atk)+" DEF: "+str(mon.defense)+
+						      " SKILL: "+str(mon.skill)+" ELEMENT: "+mon.element+
+						      " BUFF: "+mon.buff),
+						     1, P.RED)
 		WIN.blit(stats_text, (P.PADDING,
 				      P.PADDING + stats_text.get_height() * x))
 		pygame.display.update()
@@ -98,7 +100,7 @@ def draw_monsters(m_p):
 def draw_monster_menu_list(m_p):
 	x = 2
 	for mon in m_p:
-		mon_info = REG_FONT.render(str(mon.name), 1, P.BLACK)
+		mon_info = REG_FONT.render(str(mon.name), 1, P.RED)
 		WIN.blit(mon_info, (P.WIDTH//2 - mon_info.get_width(), P.PADDING * x))
 		x += 2
 #draws skill list
@@ -132,6 +134,9 @@ def draw_skill_menu(hero):
 		explode_text = REG_FONT.render("Use EXPLOSIVE: E", 1, P.RED)
 		WIN.blit(explode_text, ((P.WIDTH - explode_text.get_width())//2,
 					P.PADDING * 7))
+	if "Knight" in hero.name:
+		protect_text = REG_FONT.render("PROTECT Allies: P", 1, P.RED)
+		WIN.blit(protect_text, ((P.WIDTH - protect_text.get_width())//2, P.PADDING * 7))
 		
 		
 #function that will draw the options in battle
@@ -139,8 +144,9 @@ def draw_battle_menu(h_p, m_p, h_ally, h_m, h_w, h_a):
 	attack_text = REG_FONT.render("ATTACK monsters: A", 1, P.RED)
 	WIN.blit(attack_text, (P.WIDTH//2 - attack_text.get_width(), P.PADDING))
 	skill_text = REG_FONT.render("Use SKILL: S", 1, P.RED)
-	WIN.blit(skill_text, (P.WIDTH//2 - skill_text.get_width(),
-			    P.PADDING * 2))
+	WIN.blit(skill_text, (P.WIDTH//2 - skill_text.get_width(), P.PADDING * 2))
+	magic_text = REG_FONT.render("Use MAGIC: M", 1, P.RED)
+	WIN.blit(magic_text, (P.WIDTH//2 - magic_text.get_width(), P.PADDING * 3))
 
 
 #function that will list options in the city
@@ -194,32 +200,34 @@ def draw_hero_list(h_p):
 		WIN.blit(hero_text, ((P.WIDTH - hero_text.get_width())//2, P.PADDING * (x + 1)))
 		x += 1
 def draw_forge_menu():
-	new_wpn = REG_FONT.render("Buy WEAPON: W", 1, P.WHITE)
+	new_wpn = REG_FONT.render("Buy WEAPON: W", 1, P.RED)
 	WIN.blit(new_wpn, ((P.WIDTH - new_wpn.get_width())//2, P.PADDING))
-	new_amr = REG_FONT.render("Buy ARMOR: A", 1, P.WHITE)
+	new_amr = REG_FONT.render("Buy ARMOR: A", 1, P.RED)
 	WIN.blit(new_amr, ((P.WIDTH - new_amr.get_width())//2, P.PADDING * 2))
-	wpn_atk = REG_FONT.render("SHARPEN Weapon: S", 1, P.WHITE)
+	wpn_atk = REG_FONT.render("SHARPEN Weapon: S", 1, P.RED)
 	WIN.blit(wpn_atk, ((P.WIDTH - wpn_atk.get_width())//2, P.PADDING * 3))
-	wpn_effect = REG_FONT.render("INCREASE Weapon Effect: I", 1, P.WHITE)
+	wpn_effect = REG_FONT.render("INCREASE Weapon Effect: I", 1, P.RED)
 	WIN.blit(wpn_effect, ((P.WIDTH - wpn_effect.get_width())//2, P.PADDING * 4))
-	amr_def = REG_FONT.render("ENHANCE Armor: E", 1, P.WHITE)
+	amr_def = REG_FONT.render("ENHANCE Armor: E", 1, P.RED)
 	WIN.blit(amr_def, ((P.WIDTH - amr_def.get_width())//2, P.PADDING * 5))
-	amr_effect = REG_FONT.render("BOOST Armor Effect: B", 1, P.WHITE)
+	amr_effect = REG_FONT.render("BOOST Armor Effect: B", 1, P.RED)
 	WIN.blit(amr_effect, ((P.WIDTH - amr_effect.get_width())//2, P.PADDING * 6))
-	leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+	leave_text = REG_FONT.render("LEAVE: L", 1, P.RED)
 	WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 7))
 	
 	
 def draw_reorder_eqp_menu(h_e):
 	#list out the equipment
 	x = 1
-	ask_text = REG_FONT.render("Which one?", 1, P.WHITE)
+	ask_text = REG_FONT.render("Which one?", 1, P.RED)
 	WIN.blit(ask_text, ((P.WIDTH - ask_text.get_width())//2, P.PADDING))
 	for eqp in h_e:
-		eqp_text = REG_FONT.render(str(x) + " USER: " + eqp.user + " EFFECT: " + eqp.effect + " POWER: " + str(eqp.strength), 1, P.WHITE)
+		eqp_text = REG_FONT.render(str(x) + " USER: " + eqp.user + " EFFECT: " +
+					   eqp.effect + " POWER: " + str(eqp.strength),
+					   1, P.RED)
 		WIN.blit(eqp_text, ((P.WIDTH - eqp_text.get_width())//2, P.PADDING * (x + 1)))
 		x += 1
-	leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+	leave_text = REG_FONT.render("LEAVE: L", 1, P.RED)
 	WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * (x + 1)))
 	
 def draw_prremove_menu(h_p):
@@ -314,13 +322,12 @@ def draw_spell_list(h_magic):
 	ask_text = REG_FONT.render("Which one?", 1, P.RED)
 	WIN.blit(ask_text, ((P.WIDTH - ask_text.get_width())//2, P.PADDING))
 	for spell in h_magic:
-		stat_text = REG_FONT.render(str(x-1) + " ELEMENT: " + spell.element + " POWER: " + str(spell.power) +
+		stat_text = REG_FONT.render(str(x-1) + " " + spell.name +
+					    " ELEMENT: " + spell.element + " POWER: " + str(spell.power) +
 					    " COST: " + str(spell.cost) + " TARGETS: " + str(spell.targets),
 					    1, P.RED)
 		WIN.blit(stat_text, ((P.WIDTH - stat_text.get_width())//2, P.PADDING * x))
 		x += 1
-	leave_text = REG_FONT.render("LEAVE: L", 1, P.BLACK)
-	WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * x))
 def draw_train_spell_menu(spell, h_b):
 	stat_text = REG_FONT.render("POWER: " + str(spell.power) + "  COST: " + str(spell.cost) +
 				    "  COINS: " + str(h_b.coins), 1, P.RED)

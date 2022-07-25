@@ -21,6 +21,7 @@ from rpg2_constants import Constants
 C = Constants()
 #always define the window you're drawing on
 WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT))
+x, y = WIN.get_size()
 pygame.display.set_caption("RPG")
 REG_FONT = pygame.font.SysFont("comicsans", 20)
 #always make a clock
@@ -47,6 +48,8 @@ def sell_spells(h_m, h_b):
 	while pick:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		BOOKSTORE_IMG = pygame.transform.scale(BOOKSTORE_RAW, (x, y))
 		WIN.blit(BOOKSTORE_IMG, P.ORIGIN)
 		draw_func.draw_spell_list(h_m)
 		pygame.display.update()
@@ -119,6 +122,8 @@ def edit_spells(h_m):
 	while pick:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		BOOKSTORE_IMG = pygame.transform.scale(BOOKSTORE_RAW, (x, y))
 		WIN.blit(BOOKSTORE_IMG, P.ORIGIN)
 		draw_func.draw_spell_list(h_m)
 		pygame.display.update()
@@ -189,6 +194,8 @@ def bookstore(h_b, h_m):
 	while store:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		BOOKSTORE_IMG = pygame.transform.scale(BOOKSTORE_RAW, (x, y))
 		WIN.blit(BOOKSTORE_IMG, P.ORIGIN)
 		draw_func.draw_bookstore_menu()
 		pygame.display.update()
@@ -253,6 +260,8 @@ def weapon_effect_enchant(wpn, h_b):
 	while enchant:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		ENCHANTER_IMG = pygame.transform.scale(ENCHANTER_RAW, (x, y))
 		WIN.blit(ENCHANTER_IMG, P.ORIGIN)
 		draw_func.draw_weapon_enchant_menu(wpn, h_b)
 		pygame.display.update()
@@ -298,6 +307,8 @@ def armor_effect_enchant(amr, h_b):
 	while enchant:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		ENCHANTER_IMG = pygame.transform.scale(ENCHANTER_RAW, (x, y))
 		WIN.blit(ENCHANTER_IMG, P.ORIGIN)
 		draw_func.draw_armor_enchant_menu(amr, h_b)
 		pygame.display.update()
@@ -325,6 +336,8 @@ def element_enchant(eqp, h_b):
 	while enchant:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		ENCHANTER_IMG = pygame.transform.scale(ENCHANTER_RAW, (x, y))
 		WIN.blit(ENCHANTER_IMG, P.ORIGIN)
 		draw_func.draw_element_enchant(eqp, h_b)
 		pygame.display.update()
@@ -369,6 +382,8 @@ def armor_enchanter(h_e, h_b):
 	while pick:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		ENCHANTER_IMG = pygame.transform.scale(ENCHANTER_RAW, (x, y))
 		WIN.blit(ENCHANTER_IMG, P.ORIGIN)
 		draw_func.draw_reorder_eqp_menu(h_e)
 		pygame.display.update()
@@ -437,6 +452,8 @@ def weapon_enchanter(h_e, h_b):
 	while pick:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		ENCHANTER_IMG = pygame.transform.scale(ENCHANTER_RAW, (x, y))
 		WIN.blit(ENCHANTER_IMG, P.ORIGIN)
 		draw_func.draw_reorder_eqp_menu(h_e)
 		pygame.display.update()
@@ -504,6 +521,8 @@ def enchanter(h_b, h_w, h_a):
 	while enchant:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		ENCHANTER_IMG = pygame.transform.scale(ENCHANTER_RAW, (x, y))
 		WIN.blit(ENCHANTER_IMG, P.ORIGIN)
 		draw_func.draw_enchanter_menu()
 		pygame.display.update()
@@ -536,6 +555,8 @@ def trainer(h_b, h_m):
 	while pick:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		ARENA_IMG = pygame.transform.scale(ARENA_RAW, (x, y))
 		WIN.blit(ARENA_IMG, P.ORIGIN)
 		draw_func.draw_spell_list(h_m)
 		pygame.display.update()
@@ -634,6 +655,8 @@ def summoner(h_p, h_ally, h_b):
 	while summon:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		PORTAL_IMG = pygame.transform.scale(PORTAL_RAW, (x, y))
 		WIN.blit(PORTAL_IMG, P.ORIGIN)
 		for hero in h_p:
 			if "Summoner" in hero.name:
@@ -686,6 +709,8 @@ def mage_tower(h_p, h_ally, h_b, h_m, h_w, h_a):
 	while tower:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		TOWER_IMG = pygame.transform.scale(TOWER_RAW, (x, y))
 		WIN.blit(TOWER_IMG, P.ORIGIN)
 		draw_func.draw_mage_menu()
 		pygame.display.update()
