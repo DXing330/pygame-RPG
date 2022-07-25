@@ -95,7 +95,7 @@ def RPG(h_party, h_magic, h_bag, h_ally, h_wpn, h_amr, quest, access):
                                                                  h_wpn, h_amr,
                                                                  quest, access,
                                                                  "RPG2_ \n ")
-                                if event.key == pygame.K_l:
+                                if event.key == pygame.K_s:
                                         game = False
                                         pygame.quit()
                                         
