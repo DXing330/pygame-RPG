@@ -57,6 +57,9 @@ def forge(h_b, h_w, h_a):
 	while choose:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		FORGE_IMG = pygame.transform.scale(FORGE_RAW,
+						   (x, y))
 		WIN.blit(FORGE_IMG, P.ORIGIN)
 		draw_func.draw_forge_menu()
 		pygame.display.update()
@@ -72,7 +75,7 @@ def forge(h_b, h_w, h_a):
 					else:
 						WIN.fill(P.WHITE)
 						WIN.blit(FORGE_IMG, P.ORIGIN)
-						poor_text = REG_FONT.render("You can't afford that much training right now. ",
+						poor_text = REG_FONT.render("You can't afford that right now. ",
 									    1, P.RED)
 						WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
 						pygame.display.update()
@@ -85,7 +88,7 @@ def forge(h_b, h_w, h_a):
 					else:
 						WIN.fill(P.WHITE)
 						WIN.blit(FORGE_IMG, P.ORIGIN)
-						poor_text = REG_FONT.render("You can't afford that much training right now. ",
+						poor_text = REG_FONT.render("You can't afford that right now. ",
 									    1, P.RED)
 						WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
 						pygame.display.update()
@@ -111,6 +114,9 @@ def forge(h_b, h_w, h_a):
 	while pick_wpn:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		FORGE_IMG = pygame.transform.scale(FORGE_RAW,
+						   (x, y))
 		WIN.blit(FORGE_IMG, P.ORIGIN)
 		draw_func.draw_reorder_eqp_menu(h_w)
 		pygame.display.update()
@@ -148,6 +154,9 @@ def forge(h_b, h_w, h_a):
 	while pick_amr:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		FORGE_IMG = pygame.transform.scale(FORGE_RAW,
+						   (x, y))
 		WIN.blit(FORGE_IMG, P.ORIGIN)
 		draw_func.draw_reorder_eqp_menu(h_a)
 		pygame.display.update()
@@ -170,9 +179,10 @@ def forge(h_b, h_w, h_a):
 				if event.key == pygame.K_5 and len(h_a) > 4:
 					armor = h_a[4]
 					pick_amr = False
-				if event.key == pygame.K_6 and len(h_a) > 5:
-					armor = h_a[5]
-					pick_amr = False
+				if event.key == pygame.K_6:
+					if len(h_a) > 5:
+						armor = h_a[5]
+						pick_amr = False
 				if event.key == pygame.K_7 and len(h_a) > 6:
 					armor = h_a[6]
 					pick_amr = False
@@ -185,17 +195,20 @@ def forge(h_b, h_w, h_a):
 	while upgrade_power:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		FORGE_IMG = pygame.transform.scale(FORGE_RAW,
+						   (x, y))
 		WIN.blit(FORGE_IMG, P.ORIGIN)
 		pygame.display.update()
 		if weapon != None:
-			wpn_stats = REG_FONT.render("EFFECT: " + weapon.effect + " POWER: " + str(weapon.strength), 1, P.WHITE)
+			wpn_stats = REG_FONT.render("EFFECT: " + weapon.effect + " POWER: " + str(weapon.strength), 1, P.RED)
 			WIN.blit(wpn_stats, ((P.WIDTH - wpn_stats.get_width())//2, P.PADDING))
 			upgrade_text = REG_FONT.render("U/UPGRADE PRICE: " + str(C.WEAPON_PRICE * (weapon.strength ** C.INCREASE_EXPONENT)),
-						       1, P.WHITE)
+						       1, P.RED)
 			WIN.blit(upgrade_text, ((P.WIDTH - upgrade_text.get_width())//2, P.PADDING * 2))
-			coins_text = REG_FONT.render("COINS: " + str(h_b.coins), 1, P.WHITE)
+			coins_text = REG_FONT.render("COINS: " + str(h_b.coins), 1, P.RED)
 			WIN.blit(coins_text, ((P.WIDTH - coins_text.get_width())//2, P.PADDING * 3))
-			leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+			leave_text = REG_FONT.render("LEAVE: L", 1, P.RED)
 			WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 4))
 			pygame.display.update()
 			for event in pygame.event.get():
@@ -209,21 +222,21 @@ def forge(h_b, h_w, h_a):
 						else:
 							WIN.fill(P.WHITE)
 							WIN.blit(FORGE_IMG, P.ORIGIN)
-							poor_text = REG_FONT.render("You can't afford that much training right now. ",
+							poor_text = REG_FONT.render("You can't afford that right now. ",
 										    1, P.RED)
 							WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
 							pygame.display.update()
 							pygame.time.delay(P.SMALLDELAY)
 							upgrade_power = False
 		elif armor != None:
-			amr_stats = REG_FONT.render("EFFECT: " + armor.effect + " POWER: " + str(armor.strength), 1, P.WHITE)
+			amr_stats = REG_FONT.render("EFFECT: " + armor.effect + " POWER: " + str(armor.strength), 1, P.RED)
 			WIN.blit(amr_stats, ((P.WIDTH - amr_stats.get_width())//2, P.PADDING))
 			upgrade_text = REG_FONT.render("U/UPGRADE PRICE: " + str(C.ARMOR_PRICE * (armor.strength ** C.INCREASE_EXPONENT)),
-						       1, P.WHITE)
+						       1, P.RED)
 			WIN.blit(upgrade_text, ((P.WIDTH - upgrade_text.get_width())//2, P.PADDING * 2))
-			coins_text = REG_FONT.render("COINS: " + str(h_b.coins), 1, P.WHITE)
+			coins_text = REG_FONT.render("COINS: " + str(h_b.coins), 1, P.RED)
 			WIN.blit(coins_text, ((P.WIDTH - coins_text.get_width())//2, P.PADDING * 3))
-			leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+			leave_text = REG_FONT.render("LEAVE: L", 1, P.RED)
 			WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 4))
 			pygame.display.update()
 			for event in pygame.event.get():
@@ -237,27 +250,32 @@ def forge(h_b, h_w, h_a):
 						else:
 							WIN.fill(P.WHITE)
 							WIN.blit(FORGE_IMG, P.ORIGIN)
-							poor_text = REG_FONT.render("You can't afford that much training right now. ",
+							poor_text = REG_FONT.render("You can't afford that right now. ",
 										    1, P.RED)
 							WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
 							pygame.display.update()
 							pygame.time.delay(P.SMALLDELAY)
 							upgrade_power = False
+		elif armor == None and weapon == None:
+			upgrade_power = False
 							
 	while upgrade_stat:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		FORGE_IMG = pygame.transform.scale(FORGE_RAW,
+						   (x, y))
 		WIN.blit(FORGE_IMG, P.ORIGIN)
 		pygame.display.update()
 		if weapon != None:
-			wpn_stats = REG_FONT.render("ATK POWER: " + str(weapon.atk), 1, P.WHITE)
+			wpn_stats = REG_FONT.render("ATK POWER: " + str(weapon.atk), 1, P.RED)
 			WIN.blit(wpn_stats, ((P.WIDTH - wpn_stats.get_width())//2, P.PADDING))
 			upgrade_text = REG_FONT.render("U/UPGRADE PRICE: " + str(C.WEAPON_PRICE * (weapon.atk ** C.INCREASE_EXPONENT)),
-						       1, P.WHITE)
+						       1, P.RED)
 			WIN.blit(upgrade_text, ((P.WIDTH - upgrade_text.get_width())//2, P.PADDING * 2))
-			coins_text = REG_FONT.render("COINS: " + str(h_b.coins), 1, P.WHITE)
+			coins_text = REG_FONT.render("COINS: " + str(h_b.coins), 1, P.RED)
 			WIN.blit(coins_text, ((P.WIDTH - coins_text.get_width())//2, P.PADDING * 3))
-			leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+			leave_text = REG_FONT.render("LEAVE: L", 1, P.RED)
 			WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 4))
 			pygame.display.update()
 			for event in pygame.event.get():
@@ -271,21 +289,21 @@ def forge(h_b, h_w, h_a):
 						else:
 							WIN.fill(P.WHITE)
 							WIN.blit(FORGE_IMG, P.ORIGIN)
-							poor_text = REG_FONT.render("You can't afford that much training right now. ",
+							poor_text = REG_FONT.render("You can't afford that right now. ",
 										    1, P.RED)
 							WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
 							pygame.display.update()
 							pygame.time.delay(P.SMALLDELAY)
 							upgrade_stat = False
 		elif armor != None:
-			amr_stats = REG_FONT.render("DEFENSE: " + str(armor.defense), 1, P.WHITE)
+			amr_stats = REG_FONT.render("DEFENSE: " + str(armor.defense), 1, P.RED)
 			WIN.blit(amr_stats, ((P.WIDTH - amr_stats.get_width())//2, P.PADDING))
 			upgrade_text = REG_FONT.render("U/UPGRADE PRICE: " + str(C.ARMOR_PRICE * (armor.defense ** C.INCREASE_EXPONENT)),
-						       1, P.WHITE)
+						       1, P.RED)
 			WIN.blit(upgrade_text, ((P.WIDTH - upgrade_text.get_width())//2, P.PADDING * 2))
-			coins_text = REG_FONT.render("COINS: " + str(h_b.coins), 1, P.WHITE)
+			coins_text = REG_FONT.render("COINS: " + str(h_b.coins), 1, P.RED)
 			WIN.blit(coins_text, ((P.WIDTH - coins_text.get_width())//2, P.PADDING * 3))
-			leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+			leave_text = REG_FONT.render("LEAVE: L", 1, P.RED)
 			WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 4))
 			pygame.display.update()
 			for event in pygame.event.get():
@@ -299,12 +317,14 @@ def forge(h_b, h_w, h_a):
 						else:
 							WIN.fill(P.WHITE)
 							WIN.blit(FORGE_IMG, P.ORIGIN)
-							poor_text = REG_FONT.render("You can't afford that much training right now. ",
+							poor_text = REG_FONT.render("You can't afford that right now. ",
 										    1, P.RED)
 							WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
 							pygame.display.update()
 							pygame.time.delay(P.SMALLDELAY)
 							upgrade_stat = False
+		elif armor == None and weapon == None:
+			upgrade_stat = False
 
 #function that will train hero stats
 def practice_arena(h_p, h_b):
@@ -314,6 +334,9 @@ def practice_arena(h_p, h_b):
 	while pick:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		ARENA_IMG = pygame.transform.scale(ARENA_RAW,
+						   (x, y))
 		WIN.blit(ARENA_IMG, P.ORIGIN)
 		ask_text = REG_FONT.render("Who wants to train?", 1, P.WHITE)
 		WIN.blit(ask_text, ((P.WIDTH - ask_text.get_width())//2, P.PADDING))
@@ -342,6 +365,9 @@ def practice_arena(h_p, h_b):
 	while train:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		ARENA_IMG = pygame.transform.scale(ARENA_RAW,
+						   (x, y))
 		WIN.blit(ARENA_IMG, P.ORIGIN)
 		if hero.level >= C.LEVEL_LIMIT:
 			ask_text = REG_FONT.render("What do you want to train?", 1, P.WHITE)
@@ -451,50 +477,57 @@ def practice_arena(h_p, h_b):
 						
 		
 #function that will adjust weapon owners
-def reorder_weapons(h_p, h_w):
-	weapon = None
+def reorder_equip(h_p, h_e):
+	equip = None
 	hero = None
 	pick = False
 	reorder = True
 	while reorder:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		INNB_IMG = pygame.transform.scale(INNB_RAW,
+						  (x, y))
 		WIN.blit(INNB_IMG, P.ORIGIN)
-		draw_func.draw_reorder_eqp_menu(h_w)
+		draw_func.draw_reorder_eqp_menu(h_e)
 		pygame.display.update()
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_l:
 					reorder = False
 				if event.key == pygame.K_1:
-					weapon = h_w[0]
+					equip = h_e[0]
 					pick = True
-				if event.key == pygame.K_2 and len(h_w) > 1:
-					weapon = h_w[1]
+				if event.key == pygame.K_2 and len(h_e) > 1:
+					equip = h_e[1]
 					pick = True
-				if event.key == pygame.K_3 and len(h_w) > 2:
-					weapon = h_w[2]
+				if event.key == pygame.K_3 and len(h_e) > 2:
+					equip = h_e[2]
 					pick = True
-				if event.key == pygame.K_4 and len(h_w) > 3:
-					weapon = h_w[3]
+				if event.key == pygame.K_4 and len(h_e) > 3:
+					equip = h_e[3]
 					pick = True
-				if event.key == pygame.K_5 and len(h_w) > 4:
-					weapon = h_w[4]
+				if event.key == pygame.K_5 and len(h_e) > 4:
+					equip = h_e[4]
 					pick = True
-				if event.key == pygame.K_6 and len(h_w) > 5:
-					weapon = h_w[5]
+				if event.key == pygame.K_6 and len(h_e) > 5:
+					equip = h_e[5]
 					pick = True
-				if event.key == pygame.K_7 and len(h_w) > 6:
-					weapon = h_w[6]
+				if event.key == pygame.K_7 and len(h_e) > 6:
+					equip = h_e[6]
 					pick = True
-				if event.key == pygame.K_8 and len(h_w) > 7:
-					weapon = h_w[7]
+				if event.key == pygame.K_8 and len(h_e) > 7:
+					equip = h_e[7]
 					pick = True
-				if event.key == pygame.K_9 and len(h_w) > 8:
-					weapon = h_w[8]
+				if event.key == pygame.K_9 and len(h_e) > 8:
+					equip = h_e[8]
 					pick = True
+
 		while pick:
 			WIN.fill(P.WHITE)
+			x, y = WIN.get_size()
+			INNB_IMG = pygame.transform.scale(INNB_RAW,
+							  (x, y))
 			WIN.blit(INNB_IMG, P.ORIGIN)
 			ask_text = REG_FONT.render("Who do you want to equip it to?", 1, P.WHITE)
 			WIN.blit(ask_text, ((P.WIDTH - ask_text.get_width())//2, P.PADDING))
@@ -503,127 +536,46 @@ def reorder_weapons(h_p, h_w):
 			for event in pygame.event.get():
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_l:
-						reorder = False
 						pick = False
+						reorder = False
 					if event.key == pygame.K_1:
 						hero = h_p[0]
-						for wpn in h_w:
-							if wpn.user == hero.name:
-								wpn.user = "None"
-						weapon.user = hero.name
+						for eqp in h_e:
+							if eqp.user == hero.name:
+								eqp.user = "None"
+						equip.user = hero.name
 						pick = False
 					if event.key == pygame.K_2:
 						hero = h_p[1]
-						for wpn in h_w:
-							if wpn.user == hero.name:
-								wpn.user = "None"
-						weapon.user = hero.name
+						for eqp in h_e:
+							if eqp.user == hero.name:
+								eqp.user = "None"
+						equip.user = hero.name
 						pick = False
 					if event.key == pygame.K_3 and len(h_p) > 2:
 						hero = h_p[2]
-						for wpn in h_w:
-							if wpn.user == hero.name:
-								wpn.user = "None"
-						weapon.user = hero.name
+						for eqp in h_e:
+							if eqp.user == hero.name:
+								eqp.user = "None"
+						equip.user = hero.name
 						pick = False
 					if event.key == pygame.K_4 and len(h_p) > 3:
 						hero = h_p[3]
-						for wpn in h_w:
-							if wpn.user == hero.name:
-								wpn.user = "None"
-						weapon.user = hero.name
+						for eqp in h_e:
+							if eqp.user == hero.name:
+								eqp.user = "None"
+						equip.user = hero.name
 						pick = False
 
-					
-#function that will adjust armor owners
-def reorder_armors(h_p, h_a):
-	armor = None
-	hero = None
-	pick = False
-	reorder = True
-	while reorder:
-		clock.tick(P.FPS)
-		WIN.fill(P.WHITE)
-		WIN.blit(INNB_IMG, P.ORIGIN)
-		draw_func.draw_reorder_eqp_menu(h_a)
-		pygame.display.update()
-		for event in pygame.event.get():
-			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_l:
-					reorder = False
-				if event.key == pygame.K_1:
-					armor = h_a[0]
-					pick = True
-				if event.key == pygame.K_2 and len(h_a) > 1:
-					armor = h_a[1]
-					pick = True
-				if event.key == pygame.K_3 and len(h_a) > 2:
-					armor = h_a[2]
-					pick = True
-				if event.key == pygame.K_4 and len(h_a) > 3:
-					armor = h_a[3]
-					pick = True
-				if event.key == pygame.K_5 and len(h_a) > 4:
-					armor = h_a[4]
-					pick = True
-				if event.key == pygame.K_6 and len(h_a) > 5:
-					armor = h_a[5]
-					pick = True
-				if event.key == pygame.K_7 and len(h_a) > 6:
-					armor = h_a[6]
-					pick = True
-				if event.key == pygame.K_8 and len(h_a) > 7:
-					armor = h_a[7]
-					pick = True
-				if event.key == pygame.K_9 and len(h_a) > 8:
-					armor = h_a[8]
-					pick = True
-		while pick:
-			WIN.fill(P.WHITE)
-			WIN.blit(INNB_IMG, P.ORIGIN)
-			ask_text = REG_FONT.render("Who do you want to equip it to?", 1, P.WHITE)
-			WIN.blit(ask_text, ((P.WIDTH - ask_text.get_width())//2, P.PADDING))
-			draw_func.draw_hero_list(h_p)
-			pygame.display.update()
-			for event in pygame.event.get():
-				if event.type == pygame.KEYDOWN:
-					if event.key == pygame.K_l:
-						reorder = False
-						pick = False
-					if event.key == pygame.K_1:
-						hero = h_p[0]
-						for amr in h_a:
-							if amr.user == hero.name:
-								amr.user = "None"
-						armor.user = hero.name
-						pick = False
-					if event.key == pygame.K_2:
-						hero = h_p[1]
-						for amr in h_a:
-							if amr.user == hero.name:
-								amr.user = "None"
-						armor.user = hero.name
-						pick = False
-					if event.key == pygame.K_3 and len(h_p) > 2:
-						hero = h_p[2]
-						for amr in h_a:
-							if amr.user == hero.name:
-								amr.user = "None"
-						armor.user = hero.name
-						pick = False
-					if event.key == pygame.K_4 and len(h_p) > 3:
-						hero = h_p[3]
-						for amr in h_a:
-							if amr.user == hero.name:
-								amr.user = "None"
-						armor.user = hero.name
-						pick = False
 #function that removes party members
 def remove_party(h_p):
 	remove = True
 	while remove:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		INNB_IMG = pygame.transform.scale(INNB_RAW,
+						  (x, y))
 		WIN.blit(INNB_IMG, P.ORIGIN)
 		draw_func.draw_prremove_menu(h_p)
 		pygame.display.update()
@@ -648,6 +600,9 @@ def reorder_party(h_p):
 	while reorder:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		INNB_IMG = pygame.transform.scale(INNB_RAW,
+						  (x, y))
 		WIN.blit(INNB_IMG, P.ORIGIN)
 		draw_func.draw_prreorder_menu(h_p)
 		pygame.display.update()
@@ -682,6 +637,9 @@ def private_room(h_p, h_w, h_a):
 	while room:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		INNB_IMG = pygame.transform.scale(INNB_RAW,
+						  (x, y))
 		WIN.blit(INNB_IMG, P.ORIGIN)
 		draw_func.draw_proom_menu()
 		pygame.display.update()
@@ -694,9 +652,9 @@ def private_room(h_p, h_w, h_a):
 				if event.key == pygame.K_r:
 					remove_party(h_p)
 				if event.key == pygame.K_w and len(h_w) > 0:
-					reorder_weapons(h_p, h_w)
+					reorder_equip(h_p, h_w)
 				if event.key == pygame.K_a and len(h_a) > 0:
-					reorder_armors(h_p, h_a)
+					reorder_equip(h_p, h_a)
 		
 #function that controls adding heroes to the party
 def recruit(h_p):
@@ -704,6 +662,9 @@ def recruit(h_p):
 	while recruit:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		INN_IMG = pygame.transform.scale(INN_RAW,
+						 (x, y))
 		WIN.blit(INN_IMG, P.ORIGIN)
 		draw_func.draw_recruit_menu(h_p)
 		pygame.display.update()
@@ -753,6 +714,9 @@ def inn(h_p, h_b, h_w, h_a):
 	while inn:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		INN_IMG = pygame.transform.scale(INN_RAW,
+						 (x, y))
 		WIN.blit(INN_IMG, P.ORIGIN)
 		draw_func.draw_inn_menu()
 		pygame.display.update()
@@ -778,6 +742,9 @@ def city(h_p, h_b, h_w, h_a):
 	while city:
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
+		x, y = WIN.get_size()
+		CITY_IMG = pygame.transform.scale(CITY_RAW,
+						  (x, y))
 		WIN.blit(CITY_IMG, P.ORIGIN)
 		draw_func.draw_city_menu()
 		pygame.display.update()
