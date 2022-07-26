@@ -12,6 +12,8 @@ sys.path.append("../RPG2v3/RPG2v3_functions/RPG2v3_quest")
 sys.path.append("../RPG2v3/RPG2v3_functions/RPG2v3_def")
 sys.path.append("../RPG2v3/RPG2v3_functions/RPG2v3_battle")
 sys.path.append("../RPG2v3/RPG2v3_functions/bossbattles")
+sys.path.append("./pygame_functions/pybattle_functions")
+sys.path.append("./pygame_functions/pygame_general_functions")
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
                                    Spell_PC, Monster_NPC, Weapon_PC,
                                    Armor_PC, QuestItems_NPC, Access_NPC)
@@ -44,7 +46,7 @@ clock = pygame.time.Clock()
 pygame.font.init()
 #makes sound
 pygame.mixer.init()
-WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT))
+WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT), pygame.RESIZABLE)
 ww, wh = WIN.get_size()
 pygame.display.set_caption("RPG")
 REG_FONT = pygame.font.SysFont("comicsans", 20)
@@ -62,6 +64,9 @@ SPACE_IMG = pygame.transform.scale(SPACE_RAW, (P.WIDTH, P.HEIGHT))
 #function will make the plains background        
 def draw_plains():
         WIN.fill(P.WHITE)
+        x, y = WIN.get_size()
+        PLAINS_IMG = pygame.transform.scale(PLAINS_RAW,
+                                            (x, y))
         WIN.blit(PLAINS_IMG, P.ORIGIN)
         draw_func.draw_menu()
         pygame.display.update()
