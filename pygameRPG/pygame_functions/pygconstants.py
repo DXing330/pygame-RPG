@@ -9,7 +9,7 @@ WIN_FONT = pygame.font.SysFont("comicsans", 100)
 class PYGConstants:
         def __init__(self):
                 self.ORIGIN = (0, 0)
-                self.WIDTH = 1300
+                self.WIDTH = 1400
                 self.HEIGHT = 750
                 self.PADDING = 20
                 self.SCREEN = (self.WIDTH, self.HEIGHT)

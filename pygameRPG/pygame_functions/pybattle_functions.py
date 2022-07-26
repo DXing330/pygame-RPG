@@ -19,7 +19,7 @@ from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 import rpg2_party_management_functions as party_func
 import rpg2_monster_function as monster_func
 import rpg2_player_action_function as player_act_func
-import rpg2_pet_action_function as pet_func
+import pybattle_pet_action as pet_func
 import rpg2_element_function as element_func
 import rpg2_monster_effect_function as me_func
 import pybattle_hero_attack as hatk_func
@@ -163,9 +163,8 @@ def battle(h_p, m_p, h_ally, h_bag,
 			elif hero.health > 0:
 				hero_turn(hero, new_h_p, new_m_p, new_h_ally, h_bag,
 					  h_magic, new_h_wpn, new_h_amr)
-		for ally in new_h_ally:
-			#maybe later we can make this more animated
-			player_act_func.pet_action(new_h_ally, new_h_p, new_m_p)
+		#maybe later we can make this more animated
+		player_act_func.pet_action(new_h_ally, new_h_p, new_m_p)
 		for mon in new_m_p:
 			if mon.health > 0:
 				hero = party_func.pick_random_healthy_hero(new_h_p)

@@ -16,7 +16,7 @@ from rpg2_constants import Constants
 C = Constants()
 import rpg2_party_management_functions as party_func
 import rpg2_player_action_function as player_act_func
-import rpg2_pet_action_function as pet_func
+import pybattle_pet_action as pet_func
 import pypick_function as pick_func
 import pybattle_functions as pybattle_func
 import draw_functions as draw_func
@@ -213,7 +213,7 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 						else:
 							hero.skill += hero.level
 					elif "Knight" in hero.name or "Defender" in hero.name:
-						p_pc.defbonus += hero.level
+						hero.defbonus += hero.level
 						if hero.skill > 0 and armor != None:
 							armor.defense += 1
 							armor.strength += 1
