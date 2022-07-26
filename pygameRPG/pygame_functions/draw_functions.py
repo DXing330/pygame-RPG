@@ -18,10 +18,19 @@ FOREST_IMG = pygame.transform.scale(FOREST_RAW, (P.WIDTH, P.HEIGHT))
 CITY_RAW = pygame.image.load(os.path.join("Assets", "city.png"))
 CITY_IMG = pygame.transform.scale(CITY_RAW, (P.WIDTH, P.HEIGHT))
 CLERIC_RAW = pygame.image.load(os.path.join("Assets", "cleric.png"))
-TACTICIAN_RAW = pygame.image.load(os.path.join("Assets", "tactician.png"))
-NINJA_RAW = pygame.image.load(os.path.join("Assets", "ninja.png"))
-WARRIOR_RAW = pygame.image.load(os.path.join("Assets", "warrior.png"))
+CLERIC_IMG = pygame.transform.scale(CLERIC_RAW, (P.SPRITE_WIDTH, P.SPRITE_HEIGHT))
 MAGE_RAW = pygame.image.load(os.path.join("Assets", "mage.png"))
+MAGE_IMG = pygame.transform.scale(MAGE_RAW, (P.SMALL_SPRITE, P.SMALL_SPRITE))
+NINJA_RAW = pygame.image.load(os.path.join("Assets", "ninja.png"))
+NINJA_IMG = pygame.transform.scale(NINJA_RAW, (P.SMALL_SPRITE, P.SMALL_SPRITE))
+WARRIOR_RAW = pygame.image.load(os.path.join("Assets", "warrior.png"))
+WARRIOR_IMG = pygame.transform.scale(WARRIOR_RAW, (P.BIG_SPRITE, P.BIG_SPRITE))
+TACTICIAN_RAW = pygame.image.load(os.path.join("Assets", "tactician.png"))
+TACTICIAN_IMG = pygame.transform.scale(TACTICIAN_RAW, (P.SMALL_SPRITE, P.SMALL_SPRITE))
+TOTEM_RAW = pygame.image.load(os.path.join("Assets", "totem.png"))
+TOTEM_IMG = pygame.transform.scale(TOTEM_RAW, (P.SMALL_SPRITE//2, P.SMALL_SPRITE//2))
+BOMB_RAW = pygame.image.load(os.path.join("Assets", "bomb.png"))
+BOMB_IMG = pygame.transform.scale(BOMB_RAW, (P.SMALL_SPRITE//2, P.SMALL_SPRITE//2))
 HERO_RAW = pygame.image.load(os.path.join("Assets", "hero.png"))
 HERO_IMG = pygame.transform.scale(HERO_RAW, (P.SPRITE_WIDTH, P.SPRITE_HEIGHT))
 SUMMONER_RAW = pygame.image.load(os.path.join("Assets", "summoner.png"))
@@ -32,16 +41,19 @@ HUNTER_RAW =pygame.image.load(os.path.join("Assets", "hunter.png"))
 HUNTER_IMG = pygame.transform.scale(HUNTER_RAW, (P.SPRITE_WIDTH, P.SPRITE_HEIGHT))
 ANGEL_RAW = pygame.image.load(os.path.join("Assets", "angel.png"))
 ANGEL_IMG = pygame.transform.scale(ANGEL_RAW, (P.SPRITE_WIDTH//2, P.SPRITE_HEIGHT//2))
+GUARDIAN_RAW = pygame.image.load(os.path.join("Assets", "chimera.png"))
+GUARDIAN_IMG = pygame.transform.scale(GUARDIAN_RAW, (P.BIG_SPRITE, P.BIG_SPRITE))
 MON_RAW = pygame.image.load(os.path.join("Assets", "g_mon.png"))
 MON_IMG = pygame.transform.scale(MON_RAW, (P.SPRITE_WIDTH, P.SPRITE_HEIGHT))
 SLIME_RAW = pygame.image.load(os.path.join("Assets", "slime.png"))
 SLIME_IMG = pygame.transform.scale(SLIME_RAW, (P.SPRITE_WIDTH, P.SPRITE_HEIGHT))
 BEAST_RAW = pygame.image.load(os.path.join("Assets", "beast.png"))
-BEAST_IMG = pygame.transform.scale(BEAST_RAW, (P.SPRITE_WIDTH, P.SPRITE_HEIGHT))
+BEAST_IMG = pygame.transform.scale(BEAST_RAW, (P.BIG_SPRITE, P.BIG_SPRITE))
 #function that will draw characters in battle
 def draw_heroes(h_p, h_ally):
 	x = 1
-	y = 1
+	y = 2
+	z = 2
 	for player in h_p:
 		if "Hunter" in player.name:
 			WIN.blit(HUNTER_IMG,
@@ -64,23 +76,29 @@ def draw_heroes(h_p, h_ally):
 				 (P.WIDTH//2 + P.SPRITE_WIDTH,
 				  P.HEIGHT//2))
 		if "Cleric" in player.name:
-			WIN.blit(CLERIC_IMG, (P.WIDTH - (P.SPITE_WIDTH * x), P.HEIGHT - (P.SPRITE_HEIGHT * y)))
+			WIN.blit(CLERIC_IMG, (P.WIDTH - (P.SPRITE_HEIGHT * x), P.HEIGHT - (P.SPRITE_HEIGHT * y)))
 		if "Mage" in player.name:
-			WIN.blit(MAGE_IMG, (P.WIDTH - (P.SPITE_WIDTH * x), P.HEIGHT - (P.SPRITE_HEIGHT * y)))
+			WIN.blit(MAGE_IMG, (P.WIDTH - (P.SPRITE_HEIGHT * x), P.HEIGHT - (P.SPRITE_HEIGHT * y)))
 		if "Ninja" in player.name:
-			WIN.blit(NINJA_IMG, (P.WIDTH - (P.SPITE_WIDTH * x), P.HEIGHT - (P.SPRITE_HEIGHT * y)))
+			WIN.blit(NINJA_IMG, (P.WIDTH - (P.SPRITE_HEIGHT * x), P.HEIGHT - (P.SPRITE_HEIGHT * y)))
 		if "Warrior" in player.name:
-			WIN.blit(WARRIOR_IMG, (P.WIDTH - (P.SPITE_WIDTH * x), P.HEIGHT - (P.SPRITE_HEIGHT * y)))
+			WIN.blit(WARRIOR_IMG, (P.WIDTH - (P.SPRITE_HEIGHT * x), P.HEIGHT - (P.SPRITE_HEIGHT * y)))
 		if "Tactician" in player.name:
-			WIN.blit(TACTICIAN_IMG, (P.WIDTH - (P.SPITE_WIDTH * x), P.HEIGHT - (P.SPRITE_HEIGHT * y)))
+			WIN.blit(TACTICIAN_IMG, (P.WIDTH - (P.SPRITE_HEIGHT * x), P.HEIGHT - (P.SPRITE_HEIGHT * y)))
+		if "Totem" in player.name:
+			WIN.blit(TOTEM_IMG, (P.WIDTH//2 + (P.SPRITE_HEIGHT), P.HEIGHT - (P.SPRITE_HEIGHT * x)))
 		x += 0.5
 		y += 1
 		
-	for aly in h_ally:
-		if "Angel" in aly.name:
+	for ally in h_ally:
+		if "Angel" in ally.name:
 			WIN.blit(ANGEL_IMG,
 				 (P.WIDTH - (P.SPRITE_WIDTH * 1),
-				 P.HEIGHT - (P.SPRITE_HEIGHT * 3)))
+				 P.HEIGHT - (P.SPRITE_HEIGHT * 4)))
+		if "Spirit" in ally.name:
+                        WIN.blit(GUARDIAN_IMG,
+				 (P.WIDTH//2 + (P.SPRITE_WIDTH * 2),
+				 P.HEIGHT//2 + (P.SPRITE_HEIGHT * 2)))
 
 	pygame.display.update()
 #function that will draw monster stats
@@ -131,6 +149,10 @@ def draw_monsters(m_p):
 				  P.HEIGHT - (P.SPRITE_HEIGHT * x)))
 		elif "Beast" in mon.name:
 			WIN.blit(BEAST_IMG,
+				 (P.PADDING//2 * x,
+				  P.HEIGHT - (P.SPRITE_HEIGHT * x)))
+		elif "Bomb" in mon.name:
+			WIN.blit(BOMB_IMG,
 				 (P.PADDING//2 * x,
 				  P.HEIGHT - (P.SPRITE_HEIGHT * x)))
 		else:
@@ -195,6 +217,12 @@ def draw_skill_menu(hero):
 		WIN.blit(sneak_text, ((P.WIDTH - sneak_text.get_width())//2, P.PADDING * 7))
 		
 		
+def draw_totem_menu():
+	totem_text = REG_FONT.render("ATTACK: A / BOOST: B / DEBUFF: D / HEAL: H", 1, P.RED)
+	WIN.blit(totem_text, (P.WIDTH//2 - totem_text.get_width(), P.PADDING))
+def draw_bomb_menu():
+	bomb_text = REG_FONT.render("EXPLOSIVE: E / POISON: P", 1, P.RED)
+	WIN.blit(bomb_text, (P.WIDTH//2 - bomb_text.get_width(), P.PADDING))
 #function that will draw the options in battle
 def draw_battle_menu(hero):
 	attack_text = REG_FONT.render("ATTACK monsters: A", 1, P.RED)

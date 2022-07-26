@@ -170,9 +170,10 @@ def battle(h_p, m_p, h_ally, h_bag,
 			if mon.health > 0:
 				hero = party_func.pick_random_healthy_hero(new_h_p)
 				monster_func.monster_attack(mon, hero, new_h_amr, new_h_p, new_m_p)
-		for mon in new_m_p:
-			if mon.health <= 0:
-				new_m_p.remove(mon)
+		for num in range(0, len(m_p)):
+			for mon in new_m_p:
+				if mon.health <= 0:
+					new_m_p.remove(mon)
 		for hero in new_h_p:
 			if hero.health <= 0:
 				new_h_p.remove(hero)
