@@ -4,6 +4,7 @@ pygame.init()
 from pygconstants import PYGConstants
 P = PYGConstants()
 import draw_functions as draw_func
+import draw_effects as drawe_func
 import rpg2_player_action_function as player_act_func
 WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT))
 pygame.display.set_caption("RPG")
@@ -79,12 +80,8 @@ def hero_attack(hero, h_p, m_p, h_ally, h_wpn, h_amr):
 	if not pick:
 		pygame.event.clear()
 		player_act_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
-		attack_text = REG_FONT.render(hero.name + " attacks " + mon.name, 1, P.RED)
 		x, y = WIN.get_size()
 		FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
 		WIN.blit(FOREST_IMG, P.ORIGIN)
-		draw_func.draw_heroes(h_p, h_ally)
-		draw_func.draw_monsters(m_p)
-		WIN.blit(attack_text, ((P.WIDTH - attack_text.get_width())//2, P.PADDING * 3))
+		drawe_func.hero_attack(hero, mon)
 		pygame.display.update()
-		pygame.time.delay(P.SMALLDELAY)

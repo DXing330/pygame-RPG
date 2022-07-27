@@ -137,3 +137,18 @@ def companion_action(p_npc, h_p, m_p):
                                 mon = party_func.pet_pick_random_monster(m_p)
                                 mon.poison += p_npc.atk//p_npc.stage
                                 mon.health -= mon.poison
+
+def ally_action(h_ally, h_p, m_p):
+        #check if there is an angel ally
+        angel = None
+        comp = None
+        for ally in h_ally:
+                if "Angel" in ally.name:
+                        angel = ally
+        for ally in h_ally:
+                if "Spirit" in ally.name:
+                        comp = ally
+        if angel != None:
+                angel_action(angel, h_p, m_p)
+        if comp != None:
+                companion_action(comp, h_p, m_p)

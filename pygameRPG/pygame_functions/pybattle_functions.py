@@ -27,6 +27,7 @@ import pybattle_hero_skill as hskl_func
 import pybattle_hero_magic as hmagic_func
 import pypick_function as pick_func
 import draw_functions as draw_func
+import draw_effects as drawe_func
 #always define the window you're drawing on
 WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT))
 pygame.display.set_caption("RPG")
@@ -101,6 +102,10 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 					mon = m_p[0]
 					player_act_func.player_attack(hero, mon, h_wpn,
 								      h_amr, h_p, m_p)
+					x, y = WIN.get_size()
+					FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
+					WIN.blit(FOREST_IMG, P.ORIGIN)
+					drawe_func.hero_attack(hero, mon)
 					break
 				if event.key == pygame.K_a and len(m_p) > 1:
 					turn = False
@@ -164,11 +169,16 @@ def battle(h_p, m_p, h_ally, h_bag,
 				hero_turn(hero, new_h_p, new_m_p, new_h_ally, h_bag,
 					  h_magic, new_h_wpn, new_h_amr)
 		#maybe later we can make this more animated
-		player_act_func.pet_action(new_h_ally, new_h_p, new_m_p)
+		pet_func.ally_action(new_h_ally, new_h_p, new_m_p)
 		for mon in new_m_p:
+			x, y = WIN.get_size()
+			FOREST_IMG = pygame.transform.scale(FOREST_RAW,
+							    (x, y))
+			WIN.blit(FOREST_IMG, P.ORIGIN)
 			if mon.health > 0:
 				hero = party_func.pick_random_healthy_hero(new_h_p)
 				monster_func.monster_attack(mon, hero, new_h_amr, new_h_p, new_m_p)
+				drawe_func.monster_attack(mon, hero)
 		for num in range(0, len(m_p)):
 			for mon in new_m_p:
 				if mon.health <= 0:
