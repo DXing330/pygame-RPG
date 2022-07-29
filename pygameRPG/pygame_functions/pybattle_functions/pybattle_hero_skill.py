@@ -8,8 +8,8 @@ sys.path.append("../../../RPG2v3/RPG2v3_functions/RPG2v3_def")
 sys.path.append("../../../RPG2v3/RPG2v3_functions/RPG2v3_battle")
 pygame.init()
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
-                                   Spell_PC, Monster_NPC, Weapon_PC,
-                                   Armor_PC, QuestItems_NPC, Access_NPC)
+				   Spell_PC, Monster_NPC, Weapon_PC,
+				   Armor_PC, QuestItems_NPC, Access_NPC)
 from pygconstants import PYGConstants
 P = PYGConstants()
 from rpg2_constants import Constants
@@ -28,42 +28,48 @@ FOREST_RAW = pygame.image.load(os.path.join("Assets", "forest.png"))
 FOREST_IMG = pygame.transform.scale(FOREST_RAW, (P.WIDTH, P.HEIGHT))
 #function that makes a bomb
 def make_bomb(hero, h_p, m_p, h_ally):
+	x, y = WIN.get_size()
+	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
+	WIN.blit(FOREST_IMG, P.ORIGIN)
+	draw_func.draw_heroes(h_p, h_ally)
+	draw_func.draw_monsters(m_p)
+	pygame.display.update()
 	pick = True
 	while pick:
 		pygame.event.clear()
 		clock.tick(P.SLOWFPS)
-		x, y = WIN.get_size()
-		FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
-		WIN.blit(FOREST_IMG, P.ORIGIN)
-		draw_func.draw_heroes(h_p, h_ally)
-		draw_func.draw_monsters(m_p)
 		draw_func.draw_bomb_menu()
 		pygame.display.update()
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN:
 				pygame.event.clear()
 				if event.key == pygame.K_e:
+					pick = False
+					pygame.event.clear()
 					bomb = Monster_NPC("Bomb", hero.skill, 0, 0, hero.level, "Blast", 0)
 					copy_bomb = copy.copy(bomb)
 					m_p.append(copy_bomb)
-					pick = False
+					break
 				elif event.key == pygame.K_p:
 					pick = False
+					pygame.event.clear()
 					bomb = Monster_NPC("Bomb", hero.skill, 0, 0, hero.level, "Poison", 0)
 					copy_bomb = copy.copy(bomb)
 					m_p.append(copy_bomb)
+					break
 					
 #function that summons a totem
 def summon_totem(hero, h_p, m_p, h_ally):
+	x, y = WIN.get_size()
+	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
+	WIN.blit(FOREST_IMG, P.ORIGIN)
+	draw_func.draw_heroes(h_p, h_ally)
+	draw_func.draw_monsters(m_p)
+	pygame.display.update()
 	pick = True
 	while pick:
 		pygame.event.clear()
 		clock.tick(P.SLOWFPS)
-		x, y = WIN.get_size()
-		FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
-		WIN.blit(FOREST_IMG, P.ORIGIN)
-		draw_func.draw_heroes(h_p, h_ally)
-		draw_func.draw_monsters(m_p)
 		draw_func.draw_totem_menu()
 		pygame.display.update()
 		for event in pygame.event.get():
@@ -75,42 +81,47 @@ def summon_totem(hero, h_p, m_p, h_ally):
 					copy_totem = copy.copy(totem)
 					h_p.append(copy_totem)
 					pick = False
+					break
 				if event.key == pygame.K_b:
 					totem = Player_PC("Totem", 1, hero.skill, hero.skill,
 							  0, 0, hero.skill, 0, 0)
 					copy_totem = copy.copy(totem)
 					h_p.append(copy_totem)
 					pick = False
+					break
 				if event.key == pygame.K_d:
 					totem = Player_PC("Totem", 1, hero.skill, hero.skill,
 							  0, 0, 0, hero.skill, 0)
 					copy_totem = copy.copy(totem)
 					h_p.append(copy_totem)
 					pick = False
+					break
 				if event.key == pygame.K_h:
 					totem = Player_PC("Totem", 1, hero.skill, hero.skill,
 							  0, hero.skill, 0, 0, 0)
 					copy_totem = copy.copy(totem)
 					h_p.append(copy_totem)
 					pick = False
+					break
 					
 	
 #function that controls what kind of skill the hero can use
 def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 	hero_other_stat = REG_FONT.render("SKILL: " + str(hero.skill) + " MANA: " + str(hero.mana),
 					  1, P.RED)
+	x, y = WIN.get_size()
+	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
+	WIN.blit(FOREST_IMG, P.ORIGIN)
+	draw_func.draw_heroes(h_p, h_ally)
+	draw_func.draw_monsters(m_p)
+	WIN.blit(hero_other_stat, (P.WIDTH - hero_other_stat.get_width() - P.PADDING,
+				   P.PADDING + hero_other_stat.get_height() * 3))
+	draw_func.draw_skill_menu(hero)
+	pygame.display.update()
 	turn = True
 	while turn:
 		pygame.event.clear()
 		clock.tick(P.SLOWFPS)
-		x, y = WIN.get_size()
-		FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
-		WIN.blit(FOREST_IMG, P.ORIGIN)
-		draw_func.draw_heroes(h_p, h_ally)
-		draw_func.draw_monsters(m_p)
-		WIN.blit(hero_other_stat, (P.WIDTH - hero_other_stat.get_width() - P.PADDING,
-					   P.PADDING + hero_other_stat.get_height() * 3))
-		draw_func.draw_skill_menu(hero)
 		pygame.display.update()
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN:
@@ -167,8 +178,10 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 				elif event.key == pygame.K_t and "Summoner" in hero.name:
 					if hero.mana > len(h_p):
 						hero.mana -= len(h_p)
+						pygame.event.clear()
 						summon_totem(hero, h_p, m_p, h_ally)
 						turn = False
+						break
 				elif event.key == pygame.K_h:
 					healee = pick_func.pick_hero(h_p)
 					turn = False
@@ -246,5 +259,7 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 					weapon.atk = 0
 					turn = False
 				elif event.key == pygame.K_e and "Hunter" in hero.name:
+					pygame.event.clear()
 					make_bomb(hero, h_p, m_p, h_ally)
 					turn = False
+					break

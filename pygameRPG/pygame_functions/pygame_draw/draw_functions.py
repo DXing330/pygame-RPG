@@ -50,6 +50,8 @@ SLIME_RAW = pygame.image.load(os.path.join("Assets", "slime.png"))
 SLIME_IMG = pygame.transform.scale(SLIME_RAW, (P.SPRITE_WIDTH, P.SPRITE_HEIGHT))
 BEAST_RAW = pygame.image.load(os.path.join("Assets", "beast.png"))
 BEAST_IMG = pygame.transform.scale(BEAST_RAW, (P.BIG_SPRITE, P.BIG_SPRITE))
+GOBLIN_RAW = pygame.image.load(os.path.join("Assets", "goblin.png"))
+GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW, (P.SMALL_SPRITE, P.SMALL_SPRITE))
 #function that will draw characters in battle
 def draw_heroes(h_p, h_ally):
 	width, height = WIN.get_size()
@@ -89,14 +91,14 @@ def draw_heroes(h_p, h_ally):
 			WIN.blit(TACTICIAN_IMG, (width - (P.SPRITE_HEIGHT * x), height - (P.SPRITE_HEIGHT * y)))
 		if "Totem" in player.name:
 			WIN.blit(TOTEM_IMG, (width//2 + (P.SPRITE_HEIGHT), height - (P.SPRITE_HEIGHT * x)))
-		x += 0.5
+		x += 0.2
 		y += 1
 		
 	for ally in h_ally:
 		if "Angel" in ally.name:
 			WIN.blit(ANGEL_IMG,
 				 (width - (P.SPRITE_WIDTH * 1),
-				 height - (P.SPRITE_HEIGHT * 4)))
+				 height - (P.SPRITE_HEIGHT * 2)))
 		if "Spirit" in ally.name:
 			WIN.blit(GUARDIAN_IMG,
 				 (width//2 + (P.SPRITE_WIDTH * 2),
@@ -209,24 +211,39 @@ def draw_hero_stats(hero):
 def draw_monsters(m_p):
 	width, height = WIN.get_size()
 	x = 2
+	y = 0
+	z = 1
 	for mon in m_p:
 		if "Slime" in mon.name:
 			WIN.blit(SLIME_IMG,
-				 (P.PADDING//2 * x,
+				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
 				  height - (P.SPRITE_HEIGHT * x)))
 		elif "Beast" in mon.name:
 			WIN.blit(BEAST_IMG,
-				 (P.PADDING//2 * x,
+				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
 				  height - (P.SPRITE_HEIGHT * x)))
 		elif "Bomb" in mon.name:
 			WIN.blit(BOMB_IMG,
-				 (P.PADDING//2 * x,
+				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
+				  height - (P.SPRITE_HEIGHT * x)))
+		elif "Goblin" in mon.name:
+			if "Champion" in mon.name:
+				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW, (P.BIG_SPRITE, P.BIG_SPRITE))
+			elif "Hob" in mon.name:
+				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW, (P.SPRITE_WIDTH, P.SPRITE_WIDTH))
+			else:
+				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW, (P.SMALL_SPRITE, P.SMALL_SPRITE))
+			WIN.blit(GOBLIN_IMG,
+				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
 				  height - (P.SPRITE_HEIGHT * x)))
 		else:
 			WIN.blit(MON_IMG,
-				 (P.PADDING//2 * x,
+				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
 				  height - (P.SPRITE_HEIGHT * x)))
 		x += 1
+		if x * P.SPRITE_HEIGHT > height - P.PADDING:
+			x = 1
+			y += 1
 
 #function that draws a single monster
 def draw_monster(mon):
@@ -773,6 +790,30 @@ def hunter_weapon_enchant(qi_npc, a_npc):
 		WIN.blit(explode_text, ((width - explode_text.get_width())//2, P.PADDING * 5))
 	leave_text = REG_FONT.render("LEAVE: L", 1, P.RED)
 	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 10))
+def draw_grandmaster_menu():
+	width, height = WIN.get_size()
+	greeting_text = REG_FONT.render("I continue to hear of your great exploits. ", 1, P.WHITE)
+	WIN.blit(greeting_text, ((width - greeting_text.get_width())//2, P.PADDING * 1))
+	choice_text = REG_FONT.render("Would you like to REST: R here?", 1, P.WHITE)
+	WIN.blit(choice_text, ((width - choice_text.get_width())//2, P.PADDING * 2))
+	choice2_text = REG_FONT.render("I can also help you TRAIN: T beyond your limits.", 1, P.WHITE)
+	WIN.blit(choice2_text, ((width - choice2_text.get_width())//2, P.PADDING * 3))
+	train_text = REG_FONT.render("Of course, you'll need a lot of mana to go through my training.", 1, P.WHITE)
+	WIN.blit(train_text, ((width - train_text.get_width())//2, P.PADDING * 4))
+	leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 8))
+
+def draw_prestige_price(hero, price):
+	width, height = WIN.get_size()
+	hero_text = REG_FONT.render("HERO: "+hero.name+" LEVEL: "+str(hero.level), 1, P.WHITE)
+	WIN.blit(hero_text, ((width - hero_text.get_width())//2, P.PADDING * 1))
+	price_text = REG_FONT.render("PRICE: "+str(price), 1, P.WHITE)
+	WIN.blit(price_text, ((width - price_text.get_width())//2, P.PADDING * 2))
+	choice_text = REG_FONT.render("YES/NO : Y/N", 1, P.WHITE)
+	WIN.blit(choice_text, ((width - choice_text.get_width())//2, P.PADDING * 3))
+	leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 5))
+	
 #function that will tell the player they don't have enough money
 def poor_text():
 	width, height = WIN.get_size()

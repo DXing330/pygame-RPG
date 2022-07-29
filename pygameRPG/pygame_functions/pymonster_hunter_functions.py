@@ -39,6 +39,86 @@ TINKERER_RAW = pygame.image.load(os.path.join("Assets", "tinkerer.png"))
 TINKERER_IMG = pygame.transform.scale(TINKERER_RAW, (P.WIDTH, P.HEIGHT))
 FORGE_RAW = pygame.image.load(os.path.join("Assets", "forge2.png"))
 FORGE_IMG = pygame.transform.scale(FORGE_RAW, (P.WIDTH, P.HEIGHT))
+HALL_RAW = pygame.image.load(os.path.join("Assets", "hall.png"))
+HALL_IMG = pygame.transform.scale(HALL_RAW, (P.WIDTH, P.HEIGHT))
+#grandmaster function
+def grandmaster(h_p, qi_npc, a_npc):
+	choice = True
+	hero = None
+	price = 0
+	train = False
+	while choice:
+		pygame.event.clear()
+		clock.tick(P.FPS)
+		x, y = WIN.get_size()
+		HALL_IMG = pygame.transform.scale(HALL_RAW, (x, y))
+		WIN.blit(HALL_IMG, P.ORIGIN)
+		draw_func.draw_grandmaster_menu()
+		pygame.display.update()
+		for event in pygame.event.get():
+			if event.type == pygame.KEYDOWN:
+				pygame.event.clear()
+				if event.key == pygame.K_l:
+					choice = False
+				elif event.key == pygame.K_r:
+					for p in h_p:
+						p.health = p.maxhealth
+						p.mana = p.maxmana
+				elif event.key == pygame.K_t:
+					choice = False
+					train = True
+					hero = pick_func.pick_hero(h_p)
+					if hero.level >= C.LEVEL_LIMIT * C.INCREASE_EXPONENT:
+						x, y = WIN.get_size()
+						HALL_IMG = pygame.transform.scale(HALL_RAW, (x, y))
+						WIN.blit(HALL_IMG, P.ORIGIN)
+						fail_text = REG_FONT.render("Sorry, I can't train you anymore. ", 1, P.WHITE)
+						WIN.blit(fail_text, ((x - fail_text.get_width())//2, P.PADDING * 1))
+						pygame.display.update()
+						pygame.time.delay(1000)
+						train = False
+					elif hero.level == C.LEVEL_LIMIT:
+						price += C.PRESTIGE_PRICE
+					elif hero.level > C.LEVEL_LIMIT:
+						price += hero.level ** C.INCREASE_EXPONENT
+	while train:
+		pygame.event.clear()
+		clock.tick(P.FPS)
+		x, y = WIN.get_size()
+		HALL_IMG = pygame.transform.scale(HALL_RAW, (x, y))
+		WIN.blit(HALL_IMG, P.ORIGIN)
+		draw_func.draw_prestige_price(hero, price)
+		pygame.display.update()
+		for event in pygame.event.get():
+			if event.type == pygame.KEYDOWN:
+				pygame.event.clear()
+				x, y = WIN.get_size()
+				HALL_IMG = pygame.transform.scale(HALL_RAW, (x, y))
+				WIN.blit(HALL_IMG, P.ORIGIN)
+				if event.key == pygame.K_l:
+					train = False
+				elif event.key == pygame.K_n:
+					train = False
+					grandmaster(h_p, qi_npc, a_npc)
+				elif event.key == pygame.K_y:
+					train = False
+					if qi_npc.managem >= price:
+						qi_npc.managem -= price
+						if hero.level == C.LEVEL_LIMIT:
+							lvl_func.prestige_class(hero)
+							lvl_func.prestige_level_up(hero)
+						elif hero.level > C.LEVEL_LIMIT:
+							lvl_func.prestige_level_up(hero)
+						fail_text = REG_FONT.render("Can you feel the energy empowering you? ", 1, P.WHITE)
+						WIN.blit(fail_text, ((x - fail_text.get_width())//2, P.PADDING * 1))
+						pygame.display.update()
+						pygame.time.delay(1000)
+					else:
+						fail_text = REG_FONT.render("You'll need more mana gems for the process to work. ", 1, P.WHITE)
+						WIN.blit(fail_text, ((x - fail_text.get_width())//2, P.PADDING * 1))
+						pygame.display.update()
+						pygame.time.delay(1000)
+					
 #enchanter function
 def enchanter(h_ally, h_wpn, h_amr, qi_npc, a_npc):
 	choice = True
@@ -95,26 +175,32 @@ def enchanter(h_ally, h_wpn, h_amr, qi_npc, a_npc):
 					enchant = False
 				elif event.key == pygame.K_d and weapon != None:
 					weapon.effect = "Death"
+					weapon.name = "Death's Call"
 					qi_npc.managem -= C.ENCHANT_PRICE
 					enchant = False
 				elif event.key == pygame.K_n and weapon != None:
 					weapon.effect = "Necromancer"
+					weapon.name = "Necromantic Blade"
 					qi_npc.managem -= C.ENCHANT_PRICE
 					enchant = False
 				elif event.key == pygame.K_r and armor != None:
 					armor.effect = "Revive"
+					armor.name = "Phoenix Armor"
 					qi_npc.managem -= C.ENCHANT_PRICE
 					enchant = False
 				elif event.key == pygame.K_b and armor != None:
 					armor.effect = "Bomb"
+					armor.name = "Explosive Armor"
 					qi_npc.managem -= C.ENCHANT_PRICE
 					enchant = False
 				elif event.key == pygame.K_e:
 					if weapon != None:
 						weapon.effect = "Explode"
+						weapon.name = "Explosive Blade"
 						qi_npc.managem -= C.ENCHANT_PRICE
 					elif armor != None:
 						armor.effect = "Ethereal"
+						armor.name = "Ghostly Armor"
 						qi_npc.managem -= C.ENCHANT_PRICE
 					enchant = False
 		
@@ -205,7 +291,7 @@ def tinkerer(h_wpn, h_amr, qi_npc, a_npc):
 		TINKERER_IMG = pygame.transform.scale(TINKERER_RAW, (width, height))
 		WIN.blit(TINKERER_IMG, P.ORIGIN)
 		if armor != None:
-			if armor == armor2:
+			if armor.effect == armor2.effect:
 				fail_text = REG_FONT.render("Those are the same thing. ", 1, P.WHITE)
 				WIN.blit(fail_text, ((width - fail_text.get_width())//2, P.PADDING * 1))
 				pygame.display.update()
@@ -221,7 +307,7 @@ def tinkerer(h_wpn, h_amr, qi_npc, a_npc):
 				new_defense = max(armor.defense, armor2.defense)
 				new_upgrade = max(armor.upgrade, armor2.upgrade)
 				new_user = "None"
-				new_name = "Chimera Armor"
+				new_name = "Chimera Armor: "+new_effect
 				new_element = "None"
 				new_armor = Armor_PC(new_name, new_user, new_effect,
 						     new_strength, new_element, new_defense,
@@ -236,7 +322,7 @@ def tinkerer(h_wpn, h_amr, qi_npc, a_npc):
 				pygame.display.update()
 				pygame.time.delay(1000)
 		elif weapon != None:
-			if weapon == weapon2:
+			if weapon.effect == weapon2.effect:
 				fail_text = REG_FONT.render("Those are the same thing. ", 1, P.WHITE)
 				WIN.blit(fail_text, ((width - fail_text.get_width())//2, P.PADDING * 1))
 				pygame.display.update()
@@ -252,7 +338,7 @@ def tinkerer(h_wpn, h_amr, qi_npc, a_npc):
 				new_atk = max(weapon.atk, weapon2.atk)
 				new_upgrade = max(weapon.upgrade, weapon2.upgrade)
 				new_user = "None"
-				new_name = "Chimera Weapon"
+				new_name = "Chimera Weapon: "+new_effect
 				new_element = "None"
 				new_weapon = Weapon_PC(new_name, new_user, new_effect,
 						       new_strength, new_element, new_atk,
@@ -435,7 +521,7 @@ def monster_hunter_guild(h_p, h_bag, h_ally, h_wpn, h_amr, qi_npc, a_npc):
 				elif event.key == pygame.K_q and qi_npc.package < a_npc.rank:
 					qi_npc.package += max(a_npc.rank - qi_npc.package, 0)
 				elif event.key == pygame.K_r and qi_npc.rpackage > 0:
-					qi_npc.managem += qi_npc.rpackage * a_npc.rank
+					qi_npc.managem += qi_npc.rpackage * round(a_npc.rank ** 0.5)
 					qi_npc.rpackage = 0
 					x, y = WIN.get_size()
 					GUILD_IMG = pygame.transform.scale(TOWER_RAW, (x, y))
