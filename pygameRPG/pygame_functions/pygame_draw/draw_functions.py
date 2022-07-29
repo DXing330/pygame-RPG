@@ -648,10 +648,135 @@ def draw_sell_spell_menu(spell, h_b):
 	leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
 	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 4))
 	
+#texts inside the monster hunter guild
+def draw_guild_menu(qi_npc, a_npc):
+	width, height = WIN.get_size()
+	currency_text = REG_FONT.render("Packages: "+str(qi_npc.package)+
+					" Reciepts: "+str(qi_npc.rpackage)+
+					" Mana Crystal: "+str(qi_npc.managem), 1, P.WHITE)
+	WIN.blit(currency_text, ((width - currency_text.get_width())//2, P.PADDING * 1))
+	package_text = REG_FONT.render("Accept QUEST: Q", 1, P.WHITE)
+	WIN.blit(package_text, ((width - package_text.get_width())//2, P.PADDING * 2))
+	return_text = REG_FONT.render("Claim REWARDS: R", 1, P.WHITE)
+	WIN.blit(return_text, ((width - return_text.get_width())//2, P.PADDING * 3))
+	armor_text = REG_FONT.render("Visit ARMORER: A", 1, P.WHITE)
+	WIN.blit(armor_text, ((width - armor_text.get_width())//2, P.PADDING * 4))
+	tinkerer_text = REG_FONT.render("Visit TINKERER: T", 1, P.WHITE)
+	WIN.blit(tinkerer_text, ((width - tinkerer_text.get_width())//2, P.PADDING * 5))
+	enchanter_text = REG_FONT.render("Enter ENCHANTER Garden: E", 1, P.WHITE)
+	WIN.blit(enchanter_text, ((width - enchanter_text.get_width())//2, P.PADDING * 6))
+	if a_npc.rank >= 20:
+		grandmaster_text = REG_FONT.render("Enter GRANDMASTER Hall: G", 1, P.WHITE)
+		WIN.blit(grandmaster_text, ((width - grandmaster_text.get_width())//2, P.PADDING * 7))
+	leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 8))
+
+def draw_armorer_menu(h_bag, qi_npc, a_npc):
+	width, height = WIN.get_size()
+	currency_text = REG_FONT.render("Coins: "+str(h_bag.coins)+
+					" Mana Gems: "+str(qi_npc.managem), 1, P.WHITE)
+	WIN.blit(currency_text, ((width - currency_text.get_width())//2, P.PADDING * 1))
+	sell_amr_text = REG_FONT.render("Sell ARMOR: A", 1, P.WHITE)
+	WIN.blit(sell_amr_text, ((width - sell_amr_text.get_width())//2, P.PADDING * 2))
+	sell_wpn_text = REG_FONT.render("Sell WEAPONS: W", 1, P.WHITE)
+	WIN.blit(sell_wpn_text, ((width - sell_wpn_text.get_width())//2, P.PADDING * 3))
+	if a_npc.rank > 10:
+		buy_text = REG_FONT.render("BUY: B", 1, P.WHITE)
+		WIN.blit(buy_text, ((width - buy_text.get_width())//2, P.PADDING * 4))
+	leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 5))
+def draw_equip_price(equip, price):
+	width, height = WIN.get_size()
+	equip_text = REG_FONT.render("EFFECT: "+equip.effect+" POWER: "+str(equip.strength)+
+				     " UPGRADES: "+str(equip.upgrade), 1, P.WHITE)
+	WIN.blit(equip_text, ((width - equip_text.get_width())//2, P.PADDING * 1))
+	price_text = REG_FONT.render("PRICE: "+str(price), 1, P.WHITE)
+	WIN.blit(price_text, ((width - price_text.get_width())//2, P.PADDING * 2))
+	choice_text = REG_FONT.render("YES/NO : Y/N", 1, P.WHITE)
+	WIN.blit(choice_text, ((width - choice_text.get_width())//2, P.PADDING * 3))
+	leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 5))
+
+def draw_unique_equip(h_wpn, qi_npc):
+	width, height = WIN.get_size()
+	price_text = REG_FONT.render("They all cost "+str(C.ENCHANT_PRICE)+
+				     " mana gems. MANA GEMS: "+str(qi_npc.managem), 1, P.WHITE)
+	WIN.blit(price_text, ((width - price_text.get_width())//2, P.PADDING * 1))
+	observer_text = REG_FONT.render("Buy an OBSERVER: O", 1, P.WHITE)
+	WIN.blit(observer_text, ((width - observer_text.get_width())//2, P.PADDING * 2))
+	for wpn in h_wpn:
+		if "Ninja" in wpn.user:
+			ninja_text = REG_FONT.render("Buy a HIDDEN DAGGER for a NINJA: N", 1, P.WHITE)
+			WIN.blit(ninja_text, ((width - ninja_text.get_width())//2, P.PADDING * 3))
+		if "Summoner" in wpn.user:
+			summon_text = REG_FONT.render("Buy a SUMMONING STAFF: S", 1, P.WHITE)
+			WIN.blit(summon_text, ((width - summon_text.get_width())//2, P.PADDING * 4))
+		if "Cleric" in wpn.user:
+			heal_text = REG_FONT.render("Buy a HEALING Staff for a CLERIC: C", 1, P.WHITE)
+			WIN.blit(heal_text, ((width - heal_text.get_width())//2, P.PADDING * 5))
+		if "Knight" in wpn.user:
+			shield_text = REG_FONT.render("Buy a SHIELD for a KNIGHT: K", 1, P.WHITE)
+			WIN.blit(shield_text, ((width - shield_text.get_width())//2, P.PADDING * 6))
+	leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 10))
+
+def draw_tinkerer_menu(qi_npc, a_npc):
+	width, height = WIN.get_size()
+	currency_text = REG_FONT.render("Mana Gems: "+str(qi_npc.managem), 1, P.WHITE)
+	WIN.blit(currency_text, ((width - currency_text.get_width())//2, P.PADDING * 1))
+	upgrade_text = REG_FONT.render("Upgrade ARMOR: A / Upgrade WEAPONS: W", 1, P.WHITE)
+	WIN.blit(upgrade_text, ((width - upgrade_text.get_width())//2, P.PADDING * 2))
+	if a_npc.rank > 15:
+		combine_text = REG_FONT.render("COMBINE ARMOR: C / FUSE WEAPONS: F (PRICE: "+str(C.ENCHANT_PRICE)+")", 1, P.WHITE)
+		WIN.blit(combine_text, ((width - combine_text.get_width())//2, P.PADDING * 3))
+	leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
+	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 5))
+def draw_henchanter_menu():
+	width, height = WIN.get_size()
+	amr_enchant = REG_FONT.render("Enchant ARMOR: A", 1, P.GREEN)
+	WIN.blit(amr_enchant, ((width - amr_enchant.get_width())//2, height//3 + P.PADDING * 1))
+	wpn_enchant = REG_FONT.render("Enchant WEAPON: W", 1, P.RED)
+	WIN.blit(wpn_enchant, ((width - wpn_enchant.get_width())//2, height//3 + P.PADDING * 2))
+	leave_text = REG_FONT.render("LEAVE: L", 1, P.BLUE)
+	WIN.blit(leave_text, ((width - leave_text.get_width())//2, height//3 + P.PADDING * 3))
+def hunter_armor_enchant(qi_npc, a_npc):
+	width, height = WIN.get_size()
+	currency_text = REG_FONT.render("Mana Gems: "+str(qi_npc.managem), 1, P.GREEN)
+	WIN.blit(currency_text, ((width - currency_text.get_width())//2, P.PADDING * 1))
+	price_text = REG_FONT.render("PRICE: "+str(C.ENCHANT_PRICE), 1, P.GREEN)
+	WIN.blit(price_text, ((width - price_text.get_width())//2, P.PADDING * 2))
+	if a_npc.rank > 20:
+		revive_text = REG_FONT.render("REVIVE ARMOR: R", 1, P.GREEN)
+		WIN.blit(revive_text, ((width - revive_text.get_width())//2, P.PADDING * 3))
+	if a_npc.rank > 15:
+		ethereal_text = REG_FONT.render("ETHEREAL ARMOR: E", 1, P.GREEN)
+		WIN.blit(ethereal_text, ((width - ethereal_text.get_width())//2, P.PADDING * 4))
+	if a_npc.rank > 10:
+		bomb_text = REG_FONT.render("BURST ARMOR: B", 1, P.GREEN)
+		WIN.blit(bomb_text, ((width - bomb_text.get_width())//2, P.PADDING * 5))
+	leave_text = REG_FONT.render("LEAVE: L", 1, P.GREEN)
+	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 10))
+def hunter_weapon_enchant(qi_npc, a_npc):
+	width, height = WIN.get_size()
+	currency_text = REG_FONT.render("Mana Gems: "+str(qi_npc.managem), 1, P.RED)
+	WIN.blit(currency_text, ((width - currency_text.get_width())//2, P.PADDING * 1))
+	price_text = REG_FONT.render("PRICE: "+str(C.ENCHANT_PRICE), 1, P.RED)
+	WIN.blit(price_text, ((width - price_text.get_width())//2, P.PADDING * 2))
+	if a_npc.rank > 20:
+		death_text = REG_FONT.render("DEATH: D", 1, P.RED)
+		WIN.blit(death_text, ((width - death_text.get_width())//2, P.PADDING * 3))
+	if a_npc.rank > 15:
+		necro_text = REG_FONT.render("NECROMANCER: N", 1, P.RED)
+		WIN.blit(necro_text, ((width - necro_text.get_width())//2, P.PADDING * 4))
+	if a_npc.rank > 10:
+		explode_text = REG_FONT.render("EXPLODE: E", 1, P.RED)
+		WIN.blit(explode_text, ((width - explode_text.get_width())//2, P.PADDING * 5))
+	leave_text = REG_FONT.render("LEAVE: L", 1, P.RED)
+	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 10))
 #function that will tell the player they don't have enough money
 def poor_text():
 	width, height = WIN.get_size()
-	poor_text = REG_FONT.render("You can't afford that. ", 1, P.BLACK)
+	poor_text = REG_FONT.render("You can't afford that. ", 1, P.WHITE)
 	WIN.blit(poor_text, ((width - poor_text.get_width())//2, P.PADDING))
 	pygame.display.update()
 	pygame.time.delay(P.SMALLDELAY)
