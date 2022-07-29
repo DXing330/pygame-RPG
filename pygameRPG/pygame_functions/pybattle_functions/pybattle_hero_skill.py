@@ -29,15 +29,12 @@ FOREST_IMG = pygame.transform.scale(FOREST_RAW, (P.WIDTH, P.HEIGHT))
 #function that makes a bomb
 def make_bomb(hero, h_p, m_p, h_ally):
 	x, y = WIN.get_size()
-	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
-	WIN.blit(FOREST_IMG, P.ORIGIN)
-	draw_func.draw_heroes(h_p, h_ally)
-	draw_func.draw_monsters(m_p)
+	WIN.fill(P.WHITE)
 	pygame.display.update()
 	pick = True
 	while pick:
 		pygame.event.clear()
-		clock.tick(P.SLOWFPS)
+		clock.tick(P.FPS)
 		draw_func.draw_bomb_menu()
 		pygame.display.update()
 		for event in pygame.event.get():
@@ -61,15 +58,12 @@ def make_bomb(hero, h_p, m_p, h_ally):
 #function that summons a totem
 def summon_totem(hero, h_p, m_p, h_ally):
 	x, y = WIN.get_size()
-	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
-	WIN.blit(FOREST_IMG, P.ORIGIN)
-	draw_func.draw_heroes(h_p, h_ally)
-	draw_func.draw_monsters(m_p)
+	WIN.fill(P.WHITE)
 	pygame.display.update()
 	pick = True
 	while pick:
 		pygame.event.clear()
-		clock.tick(P.SLOWFPS)
+		clock.tick(P.FPS)
 		draw_func.draw_totem_menu()
 		pygame.display.update()
 		for event in pygame.event.get():
@@ -110,8 +104,6 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 	hero_other_stat = REG_FONT.render("SKILL: " + str(hero.skill) + " MANA: " + str(hero.mana),
 					  1, P.RED)
 	x, y = WIN.get_size()
-	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
-	WIN.blit(FOREST_IMG, P.ORIGIN)
 	draw_func.draw_heroes(h_p, h_ally)
 	draw_func.draw_monsters(m_p)
 	WIN.blit(hero_other_stat, (P.WIDTH - hero_other_stat.get_width() - P.PADDING,
@@ -127,9 +119,6 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 			if event.type == pygame.KEYDOWN:
 				pygame.event.clear()
 				if event.key == pygame.K_o:
-					WIN.blit(FOREST_IMG, P.ORIGIN)
-					draw_func.draw_heroes(h_p, h_ally)
-					draw_func.draw_monsters(m_p)
 					draw_func.draw_monster_stats(m_p)
 					pygame.display.update()
 					if "Ninja" in hero.name:

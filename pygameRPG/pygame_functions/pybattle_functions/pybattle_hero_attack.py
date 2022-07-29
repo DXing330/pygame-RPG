@@ -19,7 +19,5 @@ def hero_attack(hero, h_p, m_p, h_ally, h_wpn, h_amr):
 	pygame.event.clear()
 	player_act_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
 	x, y = WIN.get_size()
-	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
-	WIN.blit(FOREST_IMG, P.ORIGIN)
 	drawe_func.hero_attack(hero, mon)
 	pygame.display.update()

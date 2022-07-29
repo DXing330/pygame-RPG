@@ -119,13 +119,14 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 	WIN.blit(FOREST_IMG, P.ORIGIN)
 	draw_func.draw_heroes(h_p, h_ally)
 	draw_func.draw_monsters(m_p)
+	draw_func.draw_battle_menu(hero)
+	draw_func.draw_hero_stats(hero)
 	pygame.display.update()
 	turn = True
 	while turn:
 		pygame.event.clear()
+		x, y = WIN.get_size()
 		clock.tick(P.SLOWFPS)
-		draw_func.draw_battle_menu(hero)
-		draw_func.draw_hero_stats(hero)
 		pygame.display.update()
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -138,23 +139,49 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 					mon = m_p[0]
 					player_act_func.player_attack(hero, mon, h_wpn,
 								      h_amr, h_p, m_p)
-					x, y = WIN.get_size()
-					FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
 					WIN.blit(FOREST_IMG, P.ORIGIN)
+					pygame.display.update()
 					drawe_func.hero_attack(hero, mon)
 					break
 				if event.key == pygame.K_a and len(m_p) > 1:
 					turn = False
-					hatk_func.hero_attack(hero, h_p, m_p, h_ally, h_wpn, h_amr)
+					mon = pick_func.pick_hero(m_p)
+					pygame.event.clear()
+					player_act_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
+					WIN.blit(FOREST_IMG, P.ORIGIN)
+					drawe_func.hero_attack(hero, mon)
+					pygame.display.update()
 					break
 				if event.key == pygame.K_s:
 					turn = False
+					WIN.blit(FOREST_IMG, P.ORIGIN)
+					pygame.display.update()
 					hskl_func.hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic)
 					break
 				if event.key == pygame.K_m and len(h_magic) > 0:
 					if hero.mana > 0:
 						turn = False
-						hmagic_func.hero_magic(hero, h_p, m_p, h_ally, h_bag, h_magic)
+						spell = pick_func.pick_hero(h_magic)
+						WIN.blit(FOREST_IMG, P.ORIGIN)
+						draw_func.draw_heroes(h_p, h_ally)
+						draw_func.draw_monsters(m_p)
+						pygame.display.update()
+						hero.mana -= spell.cost
+						if spell.targets > 1:
+							for monster in m_p:
+								new_spell_power = element_func.check_element_spell(spell, monster)
+								spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
+								monster.health -= spell_atk
+							spell_text = REG_FONT.render(hero.name + " casts " + spell.name, 1, P.RED)
+						elif spell.targets == 1:
+							mon = pick_func.pick_hero(m_p)
+							new_spell_power = element_func.check_element_spell(spell, monster)
+							spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
+							monster.health -= spell_atk
+							spell_text = REG_FONT.render(hero.name + " casts " + spell.name + " on " + mon.name, 1, P.RED)
+						WIN.blit(spell_text, ((x - spell_text.get_width())//2, y//3))
+						pygame.display.update()
+						pygame.time.delay(P.SMALLDELAY)
 						break
 				if event.key == pygame.K_i:
 					turn = False

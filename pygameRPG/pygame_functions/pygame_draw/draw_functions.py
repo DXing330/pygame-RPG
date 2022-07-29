@@ -98,7 +98,7 @@ def draw_heroes(h_p, h_ally):
 		if "Angel" in ally.name:
 			WIN.blit(ANGEL_IMG,
 				 (width - (P.SPRITE_WIDTH * 1),
-				 height - (P.SPRITE_HEIGHT * 2)))
+				 height//3))
 		if "Spirit" in ally.name:
 			WIN.blit(GUARDIAN_IMG,
 				 (width//2 + (P.SPRITE_WIDTH * 2),
@@ -320,11 +320,11 @@ def draw_skill_menu(hero):
 def draw_totem_menu():
 	width, height = WIN.get_size()
 	totem_text = REG_FONT.render("ATTACK: A / BOOST: B / DEBUFF: D / HEAL: H", 1, P.RED)
-	WIN.blit(totem_text, (width//2 - totem_text.get_width(), P.PADDING))
+	WIN.blit(totem_text, ((width - totem_text.get_width())//2, height//3))
 def draw_bomb_menu():
 	width, height = WIN.get_size()
 	bomb_text = REG_FONT.render("EXPLOSIVE: E / POISON: P", 1, P.RED)
-	WIN.blit(bomb_text, (width//2 - bomb_text.get_width(), P.PADDING))
+	WIN.blit(bomb_text, ((width - bomb_text.get_width())//2, height//3))
 #function that will draw the options in battle
 def draw_battle_menu(hero):
 	width, height = WIN.get_size()
@@ -837,20 +837,23 @@ def poor_text_3():
 	pygame.time.delay(P.SMALLDELAY)
 	
 #function will list options for the player
-def draw_menu():
+def draw_menu(qi_npc):
 	width, height = WIN.get_size()
-	width, height = WIN.get_size()
-	attack_text = REG_FONT.render("ATTACK monsters: A", 1, P.RED)
-	WIN.blit(attack_text, (width//2 - attack_text.get_width(), P.PADDING))
 	save_text = REG_FONT.render("RECORD journey: R", 1, P.GREEN)
 	WIN.blit(save_text, (width//2 - save_text.get_width(), P.PADDING * 2))
 	mage_text = REG_FONT.render("Vist WIZARD Tower: W", 1, P.BLACK)
 	WIN.blit(mage_text, (width//2 - mage_text.get_width(), P.PADDING * 3))
 	city_text = REG_FONT.render("Return to CITY: C", 1, P.BLACK)
 	WIN.blit(city_text, (width//2 - city_text.get_width(), P.PADDING * 4))
-	leave_text = REG_FONT.render("SLEEP: S", 1, P.GREEN)
+	leave_text = REG_FONT.render("Stop Adventuring and SLEEP: S", 1, P.GREEN)
 	WIN.blit(leave_text, (width//2 - leave_text.get_width(), P.PADDING * 5))
-	hunter_text = REG_FONT.render("MONSTER Hunter Guild: M", 1, P.BLACK)
-	WIN.blit(hunter_text, (width//2 - hunter_text.get_width(), P.PADDING * 6))
-	quest_text = REG_FONT.render("Deliver PACKAGES: P", 1, P.RED)
-	WIN.blit(quest_text, (width//2 - quest_text.get_width(), P.PADDING * 7))
+	attack_text = REG_FONT.render("ATTACK monsters: A", 1, P.RED)
+	WIN.blit(attack_text, (width//2 - attack_text.get_width(), P.PADDING * 6))
+	explore_text = REG_FONT.render("Visit remote VILLAGES: V", 1, P.RED)
+	WIN.blit(explore_text, (width//2 - explore_text.get_width(), P.PADDING * 7))
+	hunter_text = REG_FONT.render("Enter MONSTER Hunter Guild: M", 1, P.BLACK)
+	WIN.blit(hunter_text, (width//2 - hunter_text.get_width(), P.PADDING * 8))
+	if qi_npc.package > 0:
+		quest_text = REG_FONT.render("Deliver PACKAGES: P", 1, P.RED)
+		WIN.blit(quest_text, (width//2 - quest_text.get_width(), P.PADDING * 9))
+
