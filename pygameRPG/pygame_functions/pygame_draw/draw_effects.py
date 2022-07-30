@@ -88,4 +88,20 @@ def monster_attack(mon, hero):
 		WIN.blit(SLASHATK_IMAGE, (x//2, (y//2)))
 		pygame.display.update()
 		pygame.time.delay(250)
+
+def mon_atk_mon(mon, mon2):
+        draw_func.draw_monster(mon)
+        draw_func.draw_monster2(mon2)
+        x, y = WIN.get_size()
+        attack_text = REG_FONT.render(mon.name+" attacks "+mon2.name, 1, P.RED)
+	WIN.blit(attack_text, ((x - attack_text.get_width())//2, P.PADDING * 2))
+	if "Giant" in mon.name:
+                pass
+        elif "Demon" in mon.name:
+                for z in range(0, 4):
+                        CLAWATK_IMG = pygame.transform.rotate(CLAWATK_IMG,
+                                                              z * random.randint(13, 91))
+                        WIN.blit(CLAWATK_IMG, (x//2, (y//2)))
+                        pygame.display.update()
+                        pygame.time.delay(250)
 	
