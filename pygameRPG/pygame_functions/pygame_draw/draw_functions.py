@@ -257,6 +257,18 @@ def draw_monster(mon):
 		WIN.blit(BOMB_IMG, (x//3, y//2))
 	else:
 		WIN.blit(MON_IMG, (x//3, y//2))
+
+def draw_monster2(mon):
+	width, height = WIN.get_size()
+	x, y = WIN.get_size()
+	if "Slime" in mon.name:
+		WIN.blit(SLIME_IMG, (x//2, y//2))
+	elif "Beast" in mon.name:
+		WIN.blit(BEAST_IMG, (x//2, y//2))
+	elif "Bomb" in mon.name:
+		WIN.blit(BOMB_IMG, (x//2, y//2))
+	else:
+		WIN.blit(MON_IMG, (x//2, y//2))
 		
 #function that lists what monsters there are
 def draw_monster_menu_list(m_p):
