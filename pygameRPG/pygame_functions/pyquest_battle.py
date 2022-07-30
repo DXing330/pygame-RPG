@@ -37,7 +37,42 @@ clock = pygame.time.Clock()
 #also need any specific images
 FOREST_RAW = pygame.image.load(os.path.join("Assets", "forest.png"))
 FOREST_IMG = pygame.transform.scale(FOREST_RAW, (P.WIDTH, P.HEIGHT))
-
+'''#function that lets giants hit each other
+def giant_atk(m_npc, h_a, h_p, m_p):
+	#first decide who to hit based on party size
+	if len(m_p) > 1:
+		x = random.randint(0, len(m_p))
+		if x > 0:
+			#if they hit another giant make sure they don't hit themselves
+			target = party_func.pick_different_monster(m_npc, m_p)
+			if target != m_npc:
+				target.health -= m_npc.atk - target.defense
+				print (m_npc.name, "whacks", target.name)
+		elif x == 0:
+			#if they hit the heroes then function as normal
+			hero = party_func.pick_random_healthy_hero(h_p)
+			monster_func.monster_attack(m_npc, hero, h_a, h_p, m_p)
+	elif len(m_p) == 1:
+		#when the giant is alone he attacks the party
+		hero = party_func.pick_random_healthy_hero(h_p)
+		monster_func.monster_attack(m_npc, hero, h_a, h_p, m_p)'''
+#function that controls the monster drops
+def drop_step(m_p, h_bag, qi_npc, a_npc):
+	x, y = WIN.get_size()
+	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
+	WIN.blit(FOREST_IMG, P.ORIGIN)
+	pygame.display.update()
+	#check if the monsters have the package
+	for mon in m_p:
+		z = random.randint(0, a_npc.rank * C.INCREASE_EXPONENT)
+		if z == 0:
+			qi_npc.rpackage += 1
+			package_text = REG_FONT.render(mon.name+" dropped a package!", 1, P.BLACK)
+			WIN.blit(package_text, ((x - package_text.get_width())//2, y//3))
+			pygame.display.update()
+			pygame.time.delay(1000)
+		else:
+			h_bag.coins += a_npc.rank
 #function that controls using an item in battle
 def use_item(hero, h_b, h_p, h_ally, m_p):
 	use = True
@@ -79,17 +114,19 @@ def use_item(hero, h_b, h_p, h_ally, m_p):
 #function that controls the turns in battle
 def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 	      h_magic, h_wpn, h_amr):
+	x, y = WIN.get_size()
+	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
+	WIN.blit(FOREST_IMG, P.ORIGIN)
+	draw_func.draw_heroes(h_p, h_ally)
+	draw_func.draw_monsters(m_p)
+	draw_func.draw_battle_menu(hero)
+	draw_func.draw_hero_stats(hero)
+	pygame.display.update()
 	turn = True
 	while turn:
 		pygame.event.clear()
-		clock.tick(P.SLOWFPS)
 		x, y = WIN.get_size()
-		FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
-		WIN.blit(FOREST_IMG, P.ORIGIN)
-		draw_func.draw_heroes(h_p, h_ally)
-		draw_func.draw_monsters(m_p)
-		draw_func.draw_battle_menu(hero)
-		draw_func.draw_hero_stats(hero)
+		clock.tick(P.SLOWFPS)
 		pygame.display.update()
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -153,8 +190,9 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 
 
 #function that will control the battle
-def battle(h_p, m_p, h_ally, h_bag,
-	   h_magic, h_wpn, h_amr):
+def battle_phase(h_p, m_p, h_ally, h_bag,
+	   h_magic, h_wpn, h_amr,
+	   qi_npc, a_npc):
 	new_h_p = []
 	new_h_ally = []
 	new_h_wpn = []
@@ -218,7 +256,7 @@ def battle(h_p, m_p, h_ally, h_bag,
 				new_h_p.remove(hero)
 		if len(new_h_p) == 0 or len(new_m_p) == 0:
 			battle = False
-	if not battle:
+	if not battle and len(new_h_p) > 0:
 		#adjust the hp of the heroes after battles
 		for hero in h_p:
 			check = None
@@ -243,8 +281,12 @@ def battle(h_p, m_p, h_ally, h_bag,
 				elif check != None:
 					hero.health = min(check.health, hero.maxhealth)
 					hero.mana = min(check.mana, hero.maxmana)
+		for hero in h_p:
+			if hero.health == 0:
+				h_p.remove(hero)
 		if len(new_h_p) > 0:
-			for mon in m_p:
-				h_bag.coins += mon.dropchance
+			drop_step(m_p, h_bag, qi_npc, a_npc)
 		while len(m_p) > 0:
 			m_p.clear()
+	if not battle and len(new_h_p) == 0:
+		h_p.clear()

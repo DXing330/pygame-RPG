@@ -272,13 +272,18 @@ def weapon_effect_enchant(wpn, h_b):
 				if event.key == pygame.K_a and h_b.coins >= C.ENCHANT_PRICE:
 					wpn.effect = "Attack"
 					h_b.coins -= C.ENCHANT_PRICE
+					wpn.name = "Weapon"      
 				if event.key == pygame.K_i and h_b.coins >= C.ENCHANT_PRICE:
 					wpn.effect = "Lifesteal"
 					h_b.coins -= C.ENCHANT_PRICE
+					if wpn.name == "Weapon":
+						wpn.name == "Lifesteal Weapon"
 				if event.key == pygame.K_p:
 					if h_b.coins >= C.ENCHANT_PRICE ** C.INCREASE_EXPONENT:
 						wpn.effect = "Poison"
 						h_b.coins -= C.ENCHANT_PRICE ** C.INCREASE_EXPONENT
+						if wpn.name == "Weapon":
+							wpn.name == "Poison Weapon"
 					else:
 						WIN.fill(P.WHITE)
 						WIN.blit(ENCHANTER_IMG, P.ORIGIN)
@@ -288,6 +293,8 @@ def weapon_effect_enchant(wpn, h_b):
 					if h_b.coins >= C.ENCHANT_PRICE ** C.INCREASE_EXPONENT:
 						wpn.effect = "ManaDrain"
 						h_b.coins -= C.ENCHANT_PRICE ** C.INCREASE_EXPONENT
+						if wpn.name == "Weapon":
+							wpn.name == "ManaDrain Weapon"
 					else:
 						WIN.fill(P.WHITE)
 						WIN.blit(ENCHANTER_IMG, P.ORIGIN)
@@ -297,6 +304,8 @@ def weapon_effect_enchant(wpn, h_b):
 					if h_b.coins >= C.ENCHANT_PRICE ** C.INCREASE_EXPONENT:
 						wpn.effect = "SkillDrain"
 						h_b.coins -= C.ENCHANT_PRICE ** C.INCREASE_EXPONENT
+						if wpn.name == "Weapon":
+							wpn.name == "SkillDrain Weapon"
 					else:
 						WIN.fill(P.WHITE)
 						WIN.blit(ENCHANTER_IMG, P.ORIGIN)
@@ -319,13 +328,18 @@ def armor_effect_enchant(amr, h_b):
 				if event.key == pygame.K_a and h_b.coins >= C.ENCHANT_PRICE:
 					amr.effect = "Absorb"
 					h_b.coins -= C.ENCHANT_PRICE
+					if amr.name == "Armor":
+						amr.name = "Absorb Armor"
 				if event.key == pygame.K_b and h_b.coins >= C.ENCHANT_PRICE:
 					amr.effect = "Block"
 					h_b.coins -= C.ENCHANT_PRICE
+					amr.name = "Armor"
 				if event.key == pygame.K_p:
 					if h_b.coins >= C.ENCHANT_PRICE ** C.INCREASE_EXPONENT:
 						amr.effect = "Poison"
 						h_b.coins -= C.ENCHANT_PRICE ** C.INCREASE_EXPONENT
+						if amr.name == "Armor":
+							amr.name = "Poison Armor"
 					else:
 						WIN.fill(P.WHITE)
 						WIN.blit(ENCHANTER_IMG, P.ORIGIN)
