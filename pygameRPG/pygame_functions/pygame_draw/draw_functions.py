@@ -175,7 +175,8 @@ def draw_monster_stats(m_p):
 		if mon.buff == None:
 			stats_text = REG_FONT.render((mon.name+" HP: "+str(mon.health)+
 						      " ATK: "+str(mon.atk)+" DEF: "+str(mon.defense)+
-						      " SKILL: "+str(mon.skill)+" ELEMENT: "+mon.element),
+						      " SKILL: "+str(mon.skill)+" ELEMENT: "+mon.element+
+                                                      " POISON: "+str(mon.poison)),
 						     1, P.RED)
 		elif mon.buff != None:
 			stats_text = REG_FONT.render((mon.name+" HP: "+str(mon.health)+
@@ -183,11 +184,9 @@ def draw_monster_stats(m_p):
 						      " SKILL: "+str(mon.skill)+" ELEMENT: "+mon.element+
 						      " BUFF: "+mon.buff),
 						     1, P.RED)
-		WIN.blit(stats_text, (P.PADDING,
-				      P.PADDING + stats_text.get_height() * x))
+		WIN.blit(stats_text, (P.PADDING, P.PADDING + stats_text.get_height() * x))
 		pygame.display.update()
 		x += 1
-	pygame.time.delay(P.TIMEDELAY)
 #hero stats
 def draw_hero_stats(hero):
 	width, height = WIN.get_size()
@@ -257,18 +256,6 @@ def draw_monster(mon):
 		WIN.blit(BOMB_IMG, (x//3, y//2))
 	else:
 		WIN.blit(MON_IMG, (x//3, y//2))
-
-def draw_monster2(mon):
-	width, height = WIN.get_size()
-	x, y = WIN.get_size()
-	if "Slime" in mon.name:
-		WIN.blit(SLIME_IMG, (x//2, y//2))
-	elif "Beast" in mon.name:
-		WIN.blit(BEAST_IMG, (x//2, y//2))
-	elif "Bomb" in mon.name:
-		WIN.blit(BOMB_IMG, (x//2, y//2))
-	else:
-		WIN.blit(MON_IMG, (x//2, y//2))
 		
 #function that lists what monsters there are
 def draw_monster_menu_list(m_p):

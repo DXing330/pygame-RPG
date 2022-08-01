@@ -14,7 +14,7 @@ from pygconstants import PYGConstants
 P = PYGConstants()
 from rpg2_constants import Constants
 C = Constants()
-import rpg2_party_management_functions as party_func
+import pyparty_functions as party_func
 import rpg2_player_action_function as player_act_func
 import pybattle_pet_action as pet_func
 import pypick_function as pick_func
@@ -26,6 +26,18 @@ REG_FONT = pygame.font.SysFont("comicsans", 20)
 clock = pygame.time.Clock()
 FOREST_RAW = pygame.image.load(os.path.join("Assets", "forest.png"))
 FOREST_IMG = pygame.transform.scale(FOREST_RAW, (P.WIDTH, P.HEIGHT))
+#function that observes the enemies
+def observe(m_p):
+	WIN.fill(P.WHITE)
+	observe = True
+	while observe:
+		draw_func.draw_monster_stats(m_p)
+		pygame.display.update()
+		for event in pygame.event.get():
+			if event.type == pygame.KEYDOWN:
+				pygame.event.clear()
+				observe = False
+		
 #function that makes a bomb
 def make_bomb(hero, h_p, m_p, h_ally):
 	x, y = WIN.get_size()
@@ -119,8 +131,7 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 			if event.type == pygame.KEYDOWN:
 				pygame.event.clear()
 				if event.key == pygame.K_o:
-					draw_func.draw_monster_stats(m_p)
-					pygame.display.update()
+					observe(m_p)
 					if "Ninja" in hero.name:
 						hero.skill += hero.level
 					if "Tactician" in hero.name:
@@ -133,6 +144,7 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 							if "Spirit" in ally.name:
 								ally.atk += hero.level
 					turn = False
+					break
 				elif event.key == pygame.K_c:
 					if "Summoner" in hero.name:
 						ally = None

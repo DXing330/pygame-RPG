@@ -8,6 +8,7 @@ sys.path.append("../../RPG2v3/RPG2v3_functions/RPG2v3_battle")
 sys.path.append("../../RPG2v3/RPG2v3_functions/RPG2v3_def")
 sys.path.append("../../RPG2v3/RPG2v3_functions/")
 sys.path.append("../pygame_functions/pygame_general_functions/")
+sys.path.append("./pyboss/pydemon_general.py")
 from pygconstants import PYGConstants
 P = PYGConstants()
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,

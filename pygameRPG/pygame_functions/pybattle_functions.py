@@ -16,7 +16,7 @@ C = Constants()
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 				   Spell_PC, Monster_NPC, Weapon_PC,
 				   Armor_PC, QuestItems_NPC, Access_NPC)
-import rpg2_party_management_functions as party_func
+import pyparty_functions as party_func
 import rpg2_monster_function as monster_func
 import rpg2_player_action_function as player_act_func
 import pybattle_pet_action as pet_func
@@ -37,6 +37,25 @@ clock = pygame.time.Clock()
 #also need any specific images
 FOREST_RAW = pygame.image.load(os.path.join("Assets", "forest.png"))
 FOREST_IMG = pygame.transform.scale(FOREST_RAW, (P.WIDTH, P.HEIGHT))
+#function that gives gold and exp after battle
+def drop_step(h_p, m_p, h_bag):
+	#get gold
+	for mon in m_p:
+		h_bag.coins += mon.dropchance
+	#get exp
+	for hero in h_p:
+		for mon in m_p:
+			x = random.randint(0, hero.level)
+			if x <= mon.dropchance:
+				hero.exp += 1
+	for hero in h_p:
+		x, y = WIN.get_size()
+		FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
+		WIN.blit(FOREST_IMG, P.ORIGIN)
+		x = party_func.exp_level_up(hero)
+		if x == 1:
+			drawe_func.hero_level_up(hero)
+	m_p.clear()
 
 #function that controls using an item in battle
 def use_item(hero, h_b, h_p, h_ally, m_p):
@@ -244,7 +263,6 @@ def battle(h_p, m_p, h_ally, h_bag,
 					hero.health = min(check.health, hero.maxhealth)
 					hero.mana = min(check.mana, hero.maxmana)
 		if len(new_h_p) > 0:
-			for mon in m_p:
-				h_bag.coins += mon.dropchance
+			drop_step(h_p, m_p, h_bag)
 		while len(m_p) > 0:
 			m_p.clear()

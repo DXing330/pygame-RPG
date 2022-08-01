@@ -34,19 +34,52 @@ PUNCH_RAW = pygame.image.load(os.path.join("Assets", "punch_atk.png"))
 PUNCH_IMG = pygame.transform.scale(PUNCH_RAW, (P.BIG_SPRITE * 2, P.BIG_SPRITE))
 #function that will draw the angel's legendary action
 def angel_legendary_action(angel, h_p, m_p):
-	for z in range(0, 77):
+	for z in range(0, 33):
 		x, y = WIN.get_size()
 		TEMPLE_IMG = pygame.transform.scale(TEMPLE_RAW, (x, y))
 		WIN.blit(TEMPLE_IMG, P.ORIGIN)
 		draw_func.draw_monsters(m_p)
 		draw_func.draw_just_hero(h_p)
 		#draw the light expanding each round
-		LIGHT_IMG = pygame.transform.scale(LIGHT_RAW, (x * (z + 1)//16, y * 2))
+		LIGHT_IMG = pygame.transform.scale(LIGHT_RAW, (x * (z + 1)//8, y * 2))
 		#keep the light in the center
-		WIN.blit(LIGHT_IMG, (x//2 - (x * (z + 1))//32, -y))
+		WIN.blit(LIGHT_IMG, (x//2 - (x * (z + 1))//16, -y))
 		#draw the angel
 		WIN.blit(WINGS_IMG, (x//2 - P.BIG_SPRITE, y//2 - P.BIG_SPRITE))
 		pygame.display.update()
+def angel_heal_action(angel, hero):
+	for z in range(0, 15):
+		x, y = WIN.get_size()
+		WIN.fill(P.BLACK)
+		draw_func.draw_hero(hero)
+		LIGHT_IMG = pygame.transform.scale(LIGHT_RAW, (x * (z + 1)//16, y * 2))
+		WIN.blit(LIGHT_IMG, (x//2 - (x * (z + 1))//32, -y))
+		angel_text = REG_FONT.render(angel.name+" heals "+hero.name, 1, P.WHITE)
+		WIN.blit(angel_text, ((x - angel_text.get_width())//2, P.PADDING * 2))
+		pygame.display.update()
+		pygame.time.delay(30)
+def angel_debuff_action(angel, mon):
+	for z in range(0, 15):
+		x, y = WIN.get_size()
+		WIN.fill(P.BLACK)
+		draw_func.draw_monster(mon)
+		LIGHT_IMG = pygame.transform.scale(LIGHT_RAW, (x * (z + 1)//16, y * 2))
+		WIN.blit(LIGHT_IMG, (x//2 - (x * (z + 1))//32, -y))
+		angel_text = REG_FONT.render(angel.name+" curses "+mon.name, 1, P.WHITE)
+		WIN.blit(angel_text, ((x - angel_text.get_width())//2, P.PADDING * 2))
+		pygame.display.update()
+		pygame.time.delay(30)
+def angel_buff_action(angel, hero):
+	for z in range(0, 15):
+		x, y = WIN.get_size()
+		WIN.fill(P.BLACK)
+		draw_func.draw_hero(hero)
+		LIGHT_IMG = pygame.transform.scale(LIGHT_RAW, (x * (z + 1)//16, y * 2))
+		WIN.blit(LIGHT_IMG, (x//2 - (x * (z + 1))//32, -y))
+		angel_text = REG_FONT.render(angel.name+" blesses "+hero.name, 1, P.WHITE)
+		WIN.blit(angel_text, ((x - angel_text.get_width())//2, P.PADDING * 2))
+		pygame.display.update()
+		pygame.time.delay(30)
 #function that will draw the hero's attack
 def hero_attack(hero, mon):
 	x, y = WIN.get_size()
@@ -77,6 +110,15 @@ def hero_attack(hero, mon):
 			WIN.blit(SHADOW_IMAGE, (x//3, (y//2)))
 			pygame.display.update()
 
+def hero_level_up(hero):
+	x, y = WIN.get_size()
+	WIN.fill(P.BLACK)
+	draw_func.draw_hero(hero)
+	level_up_text = REG_FONT.render(hero.name+" leveled up! ", 1, P.GREEN)
+	WIN.blit(level_up_text, ((x - level_up_text.get_width())//2, P.PADDING * 2))
+	pygame.display.update()
+	pygame.time.delay(500)
+	
 def monster_attack(mon, hero):
 	draw_func.draw_monster(mon)
 	draw_func.draw_hero(hero)
@@ -88,20 +130,4 @@ def monster_attack(mon, hero):
 		WIN.blit(SLASHATK_IMAGE, (x//2, (y//2)))
 		pygame.display.update()
 		pygame.time.delay(250)
-
-def mon_atk_mon(mon, mon2):
-        draw_func.draw_monster(mon)
-        draw_func.draw_monster2(mon2)
-        x, y = WIN.get_size()
-        attack_text = REG_FONT.render(mon.name+" attacks "+mon2.name, 1, P.RED)
-	WIN.blit(attack_text, ((x - attack_text.get_width())//2, P.PADDING * 2))
-	if "Giant" in mon.name:
-                pass
-        elif "Demon" in mon.name:
-                for z in range(0, 4):
-                        CLAWATK_IMG = pygame.transform.rotate(CLAWATK_IMG,
-                                                              z * random.randint(13, 91))
-                        WIN.blit(CLAWATK_IMG, (x//2, (y//2)))
-                        pygame.display.update()
-                        pygame.time.delay(250)
 	
