@@ -12,9 +12,7 @@ P = PYGConstants()
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 				   Spell_PC, Monster_NPC, Weapon_PC,
 				   Armor_PC, QuestItems_NPC, Access_NPC)
-import rpg2_party_management_functions as party_func
-import rpg2_hunter_function as hunt_func
-import rpg2_level_up_function as lvlup_func
+import pyparty_functions as party_func
 import draw_functions as draw_func
 import pypick_function as pick_func
 from rpg2_constants import Constants
@@ -105,10 +103,10 @@ def grandmaster(h_p, qi_npc, a_npc):
 					if qi_npc.managem >= price:
 						qi_npc.managem -= price
 						if hero.level == C.LEVEL_LIMIT:
-							lvl_func.prestige_class(hero)
-							lvl_func.prestige_level_up(hero)
+							party_func.prestige_class(hero)
+							party_func.prestige_level_up(hero)
 						elif hero.level > C.LEVEL_LIMIT:
-							lvl_func.prestige_level_up(hero)
+							party_func.prestige_level_up(hero)
 						fail_text = REG_FONT.render("Can you feel the energy empowering you? ", 1, P.WHITE)
 						WIN.blit(fail_text, ((x - fail_text.get_width())//2, P.PADDING * 1))
 						pygame.display.update()

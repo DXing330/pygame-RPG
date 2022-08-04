@@ -17,14 +17,11 @@ from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 				   Spell_PC, Monster_NPC, Weapon_PC,
 				   Armor_PC, QuestItems_NPC, Access_NPC)
 import pyparty_functions as party_func
-import rpg2_monster_function as monster_func
-import rpg2_player_action_function as player_act_func
+import pymonster_function as monster_func
 import pybattle_pet_action as pet_func
-import rpg2_element_function as element_func
-import rpg2_monster_effect_function as me_func
-import pybattle_hero_attack as hatk_func
+import pyelement_function as element_func
+import pymoneffect_function as me_func
 import pybattle_hero_skill as hskl_func
-import pybattle_hero_magic as hmagic_func
 import pypick_function as pick_func
 import draw_functions as draw_func
 import draw_effects as drawe_func
@@ -56,6 +53,7 @@ def drop_step(h_p, m_p, h_bag):
 		if x == 1:
 			drawe_func.hero_level_up(hero)
 	m_p.clear()
+	h_bag.flow += 1
 
 #function that controls using an item in battle
 def use_item(hero, h_b, h_p, h_ally, m_p):
@@ -119,7 +117,7 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 				if event.key == pygame.K_a and len(m_p) == 1:
 					turn = False
 					mon = m_p[0]
-					player_act_func.player_attack(hero, mon, h_wpn,
+					hskl_func.player_attack(hero, mon, h_wpn,
 								      h_amr, h_p, m_p)
 					WIN.blit(FOREST_IMG, P.ORIGIN)
 					pygame.display.update()
@@ -129,7 +127,7 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 					turn = False
 					mon = pick_func.pick_hero(m_p)
 					pygame.event.clear()
-					player_act_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
+					hskl_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
 					WIN.blit(FOREST_IMG, P.ORIGIN)
 					drawe_func.hero_attack(hero, mon)
 					pygame.display.update()

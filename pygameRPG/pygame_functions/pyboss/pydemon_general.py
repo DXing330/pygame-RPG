@@ -4,16 +4,16 @@ import sys
 import copy
 import random
 sys.path.append(".")
-sys.path.append("../../RPG2v3/RPG2v3_functions/RPG2v3_battle")
-sys.path.append("../../RPG2v3/RPG2v3_functions/RPG2v3_def")
-sys.path.append("../../RPG2v3/RPG2v3_functions/")
-sys.path.append("../pygame_functions/pygame_general_functions/")
+sys.path.append("../../../RPG2v3/RPG2v3_functions/RPG2v3_battle")
+sys.path.append("../../../RPG2v3/RPG2v3_functions/RPG2v3_def")
+sys.path.append("../../../RPG2v3/RPG2v3_functions/")
+sys.path.append("../../pygame_functions/pygame_general_functions/")
 from pygconstants import PYGConstants
 P = PYGConstants()
 from rpg2_classdefinitions import (Player_PC, Monster_NPC, Pet_NPC,
 				   ItemBag_PC, Spell_PC, Weapon_PC,
 				   Armor_PC)
-import rpg2_party_management_functions as party_func
+import pyparty_functions as party_func
 from rpg2_constants import Constants
 C = Constants()
 from rpg2_boss_constants import BOSS_CONSTANTS
@@ -22,11 +22,10 @@ import draw_functions as draw_func
 import pypick_function as pick_func
 #import draw_boss_functions as drawb_func
 import draw_effects as drawe_func
-import rpg2_monster_function as monster_func
-import rpg2_player_action_function as player_act_func
+import pymonster_function as monster_func
 import pybattle_pet_action as pet_func
-import rpg2_element_function as element_func
-import rpg2_monster_effect_function as me_func
+import pyelement_function as element_func
+import pymoneffect_function as me_func
 import pybattle_hero_skill as hskl_func
 #always define the window you're drawing on
 WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT))
@@ -44,7 +43,7 @@ D_G = Monster_NPC("Demon General", B.DEMON_GENERAL_HEALTH, B.DEMON_GENERAL_ATK,
 		  B.DEMON_GENERAL_DROPCHANCE)
 
 #using items in battle
-def use_item(hero, h_b, h_p, h_ally, m_p):
+def use_item(hero, h_b, h_p, h_s, m_p):
 	use = True
 	while use:
 		pygame.event.clear()
@@ -52,7 +51,7 @@ def use_item(hero, h_b, h_p, h_ally, m_p):
 		x, y = WIN.get_size()
 		CASTLE_IMG = pygame.transform.scale(CASTLE_RAW, (x, y))
 		WIN.blit(CASTLE_IMG, P.ORIGIN)
-		draw_func.draw_heroes(h_p, h_ally)
+		draw_func.draw_heroes(h_p, h_s)
 		draw_func.draw_monsters(m_p)
 		draw_func.draw_item_menu(h_b)
 		draw_func.draw_hero_stats(hero)
@@ -80,18 +79,18 @@ def use_item(hero, h_b, h_p, h_ally, m_p):
 						hero.atk = round(hero.atk * C.BUFF)
 					break
 #hero turn
-def hero_turn(hero, h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
+def hero_turn(hero, h_p, m_p, h_s, h_bag, h_magic, h_wpn, h_amr):
+	x, y = WIN.get_size()
+	CASTLE_IMG = pygame.transform.scale(CASTLE_RAW, (x, y))
+	WIN.blit(CASTLE_IMG, P.ORIGIN)
+	draw_func.draw_heroes(h_p, h_s)
+	draw_func.draw_monsters(m_p)
+	draw_func.draw_battle_menu(hero)
+	draw_func.draw_hero_stats(hero)
 	turn = True
 	while turn:
 		pygame.event.clear()
 		clock.tick(P.SLOWFPS)
-		x, y = WIN.get_size()
-		CASTLE_IMG = pygame.transform.scale(CASTLE_RAW, (x, y))
-		WIN.blit(CASTLE_IMG, P.ORIGIN)
-		draw_func.draw_heroes(h_p, h_ally)
-		draw_func.draw_monsters(m_p)
-		draw_func.draw_battle_menu(hero)
-		draw_func.draw_hero_stats(hero)
 		pygame.display.update()
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -102,7 +101,7 @@ def hero_turn(hero, h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 				if event.key == pygame.K_a and len(m_p) == 1:
 					turn = False
 					mon = m_p[0]
-					player_act_func.player_attack(hero, mon, h_wpn,
+					hskl_func.player_attack(hero, mon, h_wpn,
 								      h_amr, h_p, m_p)
 					WIN.blit(CASTLE_IMG, P.ORIGIN)
 					pygame.display.update()
@@ -112,7 +111,7 @@ def hero_turn(hero, h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 					turn = False
 					mon = pick_func.pick_hero(m_p)
 					pygame.event.clear()
-					player_act_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
+					hskl_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
 					WIN.blit(CASTLE_IMG, P.ORIGIN)
 					drawe_func.hero_attack(hero, mon)
 					pygame.display.update()
@@ -121,14 +120,14 @@ def hero_turn(hero, h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 					turn = False
 					WIN.blit(CASTLE_IMG, P.ORIGIN)
 					pygame.display.update()
-					hskl_func.hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic)
+					hskl_func.hero_skill(hero, h_p, m_p, h_s, h_wpn, h_amr, h_bag, h_magic)
 					break
 				if event.key == pygame.K_m and len(h_magic) > 0:
 					if hero.mana > 0:
 						turn = False
 						spell = pick_func.pick_hero(h_magic)
 						WIN.blit(CASTLE_IMG, P.ORIGIN)
-						draw_func.draw_heroes(h_p, h_ally)
+						draw_func.draw_heroes(h_p, h_s)
 						draw_func.draw_monsters(m_p)
 						pygame.display.update()
 						hero.mana -= spell.cost
@@ -150,7 +149,7 @@ def hero_turn(hero, h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 						break
 				if event.key == pygame.K_i:
 					turn = False
-					use_item(hero, h_bag, h_p, h_ally, m_p)
+					use_item(hero, h_bag, h_p, h_s, m_p)
 					break
 
 #special boss actions
@@ -182,14 +181,14 @@ def dg_phase_one_action(monster, h_p, b_p, h_bag):
 			pygame.display.update()
 			pygame.time.delay(1000)
 			for hero in h_p:
-				mon = monster_func.random_scaled_up_monster(hero)
+				mon = monster_func.random_scaled_monster(hero, h_bag)
 				b_p.append(mon)
 				WIN.blit(CASTLE_IMG, P.ORIGIN)
 				appear_text = REG_FONT.render(mon.name+" appears from the shadows!", 1, P.WHITE)
 				WIN.blit(appear_text, ((x - appear_text.get_width())//2, P.PADDING * 2))
 				draw_func.draw_monsters(b_p)
 				pygame.display.update()
-				pygame.time.delay(1000)
+				pygame.time.delay(250)
 			       
 	elif (B.DEMON_GENERAL_HEALTH * (C.BUFF ** h_bag.dg_trophy)) * 0.5 <= monster.health < (B.DEMON_GENERAL_HEALTH * (C.BUFF ** h_bag.dg_trophy)) * 0.7:
 		if len(b_p) > 1:
@@ -208,14 +207,14 @@ def dg_phase_one_action(monster, h_p, b_p, h_bag):
 			pygame.display.update()
 			pygame.time.delay(1000)
 			for hero in h_p:
-				mon = monster_func.random_scaled_monster(hero)
+				mon = monster_func.random_scaled_monster(hero, h_bag)
 				b_p.append(mon)
 				WIN.blit(CASTLE_IMG, P.ORIGIN)
 				appear_text = REG_FONT.render(mon.name+" runs in from the hallway!", 1, P.WHITE)
 				WIN.blit(appear_text, ((x - appear_text.get_width())//2, P.PADDING * 2))
 				draw_func.draw_monsters(b_p)
 				pygame.display.update()
-				pygame.time.delay(1000)
+				pygame.time.delay(250)
 	elif monster.health < (B.DEMON_GENERAL_HEALTH * (C.BUFF ** h_bag.dg_trophy)) * 0.5:
 		line_one = REG_FONT.render("WORTHLESS FOOLS!", 1, P.WHITE)
 		WIN.blit(line_one, ((x - line_one.get_width())//2, P.PADDING * 2))
@@ -254,7 +253,7 @@ def dg_phase_one(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 					hero_turn(hero, h_p, b_p, h_s, h_bag, s_pc, h_w, h_a)
 				elif hero.health <= 0:
 					h_p.remove(hero)
-			pet_func.ally_action(h_s, h_p, h_p)
+			pet_func.ally_action(h_s, h_p, b_p)
 			for num in range(0, len(b_p)):
 				for monster in b_p:
 					if monster.health <= 0 and monster.name != "Demon General":
@@ -268,7 +267,8 @@ def dg_phase_one(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 				elif monster.health > 0:
 					hero = party_func.pick_random_healthy_hero(h_p)
 					monster_func.monster_attack(monster, hero, h_a, h_p, b_p)
-					drawe_func.monster_attack(mon, hero)
+					if monster.name != "Bomb":
+						drawe_func.monster_attack(monster, hero)
 				elif monster.health <= 0 and monster.name != "Demon General":
 					b_p.remove(monster)
 			for hero in h_p:
@@ -327,7 +327,7 @@ def dg_phase_two_action(m_npc, h_p, b_p, h_bag, h_a):
 
 
 #this will be phase two
-def dg_phase_two(h_p, b_p, new_h_s, h_bag, s_pc, h_w, h_a):
+def dg_phase_two(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 	bPhase2 = True
 	while bPhase2:
 		clock.tick(P.SLOWFPS)
@@ -354,7 +354,7 @@ def dg_phase_two(h_p, b_p, new_h_s, h_bag, s_pc, h_w, h_a):
 					hero_turn(hero, h_p, b_p, h_s, h_bag, s_pc, h_w, h_a)
 				elif hero.health <= 0:
 					h_p.remove(hero)
-			pet_func.ally_action(h_s, h_p, h_p)
+			pet_func.ally_action(h_s, h_p, b_p)
 			for monster in b_p:
 				x, y = WIN.get_size()
 				CASTLE_IMG = pygame.transform.scale(CASTLE_RAW, (x, y))
@@ -376,7 +376,7 @@ def dg_phase_two(h_p, b_p, new_h_s, h_bag, s_pc, h_w, h_a):
 			bPhase2 = False
 			break
 #phases will change according to boss hp
-def boss_battle(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
+def battle(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 	#make a copy of the heroes party and the monster's party
 	b_p = []
 	Demon_General = copy.copy(D_G)
@@ -432,22 +432,23 @@ def boss_battle(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 				if mon.name == "Demon General" and mon.health >= (B.DEMON_GENERAL_HEALTH * (C.BUFF ** h_bag.dg_trophy))/2:
 					start_text = REG_FONT.render("Visitors? Guards, get rid of them. ", 1, P.WHITE)
 					WIN.blit(start_text, ((x - start_text.get_width())//2, P.PADDING * 2))
+					draw_func.draw_monsters(new_b_p)
 					pygame.display.update()
 					pygame.time.delay(1000)
-					monster = monster_func.random_elite_monster()
+					monster = monster_func.random_elite_monster(h_bag)
 					new_b_p.append(monster)
 					WIN.blit(CASTLE_IMG, P.ORIGIN)
 					appear_text = REG_FONT.render(monster.name+" descends from beside the throne.", 1, P.WHITE)
 					WIN.blit(appear_text, ((x - appear_text.get_width())//2, P.PADDING * 2))
-					draw_func.draw_monsters(b_p)
+					draw_func.draw_monsters(new_b_p)
 					pygame.display.update()
 					pygame.time.delay(1000)
-					monster = monster_func.random_elite_monster()
-					new_b_p.append(monster)
+					monster2 = monster_func.random_elite_monster(h_bag)
+					new_b_p.append(monster2)
 					WIN.blit(CASTLE_IMG, P.ORIGIN)
-					appear_text = REG_FONT.render(monster.name+" descends from beside the throne.", 1, P.WHITE)
+					appear_text = REG_FONT.render(monster2.name+" descends from beside the throne.", 1, P.WHITE)
 					WIN.blit(appear_text, ((x - appear_text.get_width())//2, P.PADDING * 2))
-					draw_func.draw_monsters(b_p)
+					draw_func.draw_monsters(new_b_p)
 					pygame.display.update()
 					pygame.time.delay(1000)
 					dg_phase_one(new_h_p, new_b_p, new_h_s, h_bag,

@@ -14,7 +14,6 @@ P = PYGConstants()
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 				   Spell_PC, Monster_NPC, Weapon_PC,
 				   Armor_PC, QuestItems_NPC, Access_NPC)
-import rpg2_party_management_functions as party_func
 import draw_functions as draw_func
 import pypick_function as pick_func
 from rpg2_constants import Constants
@@ -33,13 +32,13 @@ REG_FONT = pygame.font.SysFont("comicsans", 20)
 clock = pygame.time.Clock()
 #check what bosses have been beaten
 def trophy_check(h_b):
-        y = 0
-        return y
+	y = 0
+	return y
 #function that will pick a boss to fight
 def pick_boss(h_p, h_b, h_m, h_ally, h_wpn, h_amr, qi_npc, a_npc):
-        m_p = []
-        y = trophy_check(h_b)
-        b = random.randint(0, y)
-        if b == 0:
-                pydg_func.battle(h_p, m_p, h_b, h_m, h_ally,
-                                     h_wpn, h_amr)
+	m_p = []
+	y = trophy_check(h_b)
+	b = random.randint(0, y)
+	if b == 0:
+		pydg_func.battle(h_p, m_p, h_ally, h_b, h_m,
+				 h_wpn, h_amr)

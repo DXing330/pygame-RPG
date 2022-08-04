@@ -5,14 +5,13 @@ import copy
 import random
 sys.path.append(".")
 sys.path.append("../../RPG2v3/RPG2v3_functions/RPG2v3_battle")
-sys.path.append("../../RPG2v3/RPG2v3_functions/RPG2v3_def")
+sys.path.append("./pyquest")
 sys.path.append("../pygame_functions/pygame_general_functions/")
 from pygconstants import PYGConstants
 P = PYGConstants()
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 				   Spell_PC, Monster_NPC, Weapon_PC,
 				   Armor_PC, QuestItems_NPC, Access_NPC)
-import rpg2_party_management_functions as party_func
 import draw_functions as draw_func
 import pypick_function as pick_func
 from rpg2_constants import Constants
@@ -29,12 +28,14 @@ REG_FONT = pygame.font.SysFont("comicsans", 20)
 #always make a clock
 clock = pygame.time.Clock()
 import pyquest_battle as battle_func
-import rpg2_quest_monster_function as mon_func
-import rpg2_orc_quest as orc_func
-import rpg2_giant_quest as giant_func
+import pyquestmon_functions as mon_func
+#import rpg2_orc_quest as orc_func
+#import rpg2_giant_quest as giant_func
 #images
 FOREST_RAW = pygame.image.load(os.path.join("Assets", "forest.png"))
 FOREST_IMG = pygame.transform.scale(FOREST_RAW, (P.WIDTH, P.HEIGHT))
+VILLAGE_RAW = pygame.image.load(os.path.join("Assets", "village.png"))
+VILLAGE_IMG = pygame.transform.scale(VILLAGE_RAW, (P.WIDTH, P.HEIGHT))
 '''#quest five is dealing with elementals
 def quest_five(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 	print ("Seems like the magicians have summoned some wild elementals again. ")
@@ -131,6 +132,13 @@ def quest_two(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 #quest one is goblin hunting
 #fight goblins until you get the package back
 def quest_one(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
+	x, y = WIN.get_size()
+	VILLAGE_IMG = pygame.transform.scale(VILLAGE_RAW, (x, y))
+	WIN.blit(VILLAGE_IMG, (0, 0))
+	quest_text = REG_FONT.render("Some goblins stole the package, go find it!", 1, P.RED)
+	WIN.blit(quest_text, ((x - quest_text.get_width())//2, y//3))
+	pygame.display.update()
+	pygame.time.delay(1000)
 	#make a copy of the heroes party to track if they are defeated
 	new_h_p = []
 	for hro in h_p:
@@ -150,7 +158,7 @@ def quest_one(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 			mon = mon_func.super_goblin_maker()
 			g_p.append(mon)
 		battle_func.battle_phase(new_h_p, g_p, p_npc, ib_pc, s_pc,
-                                         h_w, h_a, q_i, a_i)
+					 h_w, h_a, q_i, a_i)
 		for hero in new_h_p:
 			if hero.health <= 0:
 				new_h_p.remove(hero)
@@ -158,7 +166,7 @@ def quest_one(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 	#if the heroes lose then they get no reward
 	if len(new_h_p) <= 0:
 		q_i.rpackage = x
-
+	#if they find a pacakge then the quest is over
 	elif q_i.rpackage > x:
 		#make sure they only get one rpackage from the quest
 		q_i.rpackage = x + 1

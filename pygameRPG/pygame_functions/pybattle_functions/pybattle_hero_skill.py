@@ -15,11 +15,13 @@ P = PYGConstants()
 from rpg2_constants import Constants
 C = Constants()
 import pyparty_functions as party_func
-import rpg2_player_action_function as player_act_func
 import pybattle_pet_action as pet_func
 import pypick_function as pick_func
 import pybattle_functions as pybattle_func
 import draw_functions as draw_func
+import pyelement_function as element_func
+import pyeqpeffect_function as ee_func
+import pymoneffect_function as me_func
 WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT))
 pygame.display.set_caption("RPG")
 REG_FONT = pygame.font.SysFont("comicsans", 20)
@@ -27,11 +29,12 @@ clock = pygame.time.Clock()
 FOREST_RAW = pygame.image.load(os.path.join("Assets", "forest.png"))
 FOREST_IMG = pygame.transform.scale(FOREST_RAW, (P.WIDTH, P.HEIGHT))
 #function that observes the enemies
-def observe(m_p):
+def observe(m_p, h_p, h_ally, h_wpn, h_amr):
 	WIN.fill(P.WHITE)
 	observe = True
 	while observe:
 		draw_func.draw_monster_stats(m_p)
+		draw_func.draw_all_stats(h_p, h_ally, h_wpn, h_amr)
 		pygame.display.update()
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN:
@@ -131,7 +134,7 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 			if event.type == pygame.KEYDOWN:
 				pygame.event.clear()
 				if event.key == pygame.K_o:
-					observe(m_p)
+					observe(m_p, h_p, h_ally, h_wpn, h_amr)
 					if "Ninja" in hero.name:
 						hero.skill += hero.level
 					if "Tactician" in hero.name:
@@ -264,3 +267,37 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 					make_bomb(hero, h_p, m_p, h_ally)
 					turn = False
 					break
+
+#function that controls attacking
+def player_attack(hero, m_npc, h_wpn, h_amr, h_p, m_p):
+	weapon = party_func.check_equipment(hero, h_wpn)
+	new_pa = ee_func.weapon_effect(m_npc, hero, weapon, h_p, m_p)
+	new_atk = element_func.check_element_player_attack(hero, new_pa, m_npc, weapon)
+	f_atk = me_func.monster_def_buff_effect(m_npc, new_atk, hero, h_p, weapon, h_amr, m_p)
+	if "Warrior" in hero.name and hero.level >= C.LEVEL_LIMIT:
+		m_npc.health -= f_atk
+		new_pa = ee_func.weapon_effect(m_npc, hero, weapon, h_p, m_p)
+		new_atk = element_func.check_element_player_attack(hero, new_pa, m_npc, weapon)
+		f_atk = me_func.monster_def_buff_effect(m_npc, new_atk, hero, h_p, weapon, h_amr, m_p)
+		m_npc.health -= f_atk
+		new_pa = ee_func.weapon_effect(m_npc, hero, weapon, h_p, m_p)
+		new_atk = element_func.check_element_player_attack(hero, new_pa, m_npc, weapon)
+		f_atk = me_func.monster_def_buff_effect(m_npc, new_atk, hero, h_p, weapon, h_amr, m_p)
+		m_npc.health -= f_atk
+	elif "Warrior" in hero.name or "Hero" in hero.name:
+		m_npc.health -= f_atk
+		new_pa = ee_func.weapon_effect(m_npc, hero, weapon, h_p, m_p)
+		new_atk = element_func.check_element_player_attack(hero, new_pa, m_npc, weapon)
+		f_atk = me_func.monster_def_buff_effect(m_npc, new_atk, hero, h_p, weapon, h_amr, m_p)
+		m_npc.health -= f_atk
+	elif "Defender" in hero.name:
+		m_npc.health -= f_atk
+		hero.name = "Knight"
+		if weapon != None:
+			if weapon.effect == "Shield":
+				hero.name = "Defender"
+		for amr in h_amr:
+			if amr.user == "Defender":
+				amr.user = hero.name
+	else:
+		m_npc.health -= f_atk

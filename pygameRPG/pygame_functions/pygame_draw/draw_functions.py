@@ -52,6 +52,8 @@ BEAST_RAW = pygame.image.load(os.path.join("Assets", "beast.png"))
 BEAST_IMG = pygame.transform.scale(BEAST_RAW, (P.BIG_SPRITE, P.BIG_SPRITE))
 GOBLIN_RAW = pygame.image.load(os.path.join("Assets", "goblin.png"))
 GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW, (P.SMALL_SPRITE, P.SMALL_SPRITE))
+ELEMENTAL_RAW = pygame.image.load(os.path.join("Assets", "elemental.png"))
+ELEMENTAL_IMG = pygame.transform.scale(ELEMENTAL_RAW, (P.SPRITE_WIDTH, P.SPRITE_HEIGHT))
 #function that will draw characters in battle
 def draw_heroes(h_p, h_ally):
 	width, height = WIN.get_size()
@@ -149,24 +151,29 @@ def draw_hero(hero):
 	x, y = WIN.get_size()
 	if "Hunter" in hero.name:
 		WIN.blit(HUNTER_IMG, (x//2, y//2))
-	if "Hero" in hero.name:
+	elif "Hero" in hero.name:
 		WIN.blit(HERO_IMG, (x//2, y//2))
-	if "Summoner" in hero.name:
+	elif "Summoner" in hero.name:
 		WIN.blit(SUMMONER_IMG, (x//2, y//2))
-	if "Knight" in hero.name:
+	elif "Knight" in hero.name:
 		WIN.blit(KNIGHT_IMG, (x//2, y//2))
-	if "Defender" in hero.name:
+	elif "Defender" in hero.name:
 		WIN.blit(KNIGHT_IMG, (x//2, y//2))
-	if "Cleric" in hero.name:
+	elif "Cleric" in hero.name:
 		WIN.blit(CLERIC_IMG, (x//2, y//2))
-	if "Mage" in hero.name:
+	elif "Mage" in hero.name:
 		WIN.blit(MAGE_IMG, (x//2, y//2))
-	if "Ninja" in hero.name:
+	elif "Ninja" in hero.name:
 		WIN.blit(NINJA_IMG, (x//4, y//2))
-	if "Warrior" in hero.name:
+	elif "Warrior" in hero.name:
 		WIN.blit(WARRIOR_IMG, (x//2, y//2))
-	if "Tactician" in hero.name:
+	elif "Tactician" in hero.name:
 		WIN.blit(TACTICIAN_IMG, (x//2, y//2))
+def draw_ally(ally):
+	width, height = WIN.get_size()
+	x, y = WIN.get_size()
+	if "Spirit" in ally.name:
+		WIN.blit(GUARDIAN_IMG, (x//2, y//2))
 #function that will draw monster stats
 def draw_monster_stats(m_p):
 	width, height = WIN.get_size()
@@ -175,14 +182,14 @@ def draw_monster_stats(m_p):
 		if mon.buff == None:
 			stats_text = REG_FONT.render((mon.name+" HP: "+str(mon.health)+
 						      " ATK: "+str(mon.atk)+" DEF: "+str(mon.defense)+
-						      " SKILL: "+str(mon.skill)+" ELEMENT: "+mon.element+
-                                                      " POISON: "+str(mon.poison)),
+						      " SKL: "+str(mon.skill)+" ELMT: "+mon.element+
+						      " PSN: "+str(mon.poison)),
 						     1, P.RED)
 		elif mon.buff != None:
 			stats_text = REG_FONT.render((mon.name+" HP: "+str(mon.health)+
 						      " ATK: "+str(mon.atk)+" DEF: "+str(mon.defense)+
-						      " SKILL: "+str(mon.skill)+" ELEMENT: "+mon.element+
-						      " BUFF: "+mon.buff),
+						      " SKL: "+str(mon.skill)+" ELMT: "+mon.element+
+						      " BUFF: "+mon.buff+" PSN: "+str(mon.poison)),
 						     1, P.RED)
 		WIN.blit(stats_text, (P.PADDING, P.PADDING + stats_text.get_height() * x))
 		pygame.display.update()
@@ -206,6 +213,30 @@ def draw_hero_stats(hero):
 	WIN.blit(hero_other_stat, (width - hero_other_stat.get_width() - P.PADDING,
 				   P.PADDING + hero_other_stat.get_height() * 3))
 	
+def draw_all_stats(h_p, h_ally, h_wpn, h_amr):
+	x = 1
+	for hero in h_p:
+		stat_text = REG_FONT.render("Hero: "+hero.name+" ATK: "+str(hero.atk+hero.atkbonus)+
+					    " DEF: "+str(hero.defense+hero.defbonus)+" HP%: "+str(round(hero.health/hero.maxhealth, 2))+
+					    " MP: "+str(hero.mana)+" SKL: "+str(hero.skill)+" PSN: "+str(hero.poison), 1, P.RED)
+		WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
+		x +=1
+	for ally in h_ally:
+		stat_text = REG_FONT.render("Ally: "+ally.name+" ATK: "+str(ally.atk)+" STAGE: "+str(ally.stage), 1, P.RED)
+		WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
+		x +=1
+	for wpn in h_wpn:
+		if wpn.user != "None":
+			stat_text = REG_FONT.render("User: "+wpn.user+" Effect: "+wpn.effect+" Strength: "+str(wpn.strength)+
+						    " ATK: "+str(wpn.atk)+" Element: "+wpn.element, 1, P.RED)
+			WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
+			x += 1
+	for amr in h_amr:
+		if amr.user != "None":
+			stat_text = REG_FONT.render("User: "+amr.user+" Effect: "+amr.effect+" Strength: "+str(amr.strength)+
+						    " DEF: "+str(amr.defense)+" Element: "+amr.element, 1, P.RED)
+			WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
+			x += 1
 #function that will draw monsters in battle
 def draw_monsters(m_p):
 	width, height = WIN.get_size()
@@ -235,6 +266,10 @@ def draw_monsters(m_p):
 			WIN.blit(GOBLIN_IMG,
 				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
 				  height - (P.SPRITE_HEIGHT * x)))
+		elif "Elemental" in mon.name:
+			WIN.blit(ELEMENTAL_IMG,
+				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
+				  height - (P.SPRITE_HEIGHT * x)))
 		else:
 			WIN.blit(MON_IMG,
 				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
@@ -254,8 +289,27 @@ def draw_monster(mon):
 		WIN.blit(BEAST_IMG, (x//3, y//2))
 	elif "Bomb" in mon.name:
 		WIN.blit(BOMB_IMG, (x//3, y//2))
+	elif "Elemental" in mon.name:
+		WIN.blit(ELEMENTAL_IMG, (x//3, y//2))
+	elif "Golbin" in mon.name:
+		WIN.blit(GOBLIN_IMG, (x//3, y//2))
 	else:
 		WIN.blit(MON_IMG, (x//3, y//2))
+def draw_monster2(mon):
+	width, height = WIN.get_size()
+	x, y = WIN.get_size()
+	if "Slime" in mon.name:
+		WIN.blit(SLIME_IMG, (x//2, y//2))
+	elif "Beast" in mon.name:
+		WIN.blit(BEAST_IMG, (x//2, y//2))
+	elif "Bomb" in mon.name:
+		WIN.blit(BOMB_IMG, (x//2, y//2))
+	elif "Elemental" in mon.name:
+		WIN.blit(ELEMENTAL_IMG, (x//3, y//2))
+	elif "Golbin" in mon.name:
+		WIN.blit(GOBLIN_IMG, (x//3, y//2))
+	else:
+		WIN.blit(MON_IMG, (x//2, y//2))
 		
 #function that lists what monsters there are
 def draw_monster_menu_list(m_p):
