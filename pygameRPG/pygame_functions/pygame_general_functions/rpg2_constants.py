@@ -64,7 +64,7 @@ class Constants:
              #minimum stats for basic monster
              self.MONSTER_MIN_HP = 10
              self.MONSTER_MIN_ATK = 5
-             self.MONSTER_MIN_DEF = 1
+             self.MONSTER_MIN_DEF = 2
              #max dropchance for basic monster
              self.MONSTER_MAX_DROPCHANCE = 5
              self.MONSTER_MAX_DC = 5

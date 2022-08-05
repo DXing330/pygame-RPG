@@ -218,7 +218,7 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 						mon.atk -= min(round(mon.poison ** C.DECREASE_EXPONENT), mon.atk)
 						mon.defense -= min(round(mon.poison ** C.DECREASE_EXPONENT), mon.defense)
 					else:
-						mon.atk -= hero.level
+						mon.atk -= min(hero.level, mon.atk)
 				elif event.key == pygame.K_b:
 					armor = party_func.check_equipment(hero, h_amr)
 					weapon = party_func.check_equipment(hero, h_wpn)
@@ -258,9 +258,10 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 				elif event.key == pygame.K_s and "Ninja" in hero.name:
 					weapon = party_func.check_equipment(hero, h_wpn)
 					mon = pick_func.pick_hero(m_p)
-					mon.health -= hero.skill * weapon.atk
-					hero.skill = 0
-					weapon.atk = 0
+					if weapon != None:
+						mon.health -= hero.skill * weapon.atk
+						hero.skill = 0
+						weapon.atk = 0
 					turn = False
 				elif event.key == pygame.K_e and "Hunter" in hero.name:
 					pygame.event.clear()

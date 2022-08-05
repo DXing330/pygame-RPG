@@ -205,4 +205,4 @@ class Access_NPC:
 		self.negrep = negrep
 	def stats(self):
 		print ("Fame:", self.fame, ", Rank:", self.rank, "+:", self.posrep,
-		       "-:", self.negrep, "\n")
+		       "-:", self.negrep)

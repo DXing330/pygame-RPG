@@ -54,6 +54,12 @@ GOBLIN_RAW = pygame.image.load(os.path.join("Assets", "goblin.png"))
 GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW, (P.SMALL_SPRITE, P.SMALL_SPRITE))
 ELEMENTAL_RAW = pygame.image.load(os.path.join("Assets", "elemental.png"))
 ELEMENTAL_IMG = pygame.transform.scale(ELEMENTAL_RAW, (P.SPRITE_WIDTH, P.SPRITE_HEIGHT))
+DEMON_RAW = pygame.image.load(os.path.join("Assets", "demon.png"))
+DEMON_IMG = pygame.transform.scale(DEMON_RAW, (P.SPRITE_WIDTH, P.SPRITE_HEIGHT))
+SKELETON_RAW = pygame.image.load(os.path.join("Assets", "skeleton.png"))
+SKELETON_IMG = pygame.transform.scale(SKELETON_RAW, (P.SPRITE_WIDTH, P.SPRITE_HEIGHT))
+TROLL_RAW = pygame.image.load(os.path.join("Assets", "troll.png"))
+TROLL_IMG = pygame.transform.scale(TROLL_RAW, (P.BIG_SPRITE, P.BIG_SPRITE))
 #function that will draw characters in battle
 def draw_heroes(h_p, h_ally):
 	width, height = WIN.get_size()
@@ -64,33 +70,33 @@ def draw_heroes(h_p, h_ally):
 		if "Hunter" in player.name:
 			WIN.blit(HUNTER_IMG,
 				 (width - (P.SPRITE_WIDTH * x),
-				 height - (P.SPRITE_HEIGHT * y)))
+				 height - (P.BIG_SPRITE * y)))
 		if "Hero" in player.name:
 			WIN.blit(HERO_IMG,
 				 (width - (P.SPRITE_WIDTH * x),
-				 height - (P.SPRITE_HEIGHT * y)))
+				 height - (P.BIG_SPRITE * y)))
 		if "Summoner" in player.name:
 			WIN.blit(SUMMONER_IMG,
 				 (width - (P.SPRITE_WIDTH * x),
-				 height - (P.SPRITE_HEIGHT * y)))
+				 height - (P.BIG_SPRITE * y)))
 		if "Knight" in player.name:
 			WIN.blit(KNIGHT_IMG,
 				 (width - (P.SPRITE_WIDTH * x),
-				 height - (P.SPRITE_HEIGHT * y)))
+				 height - (P.BIG_SPRITE * y)))
 		if "Defender" in player.name:
 			WIN.blit(KNIGHT_IMG,
 				 (width//2 + P.SPRITE_WIDTH,
 				  height//2))
 		if "Cleric" in player.name:
-			WIN.blit(CLERIC_IMG, (width - (P.SPRITE_HEIGHT * x), height - (P.SPRITE_HEIGHT * y)))
+			WIN.blit(CLERIC_IMG, (width - (P.SPRITE_HEIGHT * x), height - (P.BIG_SPRITE * y)))
 		if "Mage" in player.name:
-			WIN.blit(MAGE_IMG, (width - (P.SPRITE_HEIGHT * x), height - (P.SPRITE_HEIGHT * y)))
+			WIN.blit(MAGE_IMG, (width - (P.SPRITE_HEIGHT * x), height - (P.BIG_SPRITE * y)))
 		if "Ninja" in player.name:
-			WIN.blit(NINJA_IMG, (width - (P.SPRITE_HEIGHT * x), height - (P.SPRITE_HEIGHT * y)))
+			WIN.blit(NINJA_IMG, (width - (P.SPRITE_HEIGHT * x), height - (P.BIG_SPRITE * y)))
 		if "Warrior" in player.name:
-			WIN.blit(WARRIOR_IMG, (width - (P.SPRITE_HEIGHT * x), height - (P.SPRITE_HEIGHT * y)))
+			WIN.blit(WARRIOR_IMG, (width - (P.SPRITE_HEIGHT * x), height - (P.BIG_SPRITE * y)))
 		if "Tactician" in player.name:
-			WIN.blit(TACTICIAN_IMG, (width - (P.SPRITE_HEIGHT * x), height - (P.SPRITE_HEIGHT * y)))
+			WIN.blit(TACTICIAN_IMG, (width - (P.SPRITE_HEIGHT * x), height - (P.BIG_SPRITE * y)))
 		if "Totem" in player.name:
 			WIN.blit(TOTEM_IMG, (width//2 + (P.SPRITE_HEIGHT), height - (P.SPRITE_HEIGHT * x)))
 		x += 0.2
@@ -214,10 +220,11 @@ def draw_hero_stats(hero):
 				   P.PADDING + hero_other_stat.get_height() * 3))
 	
 def draw_all_stats(h_p, h_ally, h_wpn, h_amr):
+	width, height = WIN.get_size()
 	x = 1
 	for hero in h_p:
 		stat_text = REG_FONT.render("Hero: "+hero.name+" ATK: "+str(hero.atk+hero.atkbonus)+
-					    " DEF: "+str(hero.defense+hero.defbonus)+" HP%: "+str(round(hero.health/hero.maxhealth, 2))+
+					    " DEF: "+str(hero.defense+hero.defbonus)+" HP%: "+str((round(hero.health/hero.maxhealth, 2))*100)+
 					    " MP: "+str(hero.mana)+" SKL: "+str(hero.skill)+" PSN: "+str(hero.poison), 1, P.RED)
 		WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
 		x +=1
@@ -247,15 +254,15 @@ def draw_monsters(m_p):
 		if "Slime" in mon.name:
 			WIN.blit(SLIME_IMG,
 				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.SPRITE_HEIGHT * x)))
+				  height - (P.BIG_SPRITE * x)))
 		elif "Beast" in mon.name:
 			WIN.blit(BEAST_IMG,
 				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.SPRITE_HEIGHT * x)))
+				  height - (P.BIG_SPRITE * x)))
 		elif "Bomb" in mon.name:
 			WIN.blit(BOMB_IMG,
 				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.SPRITE_HEIGHT * x)))
+				  height - (P.BIG_SPRITE * x)))
 		elif "Goblin" in mon.name:
 			if "Champion" in mon.name:
 				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW, (P.BIG_SPRITE, P.BIG_SPRITE))
@@ -265,17 +272,29 @@ def draw_monsters(m_p):
 				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW, (P.SMALL_SPRITE, P.SMALL_SPRITE))
 			WIN.blit(GOBLIN_IMG,
 				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.SPRITE_HEIGHT * x)))
+				  height - (P.BIG_SPRITE * x)))
 		elif "Elemental" in mon.name:
 			WIN.blit(ELEMENTAL_IMG,
 				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.SPRITE_HEIGHT * x)))
+				  height - (P.BIG_SPRITE * x)))
+		elif "Demon" in mon.name:
+			WIN.blit(DEMON_IMG,
+				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
+				  height - (P.BIG_SPRITE * x)))
+		elif "Skeleton" in mon.name:
+			WIN.blit(SKELETON_IMG,
+				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
+				  height - (P.BIG_SPRITE * x)))
+		elif "Troll" in mon.name:
+			WIN.blit(TROLL_IMG,
+				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
+				  height - (P.BIG_SPRITE * x)))
 		else:
 			WIN.blit(MON_IMG,
 				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.SPRITE_HEIGHT * x)))
+				  height - (P.BIG_SPRITE * x)))
 		x += 1
-		if x * P.SPRITE_HEIGHT > height - P.PADDING:
+		if x * P.BIG_SPRITE > height - P.PADDING:
 			x = 1
 			y += 1
 
@@ -293,6 +312,12 @@ def draw_monster(mon):
 		WIN.blit(ELEMENTAL_IMG, (x//3, y//2))
 	elif "Golbin" in mon.name:
 		WIN.blit(GOBLIN_IMG, (x//3, y//2))
+	elif "Demon" in mon.name:
+		WIN.blit(DEMON_IMG, (x//3, y//2))
+	elif "Skeleton" in mon.name:
+		WIN.blit(SKELETON_IMG, (x//3, y//2))
+	elif "Troll" in mon.name:
+		WIN.blit(TROLL_IMG, (x//3, y//2))
 	else:
 		WIN.blit(MON_IMG, (x//3, y//2))
 def draw_monster2(mon):
@@ -305,9 +330,15 @@ def draw_monster2(mon):
 	elif "Bomb" in mon.name:
 		WIN.blit(BOMB_IMG, (x//2, y//2))
 	elif "Elemental" in mon.name:
-		WIN.blit(ELEMENTAL_IMG, (x//3, y//2))
+		WIN.blit(ELEMENTAL_IMG, (x//2, y//2))
 	elif "Golbin" in mon.name:
-		WIN.blit(GOBLIN_IMG, (x//3, y//2))
+		WIN.blit(GOBLIN_IMG, (x//2, y//2))
+	elif "Demon" in mon.name:
+		WIN.blit(DEMON_IMG, (x//2, y//2))
+	elif "Skeleton" in mon.name:
+		WIN.blit(SKELETON_IMG, (x//2, y//2))
+	elif "Troll" in mon.name:
+		WIN.blit(TROLL_IMG, (x//2, y//2))
 	else:
 		WIN.blit(MON_IMG, (x//2, y//2))
 		
@@ -892,21 +923,23 @@ def poor_text_3():
 #function will list options for the player
 def draw_menu(qi_npc):
 	width, height = WIN.get_size()
+	talk_text = REG_FONT.render("TALK to nearby man: T", 1, P.BLACK)
+	WIN.blit(talk_text, (width//3 - talk_text.get_width(), P.PADDING * 1))
 	save_text = REG_FONT.render("RECORD journey: R", 1, P.GREEN)
-	WIN.blit(save_text, (width//2 - save_text.get_width(), P.PADDING * 2))
-	mage_text = REG_FONT.render("Vist WIZARD Tower: W", 1, P.BLACK)
-	WIN.blit(mage_text, (width//2 - mage_text.get_width(), P.PADDING * 3))
+	WIN.blit(save_text, (width//3 - save_text.get_width(), P.PADDING * 2))
+	mage_text = REG_FONT.render("Visit WIZARD Tower: W", 1, P.BLACK)
+	WIN.blit(mage_text, (width//3 - mage_text.get_width(), P.PADDING * 5))
 	city_text = REG_FONT.render("Return to CITY: C", 1, P.BLACK)
-	WIN.blit(city_text, (width//2 - city_text.get_width(), P.PADDING * 4))
+	WIN.blit(city_text, (width//3 - city_text.get_width(), P.PADDING * 4))
 	leave_text = REG_FONT.render("Stop Adventuring and SLEEP: S", 1, P.GREEN)
-	WIN.blit(leave_text, (width//2 - leave_text.get_width(), P.PADDING * 5))
+	WIN.blit(leave_text, (width//3 - leave_text.get_width(), P.PADDING * 3))
 	attack_text = REG_FONT.render("ATTACK monsters: A", 1, P.RED)
-	WIN.blit(attack_text, (width//2 - attack_text.get_width(), P.PADDING * 6))
+	WIN.blit(attack_text, (width//3 - attack_text.get_width(), P.PADDING * 6))
 	explore_text = REG_FONT.render("Visit remote VILLAGES: V", 1, P.RED)
-	WIN.blit(explore_text, (width//2 - explore_text.get_width(), P.PADDING * 7))
+	WIN.blit(explore_text, (width//3 - explore_text.get_width(), P.PADDING * 7))
 	hunter_text = REG_FONT.render("Enter MONSTER Hunter Guild: M", 1, P.BLACK)
-	WIN.blit(hunter_text, (width//2 - hunter_text.get_width(), P.PADDING * 8))
+	WIN.blit(hunter_text, (width//3 - hunter_text.get_width(), P.PADDING * 8))
 	if qi_npc.package > 0:
 		quest_text = REG_FONT.render("Deliver PACKAGES: P", 1, P.RED)
-		WIN.blit(quest_text, (width//2 - quest_text.get_width(), P.PADDING * 9))
+		WIN.blit(quest_text, (width//3 - quest_text.get_width(), P.PADDING * 9))
 

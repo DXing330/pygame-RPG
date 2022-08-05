@@ -31,11 +31,11 @@ def random_scaled_monster(p_pc, bag):
 	name_list = list(L.MONSTER_NAMES_LIST)
 	element = element_list[random.randint(0, len(element_list)-1)]
 	name = name_list[random.randint(0, len(name_list)-1)]
-	health = random.randint(C.MONSTER_MIN_HP, C.MONSTER_SCALE_HP * p_pc.level) + random.randint(0, bag.flow)
-	atk = random.randint(C.MONSTER_MIN_ATK, C.MONSTER_SCALE_ATK * p_pc.level) + random.randint(0, bag.flow//2)
-	defense = random.randint(C.MONSTER_MIN_DEF, C.MONSTER_SCALE_DEF * p_pc.level) + random.randint(0, bag.flow ** C.DECREASE_EXPONENT)
-	skill = random.randint(p_pc.level, C.MONSTER_MAX_SKILL + p_pc.level)
-	dropchance = random.randint(C.MONSTER_MAX_DROPCHANCE, C.MONSTER_MAX_DROPCHANCE * p_pc.level)
+	health = random.randint(C.MONSTER_MIN_HP * p_pc.level//2, C.MONSTER_SCALE_HP * p_pc.level) + random.randint(0, bag.flow//2)
+	atk = random.randint(C.MONSTER_MIN_ATK * p_pc.level//2, C.MONSTER_SCALE_ATK * p_pc.level) + random.randint(0, bag.flow//4)
+	defense = random.randint(C.MONSTER_MIN_DEF * p_pc.level//2, C.MONSTER_SCALE_DEF * p_pc.level) + random.randint(0, bag.flow//8)
+	skill = random.randint(C.MONSTER_MAX_SKILL, C.MONSTER_MAX_SKILL + p_pc.level)
+	dropchance = C.MONSTER_MAX_DROPCHANCE + random.randint(0, p_pc.level) + random.randint(0, bag.flow)
 	random_monster = Monster_NPC(element + " " + name, health, atk, defense, skill, element, dropchance)
 	return random_monster
 #function where the monster performs an action
@@ -94,9 +94,9 @@ def monster_attack(m_npc, p_pc, h_a, h_p, m_p):
 				elif y == 3:
 					#monster will buff themselves
 					p_pc.health -= max((new_m_npc_atk - p_pc.defense - p_pc.defbonus), 1)
-					m_npc.atk = round(m_npc.atk * C.BUFF) + m_npc.skill
-					m_npc.defense = round(m_npc.defense * C.BUFF)
-					m_npc.skill = round(m_npc.skill * C.BUFF)
+					m_npc.atk += m_npc.skill
+					m_npc.defense += m_npc.skill//2
+					m_npc.skill += 1
 					print (m_npc.name, "gathers energy.")
 				elif y == 4:
 					p_pc.health -= max((new_m_npc_atk - p_pc.defense - p_pc.defbonus), 1)
@@ -111,7 +111,7 @@ def monster_attack(m_npc, p_pc, h_a, h_p, m_p):
 				elif y == 6:
 					#monster will do a debuffing attack
 					p_pc.health -= max((new_m_npc_atk - p_pc.defense - p_pc.defbonus), 1)
-					p_pc.atk -= min(m_npc.skill, p_pc.atk)
+					p_pc.atkbonus -= min(m_npc.skill, p_pc.atkbonus)
 				elif y == 7:
 					p_pc.health -= max((new_m_npc_atk - p_pc.defense - p_pc.defbonus), 1)
-					p_pc.defense -= min(m_npc.skill, p_pc.defense)
+					p_pc.defbonus -= min(m_npc.skill//2, p_pc.defbonus)

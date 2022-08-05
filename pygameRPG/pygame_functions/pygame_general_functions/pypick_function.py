@@ -2,7 +2,7 @@ import pygame
 import os
 import sys
 sys.path.append(".")
-pygame.font.init()
+pygame.init()
 from pygconstants import PYGConstants
 P = PYGConstants()
 import draw_functions as draw_func
@@ -15,41 +15,52 @@ def pick_hero(h_p):
 	pick = True
 	thing = None
 	width, height = WIN.get_size()
+	if 1 < len(h_p) <= 9:
+		WIN.fill(P.WHITE)
+		x = 1
+		for hero in h_p:
+			hero_text = REG_FONT.render(str(x)+" : "+hero.name, 1, P.BLACK)
+			WIN.blit(hero_text, ((width - hero_text.get_width())//2, P.PADDING * x))
+			x += 1
+		pygame.display.update()
+	elif 9 < len(h_p):
+		WIN.fill(P.WHITE)
+		x = 1
+		y = 1
+		z = 1
+		help_text = REG_FONT.render("a = 10, b = 11, etc. ", 1, P.RED)
+		WIN.blit(help_text, ((width - help_text.get_width())//2, 0))
+		for hero in h_p:
+			hero_text = REG_FONT.render(str(z)+" : "+hero.name, 1, P.BLACK)
+			WIN.blit(hero_text, (P.PADDING * y, P.PADDING * x))
+			x += 1
+			z += 1
+			if x * P.PADDING > height - (P.PADDING * 2):
+				x = 1
+				y += (width//P.PADDING)//3
+		pygame.display.update()
 	while pick:
+		pygame.event.clear()
+		clock.tick(1)
 		if len(h_p) == 1:
 			thing = h_p[0]
 			pick = False
-		elif 1 < len(h_p) <= 9:
-			WIN.fill(P.WHITE)
-			x = 1
-			for hero in h_p:
-				hero_text = REG_FONT.render(str(x)+" : "+hero.name, 1, P.BLACK)
-				WIN.blit(hero_text, ((width - hero_text.get_width())//2, P.PADDING * x))
-				x += 1
-			pygame.display.update()
-		elif 9 < len(h_p):
-			WIN.fill(P.WHITE)
-			x = 1
-			y = 1
-			z = 1
-			help_text = REG_FONT.render("a = 10, b = 11, etc. ", 1, P.RED)
-			WIN.blit(help_text, ((width - help_text.get_width())//2, 0))
-			for hero in h_p:
-				hero_text = REG_FONT.render(str(z)+" : "+hero.name, 1, P.BLACK)
-				WIN.blit(hero_text, (P.PADDING * y, P.PADDING * x))
-				x += 1
-				z += 1
-				if x * P.PADDING > height - (P.PADDING * 2):
-					x = 1
-					y += (width//P.PADDING)//3
-			pygame.display.update()
 		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pick = False
+				pygame.quit()
 			if event.type == pygame.KEYDOWN:
 				pygame.event.clear()
+				if event.key == pygame.K_a:
+					pick = False
+					if len(h_p) <= 9:
+						thing = h_p[0]
+					else:
+						thing = h_p[9]
 				if event.key == pygame.K_1:
 					thing = h_p[0]
 					pick = False
-				if event.key == pygame.K_2 and len(h_p) > 1:
+				if event.key == pygame.K_2:
 					thing = h_p[1]
 					pick = False
 				if event.key == pygame.K_3 and len(h_p) > 2:
@@ -72,9 +83,6 @@ def pick_hero(h_p):
 					pick = False
 				if event.key == pygame.K_9 and len(h_p) > 8:
 					thing = h_p[8]
-					pick = False
-				if event.key == pygame.K_a and len(h_p) > 9:
-					thing = h_p[9]
 					pick = False
 				if event.key == pygame.K_b and len(h_p) > 10:
 					thing = h_p[10]

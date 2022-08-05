@@ -36,11 +36,15 @@ FOREST_RAW = pygame.image.load(os.path.join("Assets", "forest.png"))
 FOREST_IMG = pygame.transform.scale(FOREST_RAW, (P.WIDTH, P.HEIGHT))
 VILLAGE_RAW = pygame.image.load(os.path.join("Assets", "village.png"))
 VILLAGE_IMG = pygame.transform.scale(VILLAGE_RAW, (P.WIDTH, P.HEIGHT))
-'''#quest five is dealing with elementals
-def quest_five(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
-	print ("Seems like the magicians have summoned some wild elementals again. ")
-	print ("They're causing havoc around the city. ")
-	print ("Hurry up and deal with them. ")
+#quest five is dealing with elementals
+def quest_five(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
+	x, y = WIN.get_size()
+	VILLAGE_IMG = pygame.transform.scale(VILLAGE_RAW, (x, y))
+	WIN.blit(VILLAGE_IMG, (0, 0))
+	quest_text = REG_FONT.render("Some elementals are running wild!", 1, P.RED)
+	WIN.blit(quest_text, ((x - quest_text.get_width())//2, y//3))
+	pygame.display.update()
+	pygame.time.delay(1000)
 	new_h_p = []
 	for hro in h_p:
 		copy_hero = copy.copy(hro)
@@ -50,10 +54,8 @@ def quest_five(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 	y = a_i.rank
 	for m in range(0, y):
 		for hero in h_p:
-			mon = mon_func.elemental_maker()
+			mon = mon_func.elemental_maker(h_bag)
 			e_p.append(mon)
-	print ("You run to the city. ")
-	print ("You see massive clumps of elementals! ")
 	battle_func.battle_phase(new_h_p, e_p, p_npc, ib_pc,
 				 s_pc, h_w, h_a, q_i)
 	if len(new_h_p) <= 0:
@@ -64,7 +66,8 @@ def quest_five(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 		print ("I knew I could count on you.  Thanks.")
 		q_i.rpackage += 1
 		a_i.fame += a_i.rank//C.INCREASE_EXPONENT
-#quest four is dealing with giants
+		h_bag.coins += a_i.rank
+'''#quest four is dealing with giants
 def quest_four(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 	print ("There are reports of some giants fighting nearby. ")
 	print ("Something like that is too dangerous to allow. ")
@@ -155,7 +158,7 @@ def quest_one(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 	#after they find another rpackage then the quest is over
 	while q_i.rpackage == x and len(new_h_p) > 0:
 		for z in range(0, y):
-			mon = mon_func.super_goblin_maker()
+			mon = mon_func.super_goblin_maker(h_bag)
 			g_p.append(mon)
 		battle_func.battle_phase(new_h_p, g_p, p_npc, ib_pc, s_pc,
 					 h_w, h_a, q_i, a_i)
@@ -172,7 +175,7 @@ def quest_one(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 		q_i.rpackage = x + 1
 		#give them a fame
 		a_i.fame += 1
-
+		h_bag.coins += a_i.rank
 
 #function that decides what quest to give to the player
 #quests can depend on their rank in the guild and fame
@@ -181,11 +184,13 @@ def quest(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 	if q_i.package > 0:
 		#if so then make a quest
 		x = random.randint(0, a_i.rank)
-		if x >= 0:
+		if x == 0:
 			quest_one(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i)
-		'''elif x == 2:
-			quest_two(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i)
-		elif x == 7:
+		elif x == 5:
+			quest_five(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i)
+		else:
+                        quest(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i)
+		'''elif x == 7:
 			quest_three(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i)
 		elif x == 8:
 			quest_five(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i)

@@ -104,8 +104,9 @@ def hero_turn(hero, h_p, m_p, h_s, h_bag, h_magic, h_wpn, h_amr):
 					hskl_func.player_attack(hero, mon, h_wpn,
 								      h_amr, h_p, m_p)
 					WIN.blit(CASTLE_IMG, P.ORIGIN)
+					weapon = party_func.check_equipment(hero, h_wpn)
+					drawe_func.hero_attack(hero, weapon, mon)
 					pygame.display.update()
-					drawe_func.hero_attack(hero, mon)
 					break
 				if event.key == pygame.K_a and len(m_p) > 1:
 					turn = False
@@ -113,7 +114,8 @@ def hero_turn(hero, h_p, m_p, h_s, h_bag, h_magic, h_wpn, h_amr):
 					pygame.event.clear()
 					hskl_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
 					WIN.blit(CASTLE_IMG, P.ORIGIN)
-					drawe_func.hero_attack(hero, mon)
+					weapon = party_func.check_equipment(hero, h_wpn)
+					drawe_func.hero_attack(hero, weapon, mon)
 					pygame.display.update()
 					break
 				if event.key == pygame.K_s:
@@ -491,3 +493,13 @@ def battle(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 			print ("The villagers rain praise and thanks upon them. ")
 			h_bag.coins += B.DEMON_GENERAL_DROPCHANCE
 			h_bag.dg_trophy += 1
+			h_bag.flow -= dg_trophy ** C.DECREASE_EXPONENT
+			for hero in h_p:
+				hero.exp += h_bag.dg_trophy ** C.DECREASE_EXPONENT
+			for hero in h_p:
+				x, y = WIN.get_size()
+				CASTLE_IMG = pygame.transform.scale(CASTLE_RAW, (x, y))
+				WIN.blit(CASTLE_IMG, P.ORIGIN)
+				x = party_func.exp_level_up(hero)
+				if x == 1:
+					drawe_func.hero_level_up(hero)

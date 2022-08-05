@@ -66,7 +66,7 @@ def grandmaster(h_p, qi_npc, a_npc):
 					choice = False
 					train = True
 					hero = pick_func.pick_hero(h_p)
-					if hero.level >= C.LEVEL_LIMIT * C.INCREASE_EXPONENT:
+					if hero.level >= C.LEVEL_LIMIT * 3:
 						x, y = WIN.get_size()
 						HALL_IMG = pygame.transform.scale(HALL_RAW, (x, y))
 						WIN.blit(HALL_IMG, P.ORIGIN)
@@ -107,13 +107,13 @@ def grandmaster(h_p, qi_npc, a_npc):
 							party_func.prestige_level_up(hero)
 						elif hero.level > C.LEVEL_LIMIT:
 							party_func.prestige_level_up(hero)
-						fail_text = REG_FONT.render("Can you feel the energy empowering you? ", 1, P.WHITE)
-						WIN.blit(fail_text, ((x - fail_text.get_width())//2, P.PADDING * 1))
+						succeed_text = REG_FONT.render("Can you feel the energy empowering you? ", 1, P.WHITE)
+						WIN.blit(succeed_text, ((x - succeed_text.get_width())//2, P.PADDING * 2))
 						pygame.display.update()
 						pygame.time.delay(1000)
 					else:
 						fail_text = REG_FONT.render("You'll need more mana gems for the process to work. ", 1, P.WHITE)
-						WIN.blit(fail_text, ((x - fail_text.get_width())//2, P.PADDING * 1))
+						WIN.blit(fail_text, ((x - fail_text.get_width())//2, P.PADDING * 2))
 						pygame.display.update()
 						pygame.time.delay(1000)
 					

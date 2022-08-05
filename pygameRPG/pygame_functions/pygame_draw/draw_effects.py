@@ -98,11 +98,17 @@ def angel_buff_action(angel, hero):
 		pygame.display.update()
 		pygame.time.delay(30)
 #function that will draw the hero's attack
-def hero_attack(hero, mon):
+def hero_attack(hero, weapon, mon):
 	x, y = WIN.get_size()
 	draw_func.draw_monster(mon)
 	attack_text = REG_FONT.render(hero.name+" attacks "+mon.name, 1, P.RED)
 	WIN.blit(attack_text, ((x - attack_text.get_width())//2, P.PADDING * 2))
+	if weapon != None:
+		if weapon.effect == "Attack":
+			pass
+		else:
+			effect_text = REG_FONT.render("The attack "+weapon.effect+"'s", 1, P.RED)
+			WIN.blit(effect_text, ((x - effect_text.get_width())//2, P.PADDING * 3))
 	if "Summoner" in hero.name or "Mage" in hero.name or "Cleric" in hero.name or "Tactician" in hero.name:
 		draw_func.draw_hero(hero)
 		for z in range(0, 200):
@@ -129,7 +135,6 @@ def hero_attack(hero, mon):
 
 def hero_level_up(hero):
 	x, y = WIN.get_size()
-	WIN.fill(P.BLACK)
 	draw_func.draw_hero(hero)
 	level_up_text = REG_FONT.render(hero.name+" leveled up! ", 1, P.GREEN)
 	WIN.blit(level_up_text, ((x - level_up_text.get_width())//2, P.PADDING * 2))

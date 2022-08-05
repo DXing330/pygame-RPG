@@ -12,7 +12,7 @@ import pyelement_function as element_func
 import pyeqpeffect_function as ee_func
 #function that checks what kind of buffs the monster has
 def monster_def_buff_effect(m_npc, atk, p_pc, h_p, wpn, h_a, m_p):
-	new_atk = max(atk - m_npc.defense, 0)
+	new_atk = max(atk - m_npc.defense, 1)
 	if m_npc.buff == None:
 		new_atk = new_atk
 	else:
@@ -75,7 +75,7 @@ def monster_passive_effect(m_npc, p_pc, h_p, m_p):
 				p_pc.skill -= 1
 				print (p_pc.name, "is distracted by", m_npc.name)
 			if passive == "Earth":
-				m_npc.defense += m_npc.skill
+				m_npc.defense += m_npc.skill//4
 				print (m_npc.name, "hardens. ")
 			if passive == "Dark":
 				m_npc.skill += 1
@@ -85,19 +85,18 @@ def monster_passive_effect(m_npc, p_pc, h_p, m_p):
 					m_npc.skill += 1
 				print (m_npc.name, "empowers its allies. ")
 			if passive == "Slime":
-				if m_npc.health > m_npc.skill:
+				if m_npc.health > m_npc.skill + m_npc.atk:
 					x = random.randint(0, len(m_p))
 					if x == 0:
-						m_npc.health = round(m_npc.health/2)
+						m_npc.health = m_npc.health//3
 						copy_mon = copy.copy(m_npc)
 						m_p.append(copy_mon)
 						print (m_npc.name, "splits! ")
 			if passive == "Skeleton":
-				p_pc.defbonus -= min(m_npc.skill, p_pc.defbonus)
-				print (p_pc.name, " feels the ", 
-				       "decaying power of ", m_npc.name)
+				p_pc.defbonus -= min(m_npc.skill//4, p_pc.defbonus)
+				print (p_pc.name+" feels the decaying power of "+m_npc.name)
 			if passive == "Beast":
-				m_npc.atk += m_npc.skill
+				m_npc.atk += m_npc.skill//2
 				print (m_npc.name, "howls.")
 			if passive == "Elemental":
 				x = random.randint(0, 3)
@@ -112,7 +111,7 @@ def monster_passive_effect(m_npc, p_pc, h_p, m_p):
 				print (m_npc.name, "pulses erratically. ")
 			if passive == "Troll":
 				if m_npc.poison == 0:
-					m_npc.health += m_npc.skill + m_npc.defense
+					m_npc.health += m_npc.skill
 					print (m_npc.name, "regenerates. ")
 			if passive == "Goblin":
 				x = random.randint(0, 2)

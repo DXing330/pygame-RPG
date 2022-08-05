@@ -69,7 +69,7 @@ def prestige_level_up(p_pc):
                         p_pc.maxhealth += C.LVL_UP_HP_HIGH
                         p_pc.defense += C.LVL_UP_DEF_HIGH
                 elif "Summoner" in p_pc.name:
-                        p_pc.maxhealth += C.LVL_UP_HP_LOW
+                        p_pc.maxhealth += C.LVL_UP_HP_MID
                         p_pc.maxmana += C.LVL_UP_MANA_MID
                 elif "Mage" in p_pc.name:
                         p_pc.maxmana += C.LVL_UP_MANA_HIGH
@@ -88,7 +88,7 @@ def prestige_level_up(p_pc):
                         p_pc.maxhealth += C.LVL_UP_HP_MID
                         p_pc.skill += C.LVL_UP_SKL_HIGH
                 elif "Tactician" in p_pc.name:
-                        p_pc.defense += C.LVL_UP_DEF_LOW
+                        p_pc.defense += C.LVL_UP_DEF_MID
                         p_pc.skill += C.LVL_UP_SKL_HIGH
                 elif "Hero" in p_pc.name:
                         p_pc.maxhealth += C.LVL_UP_HP_MID
@@ -129,7 +129,9 @@ def atk_up(p_pc):
 def def_up(p_pc):
         p_pc.defbonus += 1
 def mana_up(p_pc):
-        p_pc.mana += 1
+        p_pc.maxmana += 1
+def hp_up(p_pc):
+        p_pc.maxhealth += 1
 #function that will increase the pet's stage
 def angel_stage_up(p_npc):
         #check if the pet is at the stage limit
@@ -142,11 +144,11 @@ def angel_stage_up(p_npc):
                 elif p_npc.stage == 3:
                         p_npc.name = "Mega " + p_npc.name
                 elif p_npc.stage == 4:
-                        p_npc.name = "Archangel"
+                        p_npc.name = "Arch Angel"
                 elif p_npc.stage == 5:
                         p_npc.name = "Guardian Angel"
                 elif p_npc.stage == 6:
-                        p_npc.name = "Legendary Guardian Angel"
+                        p_npc.name = "Holy Angel"
         #if the pet is already fully evolved then nothing happens
         elif p_npc.stage == C.STAGE_LIMIT:
                 print ("Sorry, it's already too powerful.")
