@@ -76,7 +76,9 @@ def angel_random_action(ally, h_p, m_p):
 	elif z >= 6:
 		draw_func.angel_legendary_action(ally, h_p, m_p)
 		for hero in h_p:
-			if hero.name != "Totem":
+			if "Totem" in hero.name:
+				hero.maxhealth += ally.atk
+			else:
 				hero.poison -= min(ally.stage, hero.poison)
 				hero.maxhealth += round(ally.atk ** C.PET_HP_BUFF)
 				hero.atkbonus += round(ally.atk ** C.PET_ATK_BUFF)
@@ -170,3 +172,19 @@ def ally_action(h_ally, h_p, m_p):
 		angel_action(angel, h_p, m_p)
 	if comp != None:
 		companion_action(comp, h_p, m_p)
+
+def totem_turn(totem, h_p, m_p, h_ally):
+	if "Attack" in totem.name:
+		for ally in h_ally:
+			ally.atk += 1
+	if "Heal" in totem.name:
+		for hero in h_p:
+			hero.health += hero.level
+	if "Debuff" in totem.name:
+		for mon in m_p:
+			mon.atk -= min(1, mon.atk)
+			print(mon.name+" is debuffed.")
+	if "Buff" in totem.name:
+		for hero in h_p:
+			hero.skill += 1
+	

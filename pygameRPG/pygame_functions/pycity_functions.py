@@ -460,7 +460,7 @@ def practice_arena(h_p, h_b):
 			WIN.blit(price_text, ((P.WIDTH - price_text.get_width())//2, P.PADDING * 2))
 			ask_test = REG_FONT.render("TRAIN: T", 1, P.RED)
 			WIN.blit(ask_test, ((P.WIDTH - ask_test.get_width())//2, P.PADDING * 3))
-			stat_text = REG_FONT.render("LEVEL: " + str(hero.level) + " COINS: " + h_b.coins, 1, P.RED)
+			stat_text = REG_FONT.render("LEVEL: " + str(hero.level) + " COINS: " + str(h_b.coins), 1, P.RED)
 			WIN.blit(stat_text, ((P.WIDTH - stat_text.get_width())//2, P.PADDING * 4))
 			leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
 			WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 5))

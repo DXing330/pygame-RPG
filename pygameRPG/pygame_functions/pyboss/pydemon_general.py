@@ -19,6 +19,7 @@ C = Constants()
 from rpg2_boss_constants import BOSS_CONSTANTS
 B = BOSS_CONSTANTS()
 import draw_functions as draw_func
+import draw_bosses as draw_boss
 import pypick_function as pick_func
 #import draw_boss_functions as drawb_func
 import draw_effects as drawe_func
@@ -269,8 +270,6 @@ def dg_phase_one(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 				elif monster.health > 0:
 					hero = party_func.pick_random_healthy_hero(h_p)
 					monster_func.monster_attack(monster, hero, h_a, h_p, b_p)
-					if monster.name != "Bomb":
-						drawe_func.monster_attack(monster, hero)
 				elif monster.health <= 0 and monster.name != "Demon General":
 					b_p.remove(monster)
 			for hero in h_p:
@@ -493,13 +492,13 @@ def battle(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 			print ("The villagers rain praise and thanks upon them. ")
 			h_bag.coins += B.DEMON_GENERAL_DROPCHANCE
 			h_bag.dg_trophy += 1
-			h_bag.flow -= dg_trophy ** C.DECREASE_EXPONENT
+			h_bag.flow -= h_bag.dg_trophy ** C.DECREASE_EXPONENT
 			for hero in h_p:
 				hero.exp += h_bag.dg_trophy ** C.DECREASE_EXPONENT
 			for hero in h_p:
 				x, y = WIN.get_size()
 				CASTLE_IMG = pygame.transform.scale(CASTLE_RAW, (x, y))
 				WIN.blit(CASTLE_IMG, P.ORIGIN)
-				x = party_func.exp_level_up(hero)
+				x = party_func.check_exp(hero)
 				if x == 1:
 					drawe_func.hero_level_up(hero)

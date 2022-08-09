@@ -141,7 +141,7 @@ def hero_level_up(hero):
 	pygame.display.update()
 	pygame.time.delay(500)
 	
-def monster_attack(mon, hero):
+def monster_attack(mon, hero, armor):
 	draw_func.draw_monster(mon)
 	draw_func.draw_hero(hero)
 	x, y = WIN.get_size()

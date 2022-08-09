@@ -11,6 +11,7 @@ sys.path.append("../../../RPG2v3/RPG2v3_functions/RPG2v3_battle")
 import pymoneffect_function as me_func
 import pyelement_function as element_func
 import pyeqpeffect_function as ee_func
+import draw_effects as drawe_func
 
 #function which create a strong monster
 def random_elite_monster(bag):
@@ -18,9 +19,9 @@ def random_elite_monster(bag):
 	name_list = list(L.MONSTER_NAMES_LIST)
 	element = element_list[random.randint(0, len(element_list)-1)]
 	name = name_list[random.randint(0, len(name_list)-1)]
-	health = C.MONSTER_MAX_HP + random.randint(0, bag.flow)
-	atk = C.MONSTER_MAX_ATK + random.randint(0, bag.flow//2)
-	defense = C.MONSTER_MAX_DEF + random.randint(0, bag.flow ** C.DECREASE_EXPONENT)
+	health = C.MONSTER_MAX_HP + random.randint(0, bag.flow//2)
+	atk = C.MONSTER_MAX_ATK + random.randint(0, bag.flow//4)
+	defense = C.MONSTER_MAX_DEF + random.randint(0, bag.flow//8)
 	skill = C.MONSTER_MAX_SKILL
 	dropchance = C.MONSTER_MAX_DROPCHANCE * C.LEVEL_LIMIT
 	random_monster = Monster_NPC("Elite " + element + " " + name, health, atk, defense, skill, element, dropchance)
@@ -31,11 +32,11 @@ def random_scaled_monster(p_pc, bag):
 	name_list = list(L.MONSTER_NAMES_LIST)
 	element = element_list[random.randint(0, len(element_list)-1)]
 	name = name_list[random.randint(0, len(name_list)-1)]
-	health = random.randint(C.MONSTER_MIN_HP * p_pc.level//2, C.MONSTER_SCALE_HP * p_pc.level) + random.randint(0, bag.flow//2)
-	atk = random.randint(C.MONSTER_MIN_ATK * p_pc.level//2, C.MONSTER_SCALE_ATK * p_pc.level) + random.randint(0, bag.flow//4)
-	defense = random.randint(C.MONSTER_MIN_DEF * p_pc.level//2, C.MONSTER_SCALE_DEF * p_pc.level) + random.randint(0, bag.flow//8)
+	health = random.randint(C.MONSTER_MIN_HP * p_pc.level//2, C.MONSTER_SCALE_HP * p_pc.level) + random.randint(0, bag.flow//4)
+	atk = random.randint(C.MONSTER_MIN_ATK * p_pc.level//2, C.MONSTER_SCALE_ATK * p_pc.level) + random.randint(0, bag.flow//8)
+	defense = random.randint(C.MONSTER_MIN_DEF * p_pc.level//2, C.MONSTER_SCALE_DEF * p_pc.level) + random.randint(0, bag.flow//16)
 	skill = random.randint(C.MONSTER_MAX_SKILL, C.MONSTER_MAX_SKILL + p_pc.level)
-	dropchance = C.MONSTER_MAX_DROPCHANCE + random.randint(0, p_pc.level) + random.randint(0, bag.flow)
+	dropchance = C.MONSTER_MAX_DROPCHANCE + random.randint(0, p_pc.level)
 	random_monster = Monster_NPC(element + " " + name, health, atk, defense, skill, element, dropchance)
 	return random_monster
 #function where the monster performs an action
@@ -69,6 +70,7 @@ def monster_attack(m_npc, p_pc, h_a, h_p, m_p):
 			print (m_npc.name, "roars with confidence.")
 
 		else:
+			drawe_func.monster_attack(m_npc, p_pc, armor)
 			#randomly pick the monster's actions
 			x = random.randint(0, max((p_pc.level + p_pc.skill), 1))
 			if x >= m_npc.skill * C.INCREASE_EXPONENT:

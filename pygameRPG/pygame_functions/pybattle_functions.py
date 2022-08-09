@@ -39,12 +39,13 @@ def drop_step(h_p, m_p, h_bag):
 	coin = 0
 	#get gold
 	for mon in m_p:
-		h_bag.coins += mon.dropchance * 2
-		coin += mon.dropchance * 2
+		fcoin = random.randint(h_bag.flow//2, h_bag.flow)
+		h_bag.coins += (mon.dropchance + fcoin) * 2
+		coin += (mon.dropchance + fcoin) * 2
 	x, y = WIN.get_size()
 	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
 	WIN.blit(FOREST_IMG, P.ORIGIN)
-	coins_text = REG_FONT.render("You find "+str(coin)+" coins.", 1, P.WHITE)
+	coins_text = REG_FONT.render("You find "+str(coin)+" coins worth of harvestable material.", 1, P.WHITE)
 	WIN.blit(coins_text, ((x - coins_text.get_width())//2, P.PADDING))
 	pygame.display.update()
 	pygame.time.delay(500)
@@ -59,7 +60,7 @@ def drop_step(h_p, m_p, h_bag):
 		x, y = WIN.get_size()
 		FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
 		WIN.blit(FOREST_IMG, P.ORIGIN)
-		x = party_func.exp_level_up(hero)
+		x = party_func.check_exp(hero)
 		if x == 1:
 			drawe_func.hero_level_up(hero)
 	m_p.clear()
@@ -118,6 +119,10 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 	while turn:
 		pygame.event.clear()
 		clock.tick(P.SLOWFPS)
+		if "Totem" in hero.name:
+			pet_func.totem_turn(hero, h_p, m_p, h_ally)
+			turn = False
+			break
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				game = False
@@ -221,11 +226,7 @@ def battle(h_p, m_p, h_ally, h_bag,
 				new_h_p.remove(hero)
 		
 		for hero in new_h_p:
-			if "Totem" in hero.name:
-				pass
-			elif hero.status == "Stun":
-				hero.status = None
-			elif hero.health > 0:
+			if hero.health > 0:
 				hero_turn(hero, new_h_p, new_m_p, new_h_ally, h_bag,
 					  h_magic, new_h_wpn, new_h_amr)
 		for num in range(0, len(m_p)):
@@ -243,7 +244,6 @@ def battle(h_p, m_p, h_ally, h_bag,
 			elif mon.health > 0:
 				hero = party_func.pick_random_healthy_hero(new_h_p)
 				monster_func.monster_attack(mon, hero, new_h_amr, new_h_p, new_m_p)
-				drawe_func.monster_attack(mon, hero)
 		for num in range(0, len(m_p)):
 			for mon in new_m_p:
 				if mon.health <= 0:

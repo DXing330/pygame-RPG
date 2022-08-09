@@ -13,6 +13,43 @@ REG_FONT = pygame.font.SysFont("comicsans", 24)
 clock = pygame.time.Clock()
 ROAD_RAW = pygame.image.load(os.path.join("Assets", "roadside.png"))
 ROAD_IMG = pygame.transform.scale(ROAD_RAW, (P.WIDTH, P.HEIGHT))
+def explain_guild():
+	width, height = WIN.get_size()
+	ROAD_IMG = pygame.transform.scale(ROAD_RAW, (width, height))
+	WIN.blit(ROAD_IMG, (0, 0))
+	explain_text1 = REG_FONT.render("The hunter's guild?", 1, P.BLACK)
+	explain_text2 = REG_FONT.render("You must be skilled if they let you join them.", 1, P.BLACK)
+	explain_text3 = REG_FONT.render("They're a group of strong people working together to fight monsters.", 1, P.BLACK)
+	explain_text4 = REG_FONT.render("If you're a member then you should have access to their services.", 1, P.BLACK)
+	explain_text5 = REG_FONT.render("I heard that as you get higher ranks you get more services from them.", 1, P.BLACK)
+	explain_text6 = REG_FONT.render("I heard that they have some special enchantments for equipment.", 1, P.BLACK)
+	explain_text7 = REG_FONT.render("I heard they can also upgrade or even combine your equipment.", 1, P.BLACK)
+	explain_text8 = REG_FONT.render("You can also sell old equipment to them, they'll always find a use for it.", 1, P.BLACK)
+	explain_text9 = REG_FONT.render("There's a rumor that the grandmasters there can teach you new skills too.", 1, P.BLACK)
+	WIN.blit(explain_text1, ((width - explain_text1.get_width())//2, P.PADDING * 1))
+	WIN.blit(explain_text2, ((width - explain_text2.get_width())//2, P.PADDING * 2))
+	WIN.blit(explain_text3, ((width - explain_text3.get_width())//2, P.PADDING * 3))
+	WIN.blit(explain_text4, ((width - explain_text4.get_width())//2, P.PADDING * 4))
+	WIN.blit(explain_text5, ((width - explain_text5.get_width())//2, P.PADDING * 5))
+	WIN.blit(explain_text6, ((width - explain_text6.get_width())//2, P.PADDING * 6))
+	WIN.blit(explain_text7, ((width - explain_text7.get_width())//2, P.PADDING * 7))
+	WIN.blit(explain_text8, ((width - explain_text8.get_width())//2, P.PADDING * 8))
+	WIN.blit(explain_text9, ((width - explain_text9.get_width())//2, P.PADDING * 9))
+	pygame.display.update()
+	explain = True
+	while explain:
+		pygame.display.update()
+		for event in pygame.event.get():
+			if event.type == pygame.KEYDOWN:
+				explain = False
+				width, height = WIN.get_size()
+				ROAD_IMG = pygame.transform.scale(ROAD_RAW, (width, height))
+				WIN.blit(ROAD_IMG, (0, 0))
+				greeting = REG_FONT.render("What do you want to talk about?", 1, P.BLACK)
+				choice = REG_FONT.render("PURPOSE / HEROES / CITIES / WIZARDS / LEAVE.", 1, P.BLACK)
+				WIN.blit(greeting, ((width - greeting.get_width())//2, P.PADDING * 1))
+				WIN.blit(choice, ((width - choice.get_width())//2, P.PADDING * 2))
+				pygame.display.update()
 def explain_purpose():
 	width, height = WIN.get_size()
 	ROAD_IMG = pygame.transform.scale(ROAD_RAW, (width, height))
@@ -148,12 +185,15 @@ def explain_heroes():
 				WIN.blit(choice, ((width - choice.get_width())//2, P.PADDING * 2))
 				pygame.display.update()
 	
-def ask():
+def ask(access):
 	width, height = WIN.get_size()
 	ROAD_IMG = pygame.transform.scale(ROAD_RAW, (width, height))
 	WIN.blit(ROAD_IMG, (0, 0))
 	greeting = REG_FONT.render("What do you want to talk about?", 1, P.BLACK)
-	choice = REG_FONT.render("PURPOSE / HEROES / CITIES / WIZARDS / LEAVE.", 1, P.BLACK)
+	if access.rank == 0:
+		choice = REG_FONT.render("PURPOSE / HEROES / CITIES / WIZARDS / LEAVE.", 1, P.BLACK)
+	elif access.rank > 0:
+		choice = REG_FONT.render("PURPOSE / HEROES / CITIES / WIZARDS / GUILD / LEAVE.", 1, P.BLACK)
 	WIN.blit(greeting, ((width - greeting.get_width())//2, P.PADDING * 1))
 	WIN.blit(choice, ((width - choice.get_width())//2, P.PADDING * 2))
 	pygame.display.update()
@@ -178,17 +218,16 @@ def ask():
 					WIN.blit(choice, ((width - choice.get_width())//2, P.PADDING * 4))
 					pygame.display.update()
 				if event.key == pygame.K_h:
-					print ("h")
 					explain_heroes()
 				if event.key == pygame.K_c:
-					print ("c")
 					explain_cities()
 				if event.key == pygame.K_w:
-					print ("w")
 					explain_wizards()
 				if event.key == pygame.K_p:
 					explain_purpose()
-def old_warrior():
+				if event.key == pygame.K_g and access.rank > 0:
+					explain_guild()
+def old_warrior(access):
 	width, height = WIN.get_size()
 	ROAD_IMG = pygame.transform.scale(ROAD_RAW, (width, height))
 	WIN.blit(ROAD_IMG, (0, 0))
@@ -213,4 +252,4 @@ def old_warrior():
 					talk = False
 				if event.key == pygame.K_t:
 					print ("t")
-					ask()
+					ask(access)

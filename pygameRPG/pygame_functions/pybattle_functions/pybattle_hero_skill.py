@@ -85,28 +85,28 @@ def summon_totem(hero, h_p, m_p, h_ally):
 			if event.type == pygame.KEYDOWN:
 				pygame.event.clear()
 				if event.key == pygame.K_a:
-					totem = Player_PC("Totem", 1, hero.skill, hero.skill,
+					totem = Player_PC("Attack Totem", 1, hero.skill, hero.skill,
 							  hero.skill, 0, 0, 0, 0)
 					copy_totem = copy.copy(totem)
 					h_p.append(copy_totem)
 					pick = False
 					break
 				if event.key == pygame.K_b:
-					totem = Player_PC("Totem", 1, hero.skill, hero.skill,
+					totem = Player_PC("Buff Totem", 1, hero.skill, hero.skill,
 							  0, 0, hero.skill, 0, 0)
 					copy_totem = copy.copy(totem)
 					h_p.append(copy_totem)
 					pick = False
 					break
 				if event.key == pygame.K_d:
-					totem = Player_PC("Totem", 1, hero.skill, hero.skill,
+					totem = Player_PC("Debuff Totem", 1, hero.skill, hero.skill,
 							  0, 0, 0, hero.skill, 0)
 					copy_totem = copy.copy(totem)
 					h_p.append(copy_totem)
 					pick = False
 					break
 				if event.key == pygame.K_h:
-					totem = Player_PC("Totem", 1, hero.skill, hero.skill,
+					totem = Player_PC("Heal Totem", 1, hero.skill, hero.skill,
 							  0, hero.skill, 0, 0, 0)
 					copy_totem = copy.copy(totem)
 					h_p.append(copy_totem)
@@ -187,7 +187,7 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 						turn = False
 						break
 				elif event.key == pygame.K_h:
-					healee = pick_func.pick_hero(h_p)
+					healee = pick_func.pick_healee(h_p)
 					turn = False
 					if "Cleric" in hero.name:
 						healee.health += hero.mana + hero.skill + hero.level

@@ -7,6 +7,7 @@ from pygconstants import PYGConstants
 P = PYGConstants()
 from rpg2_constants import Constants
 C = Constants()
+import draw_bosses as boss_func
 REG_FONT = pygame.font.SysFont("comicsans", 20)
 WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT))
 pygame.display.set_caption("RPG")
@@ -60,6 +61,8 @@ SKELETON_RAW = pygame.image.load(os.path.join("Assets", "skeleton.png"))
 SKELETON_IMG = pygame.transform.scale(SKELETON_RAW, (P.SPRITE_WIDTH, P.SPRITE_HEIGHT))
 TROLL_RAW = pygame.image.load(os.path.join("Assets", "troll.png"))
 TROLL_IMG = pygame.transform.scale(TROLL_RAW, (P.BIG_SPRITE, P.BIG_SPRITE))
+GENERAL_RAW = pygame.image.load(os.path.join("Assets", "general.png"))
+GENERAL_IMG = pygame.transform.scale(GENERAL_RAW, (P.BIG_SPRITE * 2, P.BIG_SPRITE * 2))
 #function that will draw characters in battle
 def draw_heroes(h_p, h_ally):
 	width, height = WIN.get_size()
@@ -251,7 +254,11 @@ def draw_monsters(m_p):
 	y = 0
 	z = 1
 	for mon in m_p:
-		if "Slime" in mon.name:
+		if "Demon General" in mon.name:
+			WIN.blit(GENERAL_IMG,
+				 (P.BIG_SPRITE, height//2))
+			x -= 1
+		elif "Slime" in mon.name:
 			WIN.blit(SLIME_IMG,
 				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
 				  height - (P.BIG_SPRITE * x)))
@@ -302,7 +309,9 @@ def draw_monsters(m_p):
 def draw_monster(mon):
 	width, height = WIN.get_size()
 	x, y = WIN.get_size()
-	if "Slime" in mon.name:
+	if "Demon General" in mon.name:
+		WIN.blit(GENERAL_IMG, (x//3, y//2))
+	elif "Slime" in mon.name:
 		WIN.blit(SLIME_IMG, (x//3, y//2))
 	elif "Beast" in mon.name:
 		WIN.blit(BEAST_IMG, (x//3, y//2))
@@ -475,7 +484,7 @@ def draw_hero_list(h_p):
 	width, height = WIN.get_size()
 	x = 1
 	for hero in h_p:
-		hero_text = REG_FONT.render(str(x) + " " + hero.name, 1, P.WHITE)
+		hero_text = REG_FONT.render(str(x) + " " + hero.name, 1, P.RED)
 		WIN.blit(hero_text, ((width - hero_text.get_width())//2, P.PADDING * (x + 1)))
 		x += 1
 def draw_forge_menu():

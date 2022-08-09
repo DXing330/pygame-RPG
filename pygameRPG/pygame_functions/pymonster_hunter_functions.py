@@ -508,6 +508,28 @@ def monster_hunter_guild(h_p, h_bag, h_ally, h_wpn, h_amr, qi_npc, a_npc):
 		WIN.blit(GUILD_IMG, P.ORIGIN)
 		draw_func.draw_guild_menu(qi_npc, a_npc)
 		pygame.display.update()
+		if a_npc.rank == 0:
+			a_npc.rank = 1
+			x, y = WIN.get_size()
+			GUILD_IMG = pygame.transform.scale(GUILD_RAW, (x, y))
+			WIN.blit(GUILD_IMG, P.ORIGIN)
+			thank_text = REG_FONT.render("Welcome to our guild.", 1, P.BLACK)
+			WIN.blit(thank_text, ((x - thank_text.get_width())//2, P.PADDING * 2))
+			badge_text = REG_FONT.render("We've heard good things about you.", 1, P.BLACK)
+			WIN.blit(badge_text, ((x - badge_text.get_width())//2, P.PADDING * 3))
+			pygame.display.update()
+			pygame.time.delay(1000)
+		if a_npc.fame >= a_npc.rank ** C.INCREASE_EXPONENT:
+			a_npc.rank += 1
+			x, y = WIN.get_size()
+			GUILD_IMG = pygame.transform.scale(GUILD_RAW, (x, y))
+			WIN.blit(GUILD_IMG, P.ORIGIN)
+			thank_text = REG_FONT.render("Thank you for your hard work!", 1, P.BLACK)
+			WIN.blit(thank_text, ((x - thank_text.get_width())//2, P.PADDING * 2))
+			badge_text = REG_FONT.render("Take this new badge as proof of your continued service.", 1, P.BLACK)
+			WIN.blit(badge_text, ((x - badge_text.get_width())//2, P.PADDING * 3))
+			pygame.display.update()
+			pygame.time.delay(1000)
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				guild = False
@@ -522,7 +544,7 @@ def monster_hunter_guild(h_p, h_bag, h_ally, h_wpn, h_amr, qi_npc, a_npc):
 					qi_npc.managem += qi_npc.rpackage * round(a_npc.rank ** 0.5)
 					qi_npc.rpackage = 0
 					x, y = WIN.get_size()
-					GUILD_IMG = pygame.transform.scale(TOWER_RAW, (x, y))
+					GUILD_IMG = pygame.transform.scale(GUILD_RAW, (x, y))
 					WIN.blit(GUILD_IMG, P.ORIGIN)
 					thank_text = REG_FONT.render("Thank you for your hard work!", 1, P.BLACK)
 					WIN.blit(thank_text, ((x - thank_text.get_width())//2, P.PADDING * 2))

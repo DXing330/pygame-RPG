@@ -70,7 +70,7 @@ def drop_step(h_p, m_p, h_bag, qi_npc, a_npc):
 			pygame.display.update()
 			pygame.time.delay(1000)
 		else:
-			h_bag.coins += mon.dropchance
+			h_bag.coins += mon.dropchance + random.randint(0, h_bag.flow)
 	for mon in m_p:
 		for hero in h_p:
 			x = random.randint(0, hero.level)
@@ -80,7 +80,7 @@ def drop_step(h_p, m_p, h_bag, qi_npc, a_npc):
 		x, y = WIN.get_size()
 		FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
 		WIN.blit(FOREST_IMG, P.ORIGIN)
-		x = party_func.exp_level_up(hero)
+		x = party_func.check_exp(hero)
 		if x == 1:
 			drawe_func.hero_level_up(hero)
 	h_bag.flow += 1
@@ -263,7 +263,6 @@ def battle_phase(h_p, m_p, h_ally, h_bag,
 			elif mon.health > 0:
 				hero = party_func.pick_random_healthy_hero(new_h_p)
 				monster_func.monster_attack(mon, hero, new_h_amr, new_h_p, new_m_p)
-				drawe_func.monster_attack(mon, hero)
 		for num in range(0, len(m_p)):
 			for mon in new_m_p:
 				if mon.health <= 0:

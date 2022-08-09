@@ -56,7 +56,7 @@ def quest_five(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 		for hero in h_p:
 			mon = mon_func.elemental_maker(h_bag)
 			e_p.append(mon)
-	battle_func.battle_phase(new_h_p, e_p, p_npc, ib_pc,
+	battle_func.battle_phase(new_h_p, e_p, p_npc, h_bag,
 				 s_pc, h_w, h_a, q_i)
 	if len(new_h_p) <= 0:
 		print ("You look like a mess. ")
@@ -68,7 +68,7 @@ def quest_five(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 		a_i.fame += a_i.rank//C.INCREASE_EXPONENT
 		h_bag.coins += a_i.rank
 '''#quest four is dealing with giants
-def quest_four(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
+def quest_four(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 	print ("There are reports of some giants fighting nearby. ")
 	print ("Something like that is too dangerous to allow. ")
 	print ("Go find out why they're fighting and stop them. ")
@@ -87,7 +87,7 @@ def quest_four(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 	print ("After a lot of shouting at them, they pause to take a breather. ")
 	print ("Finally noticing your shouts, they stomp over. ")
 	print ("The hills shake with every step. ")
-	giant_func.giant_quest(new_h_p, g_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i)
+	giant_func.giant_quest(new_h_p, g_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
 	if len(new_h_p) <= 0:
 		print ("You look pretty bad. ")
 		print ("At least you survived an encounter with giants. ")
@@ -99,7 +99,7 @@ def quest_four(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 
 #quest two is advanced goblin fighting
 #fight goblins until the town is saved
-def quest_two(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
+def quest_two(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 	print ("Those goblins are trying to invade the local village. ")
 	print ("We'll need to eliminate them before they get close. ")
 	new_h_p = []
@@ -116,7 +116,7 @@ def quest_two(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 			mon = mon_func.super_goblin_maker()
 			g_p.append(mon)
 		print ("You see a band of goblins approaching. ")
-		battle_func.battle_phase(new_h_p, g_p, p_npc, ib_pc,
+		battle_func.battle_phase(new_h_p, g_p, p_npc, h_bag,
 					 s_pc, h_w, h_a, q_i)
 		for hero in new_h_p:
 			if hero.health <= 0:
@@ -134,7 +134,7 @@ def quest_two(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 		a_i.fame += round(a_i.rank ** C.DECREASE_EXPONENT)'''
 #quest one is goblin hunting
 #fight goblins until you get the package back
-def quest_one(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
+def quest_one(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 	x, y = WIN.get_size()
 	VILLAGE_IMG = pygame.transform.scale(VILLAGE_RAW, (x, y))
 	WIN.blit(VILLAGE_IMG, (0, 0))
@@ -160,7 +160,7 @@ def quest_one(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 		for z in range(0, y):
 			mon = mon_func.super_goblin_maker(h_bag)
 			g_p.append(mon)
-		battle_func.battle_phase(new_h_p, g_p, p_npc, ib_pc, s_pc,
+		battle_func.battle_phase(new_h_p, g_p, p_npc, h_bag, s_pc,
 					 h_w, h_a, q_i, a_i)
 		for hero in new_h_p:
 			if hero.health <= 0:
@@ -179,25 +179,25 @@ def quest_one(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
 
 #function that decides what quest to give to the player
 #quests can depend on their rank in the guild and fame
-def quest(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i):
+def quest(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 	#check whether the party has any packages
 	if q_i.package > 0:
 		#if so then make a quest
 		x = random.randint(0, a_i.rank)
 		if x == 0:
-			quest_one(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i)
+			quest_one(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
 		elif x == 5:
-			quest_five(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i)
+			quest_five(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
 		else:
-                        quest(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i)
+                        quest(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
 		'''elif x == 7:
-			quest_three(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i)
+			quest_three(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
 		elif x == 8:
-			quest_five(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i)
+			quest_five(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
 		elif x == 10:
-			quest_four(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i)
+			quest_four(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
 		else:
-			quest(h_p, ib_pc, s_pc, p_npc, h_w, h_a, q_i, a_i)'''
+			quest(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)'''
 		
 	else:
 		print ("You don't have an assignment. ")
