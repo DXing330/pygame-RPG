@@ -12,9 +12,7 @@ P = PYGConstants()
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 				   Spell_PC, Monster_NPC, Weapon_PC,
 				   Armor_PC, QuestItems_NPC, Access_NPC)
-import rpg2_party_management_functions as party_func
-import rpg2_hunter_function as hunt_func
-import rpg2_level_up_function as lvlup_func
+import pyparty_functions as party_func
 import draw_functions as draw_func
 import pypick_function as pick_func
 from rpg2_constants import Constants
@@ -68,7 +66,7 @@ def grandmaster(h_p, qi_npc, a_npc):
 					choice = False
 					train = True
 					hero = pick_func.pick_hero(h_p)
-					if hero.level >= C.LEVEL_LIMIT * C.INCREASE_EXPONENT:
+					if hero.level >= C.LEVEL_LIMIT * 3:
 						x, y = WIN.get_size()
 						HALL_IMG = pygame.transform.scale(HALL_RAW, (x, y))
 						WIN.blit(HALL_IMG, P.ORIGIN)
@@ -105,17 +103,17 @@ def grandmaster(h_p, qi_npc, a_npc):
 					if qi_npc.managem >= price:
 						qi_npc.managem -= price
 						if hero.level == C.LEVEL_LIMIT:
-							lvl_func.prestige_class(hero)
-							lvl_func.prestige_level_up(hero)
+							party_func.prestige_class(hero)
+							party_func.prestige_level_up(hero)
 						elif hero.level > C.LEVEL_LIMIT:
-							lvl_func.prestige_level_up(hero)
-						fail_text = REG_FONT.render("Can you feel the energy empowering you? ", 1, P.WHITE)
-						WIN.blit(fail_text, ((x - fail_text.get_width())//2, P.PADDING * 1))
+							party_func.prestige_level_up(hero)
+						succeed_text = REG_FONT.render("Can you feel the energy empowering you? ", 1, P.WHITE)
+						WIN.blit(succeed_text, ((x - succeed_text.get_width())//2, P.PADDING * 2))
 						pygame.display.update()
 						pygame.time.delay(1000)
 					else:
 						fail_text = REG_FONT.render("You'll need more mana gems for the process to work. ", 1, P.WHITE)
-						WIN.blit(fail_text, ((x - fail_text.get_width())//2, P.PADDING * 1))
+						WIN.blit(fail_text, ((x - fail_text.get_width())//2, P.PADDING * 2))
 						pygame.display.update()
 						pygame.time.delay(1000)
 					
@@ -510,6 +508,28 @@ def monster_hunter_guild(h_p, h_bag, h_ally, h_wpn, h_amr, qi_npc, a_npc):
 		WIN.blit(GUILD_IMG, P.ORIGIN)
 		draw_func.draw_guild_menu(qi_npc, a_npc)
 		pygame.display.update()
+		if a_npc.rank == 0:
+			a_npc.rank = 1
+			x, y = WIN.get_size()
+			GUILD_IMG = pygame.transform.scale(GUILD_RAW, (x, y))
+			WIN.blit(GUILD_IMG, P.ORIGIN)
+			thank_text = REG_FONT.render("Welcome to our guild.", 1, P.BLACK)
+			WIN.blit(thank_text, ((x - thank_text.get_width())//2, P.PADDING * 2))
+			badge_text = REG_FONT.render("We've heard good things about you.", 1, P.BLACK)
+			WIN.blit(badge_text, ((x - badge_text.get_width())//2, P.PADDING * 3))
+			pygame.display.update()
+			pygame.time.delay(1000)
+		if a_npc.fame >= a_npc.rank ** C.INCREASE_EXPONENT:
+			a_npc.rank += 1
+			x, y = WIN.get_size()
+			GUILD_IMG = pygame.transform.scale(GUILD_RAW, (x, y))
+			WIN.blit(GUILD_IMG, P.ORIGIN)
+			thank_text = REG_FONT.render("Thank you for your hard work!", 1, P.BLACK)
+			WIN.blit(thank_text, ((x - thank_text.get_width())//2, P.PADDING * 2))
+			badge_text = REG_FONT.render("Take this new badge as proof of your continued service.", 1, P.BLACK)
+			WIN.blit(badge_text, ((x - badge_text.get_width())//2, P.PADDING * 3))
+			pygame.display.update()
+			pygame.time.delay(1000)
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				guild = False
@@ -524,7 +544,7 @@ def monster_hunter_guild(h_p, h_bag, h_ally, h_wpn, h_amr, qi_npc, a_npc):
 					qi_npc.managem += qi_npc.rpackage * round(a_npc.rank ** 0.5)
 					qi_npc.rpackage = 0
 					x, y = WIN.get_size()
-					GUILD_IMG = pygame.transform.scale(TOWER_RAW, (x, y))
+					GUILD_IMG = pygame.transform.scale(GUILD_RAW, (x, y))
 					WIN.blit(GUILD_IMG, P.ORIGIN)
 					thank_text = REG_FONT.render("Thank you for your hard work!", 1, P.BLACK)
 					WIN.blit(thank_text, ((x - thank_text.get_width())//2, P.PADDING * 2))

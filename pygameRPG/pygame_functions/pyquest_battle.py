@@ -16,15 +16,12 @@ C = Constants()
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 				   Spell_PC, Monster_NPC, Weapon_PC,
 				   Armor_PC, QuestItems_NPC, Access_NPC)
-import rpg2_party_management_functions as party_func
-import rpg2_monster_function as monster_func
-import rpg2_player_action_function as player_act_func
+import pyparty_functions as party_func
+import pymonster_function as monster_func
 import pybattle_pet_action as pet_func
-import rpg2_element_function as element_func
-import rpg2_monster_effect_function as me_func
-import pybattle_hero_attack as hatk_func
+import pyelement_function as element_func
+import pymoneffect_function as me_func
 import pybattle_hero_skill as hskl_func
-import pybattle_hero_magic as hmagic_func
 import pypick_function as pick_func
 import draw_functions as draw_func
 import draw_effects as drawe_func
@@ -57,7 +54,7 @@ def giant_atk(m_npc, h_a, h_p, m_p):
 		hero = party_func.pick_random_healthy_hero(h_p)
 		monster_func.monster_attack(m_npc, hero, h_a, h_p, m_p)'''
 #function that controls the monster drops
-def drop_step(m_p, h_bag, qi_npc, a_npc):
+def drop_step(h_p, m_p, h_bag, qi_npc, a_npc):
 	x, y = WIN.get_size()
 	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
 	WIN.blit(FOREST_IMG, P.ORIGIN)
@@ -67,12 +64,26 @@ def drop_step(m_p, h_bag, qi_npc, a_npc):
 		z = random.randint(0, a_npc.rank * C.INCREASE_EXPONENT)
 		if z == 0:
 			qi_npc.rpackage += 1
+			WIN.blit(FOREST_IMG, P.ORIGIN)
 			package_text = REG_FONT.render(mon.name+" dropped a package!", 1, P.BLACK)
 			WIN.blit(package_text, ((x - package_text.get_width())//2, y//3))
 			pygame.display.update()
 			pygame.time.delay(1000)
 		else:
-			h_bag.coins += a_npc.rank
+			h_bag.coins += mon.dropchance + random.randint(0, h_bag.flow)
+	for mon in m_p:
+		for hero in h_p:
+			x = random.randint(0, hero.level)
+			if x <= mon.dropchance:
+				hero.exp += 1
+	for hero in h_p:
+		x, y = WIN.get_size()
+		FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
+		WIN.blit(FOREST_IMG, P.ORIGIN)
+		x = party_func.check_exp(hero)
+		if x == 1:
+			drawe_func.hero_level_up(hero)
+	h_bag.flow += 1
 #function that controls using an item in battle
 def use_item(hero, h_b, h_p, h_ally, m_p):
 	use = True
@@ -137,19 +148,21 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 				if event.key == pygame.K_a and len(m_p) == 1:
 					turn = False
 					mon = m_p[0]
-					player_act_func.player_attack(hero, mon, h_wpn,
+					hskl_func.player_attack(hero, mon, h_wpn,
 								      h_amr, h_p, m_p)
 					WIN.blit(FOREST_IMG, P.ORIGIN)
+					weapon = party_func.check_equipment(hero, h_wpn)
+					drawe_func.hero_attack(hero, weapon, mon)
 					pygame.display.update()
-					drawe_func.hero_attack(hero, mon)
 					break
 				if event.key == pygame.K_a and len(m_p) > 1:
 					turn = False
 					mon = pick_func.pick_hero(m_p)
 					pygame.event.clear()
-					player_act_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
+					hskl_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
 					WIN.blit(FOREST_IMG, P.ORIGIN)
-					drawe_func.hero_attack(hero, mon)
+					weapon = party_func.check_equipment(hero, h_wpn)
+					drawe_func.hero_attack(hero, weapon, mon)
 					pygame.display.update()
 					break
 				if event.key == pygame.K_s:
@@ -191,8 +204,8 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 
 #function that will control the battle
 def battle_phase(h_p, m_p, h_ally, h_bag,
-	   h_magic, h_wpn, h_amr,
-	   qi_npc, a_npc):
+		 h_magic, h_wpn, h_amr,
+		 qi_npc, a_npc):
 	new_h_p = []
 	new_h_ally = []
 	new_h_wpn = []
@@ -212,20 +225,21 @@ def battle_phase(h_p, m_p, h_ally, h_bag,
 	new_m_p = list(m_p)
 	clock = pygame.time.Clock()
 	battle = True
+	x, y = WIN.get_size()
+	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
+	WIN.blit(FOREST_IMG, P.ORIGIN)
+	draw_func.draw_heroes(new_h_p, new_h_ally)
+	draw_func.draw_monsters(new_m_p)
+	pygame.display.update()
 	while battle:
 		clock.tick(P.SLOWFPS)
-		WIN.fill(P.WHITE)
-		x, y = WIN.get_size()
-		FOREST_IMG = pygame.transform.scale(FOREST_RAW,
-						    (x, y))
-		WIN.blit(FOREST_IMG, P.ORIGIN)
-		draw_func.draw_heroes(new_h_p, new_h_ally)
-		draw_func.draw_monsters(new_m_p)
-		pygame.display.update()
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				battle = False
 				pygame.quit()
+		for hero in new_h_p:
+			if hero.health <= 0:
+				new_h_p.remove(hero)
 		for hero in new_h_p:
 			if "Totem" in hero.name:
 				pass
@@ -234,19 +248,21 @@ def battle_phase(h_p, m_p, h_ally, h_bag,
 			elif hero.health > 0:
 				hero_turn(hero, new_h_p, new_m_p, new_h_ally, h_bag,
 					  h_magic, new_h_wpn, new_h_amr)
-		#maybe later we can make this more animated
-		pet_func.ally_action(new_h_ally, new_h_p, new_m_p)
+		for num in range(0, len(m_p)):
+			for mon in new_m_p:
+				if mon.health <= 0:
+					new_m_p.remove(mon)
+		if len(new_m_p) > 0:
+			pet_func.ally_action(new_h_ally, new_h_p, new_m_p)
 		for mon in new_m_p:
 			x, y = WIN.get_size()
-			FOREST_IMG = pygame.transform.scale(FOREST_RAW,
-							    (x, y))
+			FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
 			WIN.blit(FOREST_IMG, P.ORIGIN)
 			if mon.status == "Stun":
 				mon.status = None
 			elif mon.health > 0:
 				hero = party_func.pick_random_healthy_hero(new_h_p)
 				monster_func.monster_attack(mon, hero, new_h_amr, new_h_p, new_m_p)
-				drawe_func.monster_attack(mon, hero)
 		for num in range(0, len(m_p)):
 			for mon in new_m_p:
 				if mon.health <= 0:
@@ -285,7 +301,7 @@ def battle_phase(h_p, m_p, h_ally, h_bag,
 			if hero.health == 0:
 				h_p.remove(hero)
 		if len(new_h_p) > 0:
-			drop_step(m_p, h_bag, qi_npc, a_npc)
+			drop_step(h_p, m_p, h_bag, qi_npc, a_npc)
 		while len(m_p) > 0:
 			m_p.clear()
 	if not battle and len(new_h_p) == 0:

@@ -14,18 +14,33 @@ from pygconstants import PYGConstants
 P = PYGConstants()
 from rpg2_constants import Constants
 C = Constants()
-import rpg2_party_management_functions as party_func
-import rpg2_player_action_function as player_act_func
+import pyparty_functions as party_func
 import pybattle_pet_action as pet_func
 import pypick_function as pick_func
 import pybattle_functions as pybattle_func
 import draw_functions as draw_func
+import pyelement_function as element_func
+import pyeqpeffect_function as ee_func
+import pymoneffect_function as me_func
 WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT))
 pygame.display.set_caption("RPG")
 REG_FONT = pygame.font.SysFont("comicsans", 20)
 clock = pygame.time.Clock()
 FOREST_RAW = pygame.image.load(os.path.join("Assets", "forest.png"))
 FOREST_IMG = pygame.transform.scale(FOREST_RAW, (P.WIDTH, P.HEIGHT))
+#function that observes the enemies
+def observe(m_p, h_p, h_ally, h_wpn, h_amr):
+	WIN.fill(P.WHITE)
+	observe = True
+	while observe:
+		draw_func.draw_monster_stats(m_p)
+		draw_func.draw_all_stats(h_p, h_ally, h_wpn, h_amr)
+		pygame.display.update()
+		for event in pygame.event.get():
+			if event.type == pygame.KEYDOWN:
+				pygame.event.clear()
+				observe = False
+		
 #function that makes a bomb
 def make_bomb(hero, h_p, m_p, h_ally):
 	x, y = WIN.get_size()
@@ -70,28 +85,28 @@ def summon_totem(hero, h_p, m_p, h_ally):
 			if event.type == pygame.KEYDOWN:
 				pygame.event.clear()
 				if event.key == pygame.K_a:
-					totem = Player_PC("Totem", 1, hero.skill, hero.skill,
+					totem = Player_PC("Attack Totem", 1, hero.skill, hero.skill,
 							  hero.skill, 0, 0, 0, 0)
 					copy_totem = copy.copy(totem)
 					h_p.append(copy_totem)
 					pick = False
 					break
 				if event.key == pygame.K_b:
-					totem = Player_PC("Totem", 1, hero.skill, hero.skill,
+					totem = Player_PC("Buff Totem", 1, hero.skill, hero.skill,
 							  0, 0, hero.skill, 0, 0)
 					copy_totem = copy.copy(totem)
 					h_p.append(copy_totem)
 					pick = False
 					break
 				if event.key == pygame.K_d:
-					totem = Player_PC("Totem", 1, hero.skill, hero.skill,
+					totem = Player_PC("Debuff Totem", 1, hero.skill, hero.skill,
 							  0, 0, 0, hero.skill, 0)
 					copy_totem = copy.copy(totem)
 					h_p.append(copy_totem)
 					pick = False
 					break
 				if event.key == pygame.K_h:
-					totem = Player_PC("Totem", 1, hero.skill, hero.skill,
+					totem = Player_PC("Heal Totem", 1, hero.skill, hero.skill,
 							  0, hero.skill, 0, 0, 0)
 					copy_totem = copy.copy(totem)
 					h_p.append(copy_totem)
@@ -119,11 +134,7 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 			if event.type == pygame.KEYDOWN:
 				pygame.event.clear()
 				if event.key == pygame.K_o:
-					WIN.fill(P.WHITE)
-					draw_func.draw_monster_stats(m_p)
-					draw_func.draw_all_stats(h_p, h_ally, h_wpn, h_amr)
-					pygame.display.update()
-					pygame.time.delay(P.TIMEDELAY)
+					observe(m_p, h_p, h_ally, h_wpn, h_amr)
 					if "Ninja" in hero.name:
 						hero.skill += hero.level
 					if "Tactician" in hero.name:
@@ -136,6 +147,7 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 							if "Spirit" in ally.name:
 								ally.atk += hero.level
 					turn = False
+					break
 				elif event.key == pygame.K_c:
 					if "Summoner" in hero.name:
 						ally = None
@@ -175,7 +187,7 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 						turn = False
 						break
 				elif event.key == pygame.K_h:
-					healee = pick_func.pick_hero(h_p)
+					healee = pick_func.pick_healee(h_p)
 					turn = False
 					if "Cleric" in hero.name:
 						healee.health += hero.mana + hero.skill + hero.level
@@ -206,7 +218,7 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 						mon.atk -= min(round(mon.poison ** C.DECREASE_EXPONENT), mon.atk)
 						mon.defense -= min(round(mon.poison ** C.DECREASE_EXPONENT), mon.defense)
 					else:
-						mon.atk -= hero.level
+						mon.atk -= min(hero.level, mon.atk)
 				elif event.key == pygame.K_b:
 					armor = party_func.check_equipment(hero, h_amr)
 					weapon = party_func.check_equipment(hero, h_wpn)
@@ -246,12 +258,47 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 				elif event.key == pygame.K_s and "Ninja" in hero.name:
 					weapon = party_func.check_equipment(hero, h_wpn)
 					mon = pick_func.pick_hero(m_p)
-					mon.health -= hero.skill * weapon.atk
-					hero.skill = 0
-					weapon.atk = 0
+					if weapon != None:
+						mon.health -= hero.skill * weapon.atk
+						hero.skill = 0
+						weapon.atk = 0
 					turn = False
 				elif event.key == pygame.K_e and "Hunter" in hero.name:
 					pygame.event.clear()
 					make_bomb(hero, h_p, m_p, h_ally)
 					turn = False
 					break
+
+#function that controls attacking
+def player_attack(hero, m_npc, h_wpn, h_amr, h_p, m_p):
+	weapon = party_func.check_equipment(hero, h_wpn)
+	new_pa = ee_func.weapon_effect(m_npc, hero, weapon, h_p, m_p)
+	new_atk = element_func.check_element_player_attack(hero, new_pa, m_npc, weapon)
+	f_atk = me_func.monster_def_buff_effect(m_npc, new_atk, hero, h_p, weapon, h_amr, m_p)
+	if "Warrior" in hero.name and hero.level >= C.LEVEL_LIMIT:
+		m_npc.health -= f_atk
+		new_pa = ee_func.weapon_effect(m_npc, hero, weapon, h_p, m_p)
+		new_atk = element_func.check_element_player_attack(hero, new_pa, m_npc, weapon)
+		f_atk = me_func.monster_def_buff_effect(m_npc, new_atk, hero, h_p, weapon, h_amr, m_p)
+		m_npc.health -= f_atk
+		new_pa = ee_func.weapon_effect(m_npc, hero, weapon, h_p, m_p)
+		new_atk = element_func.check_element_player_attack(hero, new_pa, m_npc, weapon)
+		f_atk = me_func.monster_def_buff_effect(m_npc, new_atk, hero, h_p, weapon, h_amr, m_p)
+		m_npc.health -= f_atk
+	elif "Warrior" in hero.name or "Hero" in hero.name:
+		m_npc.health -= f_atk
+		new_pa = ee_func.weapon_effect(m_npc, hero, weapon, h_p, m_p)
+		new_atk = element_func.check_element_player_attack(hero, new_pa, m_npc, weapon)
+		f_atk = me_func.monster_def_buff_effect(m_npc, new_atk, hero, h_p, weapon, h_amr, m_p)
+		m_npc.health -= f_atk
+	elif "Defender" in hero.name:
+		m_npc.health -= f_atk
+		hero.name = "Knight"
+		if weapon != None:
+			if weapon.effect == "Shield":
+				hero.name = "Defender"
+		for amr in h_amr:
+			if amr.user == "Defender":
+				amr.user = hero.name
+	else:
+		m_npc.health -= f_atk

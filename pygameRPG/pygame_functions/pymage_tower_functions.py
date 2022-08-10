@@ -11,11 +11,7 @@ P = PYGConstants()
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 				   Spell_PC, Monster_NPC, Weapon_PC,
 				   Armor_PC, QuestItems_NPC, Access_NPC)
-import rpg2_party_management_functions as party_func
-import rpg2_monster_function as monster_func
-import rpg2_level_up_function as lvlup_func
-import rpg2_player_action_function as player_act_func
-import rpg2_pet_action_function as pet_func
+import pyparty_functions as party_func
 import draw_functions as draw_func
 from rpg2_constants import Constants
 C = Constants()
@@ -702,7 +698,7 @@ def summoner(h_p, h_ally, h_b):
 						elif angel.stage < C.STAGE_LIMIT:
 							if h_b.coins >= angel.atk**angel.stage:
 								h_b.coins -= angel.atk**angel.stage
-								lvlup_func.angel_stage_up(angel)
+								party_func.angel_stage_up(angel)
 							else:
 								WIN.fill(P.WHITE)
 								WIN.blit(PORTAL_IMG, P.ORIGIN)
@@ -711,7 +707,7 @@ def summoner(h_p, h_ally, h_b):
 						elif angel.stage >= C.STAGE_LIMIT:
 							if h_b.coins >= (angel.atk * angel.stage) ** C.INCREASE_EXPONENT:
 								h_b.coins -= (angel.atk * angel.stage) ** C.INCREASE_EXPONENT
-								lvlup_func.pet_atk_up(angel)
+								party_func.pet_atk_up(angel)
 							else:
 								WIN.fill(P.WHITE)
 								WIN.blit(PORTAL_IMG, P.ORIGIN)

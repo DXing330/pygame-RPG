@@ -4,18 +4,13 @@ import sys
 import copy
 import random
 sys.path.append(".")
-sys.path.append("../../RPG2v3/RPG2v3_functions/RPG2v3_battle")
 sys.path.append("../../RPG2v3/RPG2v3_functions/RPG2v3_def")
 from pygconstants import PYGConstants
 P = PYGConstants()
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 				   Spell_PC, Monster_NPC, Weapon_PC,
 				   Armor_PC, QuestItems_NPC, Access_NPC)
-import rpg2_party_management_functions as party_func
-import rpg2_monster_function as monster_func
-import rpg2_level_up_function as lvlup_func
-import rpg2_player_action_function as player_act_func
-import rpg2_pet_action_function as pet_func
+import pyparty_functions as party_func
 import draw_functions as draw_func
 from rpg2_constants import Constants
 C = Constants()
@@ -72,12 +67,18 @@ def forge(h_b, h_w, h_a):
 						h_b.coins -= C.WEAPON_PRICE
 						new = Weapon_PC("Weapon", "None", "Attack", 1, "None", 1)
 						h_w.append(new)
+						WIN.fill(P.WHITE)
+						WIN.blit(FORGE_IMG, P.ORIGIN)
+						buy_text = REG_FONT.render("Take good care of it.", 1, P.WHITE)
+						WIN.blit(buy_text, ((x - buy_text.get_width())//2, P.PADDING))
+						pygame.display.update()
+						pygame.time.delay(P.SMALLDELAY)
 					else:
 						WIN.fill(P.WHITE)
 						WIN.blit(FORGE_IMG, P.ORIGIN)
 						poor_text = REG_FONT.render("You can't afford that right now. ",
 									    1, P.RED)
-						WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
+						WIN.blit(poor_text, ((x - poor_text.get_width())//2, P.PADDING))
 						pygame.display.update()
 						pygame.time.delay(P.SMALLDELAY)
 				if event.key == pygame.K_a:
@@ -85,12 +86,18 @@ def forge(h_b, h_w, h_a):
 						h_b.coins -= C.ARMOR_PRICE
 						new = Armor_PC("Armor", "None", "Block", 1, "None", 1)
 						h_a.append(new)
+						WIN.fill(P.WHITE)
+						WIN.blit(FORGE_IMG, P.ORIGIN)
+						buy_text = REG_FONT.render("Take good care of it.", 1, P.WHITE)
+						WIN.blit(buy_text, ((x - buy_text.get_width())//2, P.PADDING))
+						pygame.display.update()
+						pygame.time.delay(P.SMALLDELAY)
 					else:
 						WIN.fill(P.WHITE)
 						WIN.blit(FORGE_IMG, P.ORIGIN)
 						poor_text = REG_FONT.render("You can't afford that right now. ",
 									    1, P.RED)
-						WIN.blit(poor_text, ((P.WIDTH - poor_text.get_width())//2, P.PADDING))
+						WIN.blit(poor_text, ((x - poor_text.get_width())//2, P.PADDING))
 						pygame.display.update()
 						pygame.time.delay(P.SMALLDELAY)
 				#when this happens, first pick the weapon
@@ -453,7 +460,7 @@ def practice_arena(h_p, h_b):
 			WIN.blit(price_text, ((P.WIDTH - price_text.get_width())//2, P.PADDING * 2))
 			ask_test = REG_FONT.render("TRAIN: T", 1, P.RED)
 			WIN.blit(ask_test, ((P.WIDTH - ask_test.get_width())//2, P.PADDING * 3))
-			stat_text = REG_FONT.render("LEVEL: " + str(hero.level) + " COINS: " + h_b.coins, 1, P.RED)
+			stat_text = REG_FONT.render("LEVEL: " + str(hero.level) + " COINS: " + str(h_b.coins), 1, P.RED)
 			WIN.blit(stat_text, ((P.WIDTH - stat_text.get_width())//2, P.PADDING * 4))
 			leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
 			WIN.blit(leave_text, ((P.WIDTH - leave_text.get_width())//2, P.PADDING * 5))
@@ -465,7 +472,7 @@ def practice_arena(h_p, h_b):
 					if event.key == pygame.K_t:
 						if h_b.coins >= (C.LEVEL_PRICE*(hero.level**C.INCREASE_EXPONENT)):
 							h_b.coins -= (C.LEVEL_PRICE*(hero.level**C.INCREASE_EXPONENT))
-							lvlup_func.level_up(hero)
+							party_func.exp_level_up(hero)
 						else:
 							WIN.fill(P.WHITE)
 							WIN.blit(ARENA_IMG, P.ORIGIN)
