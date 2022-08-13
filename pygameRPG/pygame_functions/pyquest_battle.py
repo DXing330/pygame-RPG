@@ -185,16 +185,17 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 								new_spell_power = element_func.check_element_spell(spell, monster)
 								spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
 								monster.health -= spell_atk
-							spell_text = REG_FONT.render(hero.name + " casts " + spell.name, 1, P.RED)
+							drawe_func.magic_attack(hero, spell, m_p)
 						elif spell.targets == 1:
 							mon = pick_func.pick_hero(m_p)
+							new_m_p = []
+							copy = copy.copy(mon)
+							new_m_p.append(copy)
 							new_spell_power = element_func.check_element_spell(spell, monster)
 							spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
 							monster.health -= spell_atk
-							spell_text = REG_FONT.render(hero.name + " casts " + spell.name + " on " + mon.name, 1, P.RED)
-						WIN.blit(spell_text, ((x - spell_text.get_width())//2, y//3))
+							drawe_func.magic_attack(hero, spell, new_m_p)
 						pygame.display.update()
-						pygame.time.delay(P.SMALLDELAY)
 						break
 				if event.key == pygame.K_i:
 					turn = False

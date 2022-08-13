@@ -63,6 +63,9 @@ TROLL_RAW = pygame.image.load(os.path.join("Assets", "troll.png"))
 TROLL_IMG = pygame.transform.scale(TROLL_RAW, (P.BIG_SPRITE, P.BIG_SPRITE))
 GENERAL_RAW = pygame.image.load(os.path.join("Assets", "general.png"))
 GENERAL_IMG = pygame.transform.scale(GENERAL_RAW, (P.BIG_SPRITE * 2, P.BIG_SPRITE * 2))
+HYDRA_RAW = pygame.image.load(os.path.join("Assets", "vena.png"))
+MAIN_HYDRA = pygame.transform.scale(HYDRA_RAW, (P.BIG_SPRITE, P.BIG_SPRITE * 3))
+HYDRA_HEAD = pygame.transform.scale(HYDRA_RAW, (P.BIG_SPRITE//2, P.BIG_SPRITE))
 #function that will draw characters in battle
 def draw_heroes(h_p, h_ally):
 	width, height = WIN.get_size()
@@ -258,6 +261,14 @@ def draw_monsters(m_p):
 			WIN.blit(GENERAL_IMG,
 				 (P.BIG_SPRITE, height//2))
 			x -= 1
+		elif "Acid Hydra" in mon.name:
+			x -= 1
+			WIN.blit(MAIN_HYDRA,
+				 (P.BIG_SPRITE, height//2))
+		elif "Hydra Head" in mon.name:
+			WIN.blit(HYDRA_HEAD,
+				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
+				  height - (P.BIG_SPRITE * x)))
 		elif "Slime" in mon.name:
 			WIN.blit(SLIME_IMG,
 				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
@@ -311,6 +322,11 @@ def draw_monster(mon):
 	x, y = WIN.get_size()
 	if "Demon General" in mon.name:
 		WIN.blit(GENERAL_IMG, (x//3, y//2))
+	elif "Hydra" in mon.name:
+		if "Acid" in mon.name:
+			WIN.blit(MAIN_HYDRA, (x//3, y//2))
+		elif "Head" in mon.name:
+			WIN.blit(HYDRA_HEAD, (x//3, y//2))
 	elif "Slime" in mon.name:
 		WIN.blit(SLIME_IMG, (x//3, y//2))
 	elif "Beast" in mon.name:
@@ -319,7 +335,7 @@ def draw_monster(mon):
 		WIN.blit(BOMB_IMG, (x//3, y//2))
 	elif "Elemental" in mon.name:
 		WIN.blit(ELEMENTAL_IMG, (x//3, y//2))
-	elif "Golbin" in mon.name:
+	elif "Goblin" in mon.name:
 		WIN.blit(GOBLIN_IMG, (x//3, y//2))
 	elif "Demon" in mon.name:
 		WIN.blit(DEMON_IMG, (x//3, y//2))
@@ -334,13 +350,18 @@ def draw_monster2(mon):
 	x, y = WIN.get_size()
 	if "Slime" in mon.name:
 		WIN.blit(SLIME_IMG, (x//2, y//2))
+	elif "Hydra" in mon.name:
+		if "Acid" in mon.name:
+			WIN.blit(MAIN_HYDRA, (x//2, y//2))
+		elif "Head" in mon.name:
+			WIN.blit(HYDRA_HEAD, (x//2, y//2))
 	elif "Beast" in mon.name:
 		WIN.blit(BEAST_IMG, (x//2, y//2))
 	elif "Bomb" in mon.name:
 		WIN.blit(BOMB_IMG, (x//2, y//2))
 	elif "Elemental" in mon.name:
 		WIN.blit(ELEMENTAL_IMG, (x//2, y//2))
-	elif "Golbin" in mon.name:
+	elif "Goblin" in mon.name:
 		WIN.blit(GOBLIN_IMG, (x//2, y//2))
 	elif "Demon" in mon.name:
 		WIN.blit(DEMON_IMG, (x//2, y//2))

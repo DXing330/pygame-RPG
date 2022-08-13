@@ -302,3 +302,22 @@ def player_attack(hero, m_npc, h_wpn, h_amr, h_p, m_p):
 				amr.user = hero.name
 	else:
 		m_npc.health -= f_atk
+
+#using magic
+def magical_attack(spell, hero, m_p):
+	hero.mana -= spell.cost
+	if spell.targets > 1:
+		for monster in m_p:
+			new_spell_power = element_func.check_element_spell(spell, monster)
+			spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
+			monster.health -= spell_atk
+		drawe_func.magic_attack(hero, spell, m_p)
+	elif spell.targets == 1:
+		mon = pick_func.pick_hero(m_p)
+		new_spell_power = element_func.check_element_spell(spell, monster)
+		spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
+		monster.health -= spell_atk
+		new_m_p = []
+		copy = copy.copy(mon)
+		new_m_p.append(copy)
+		drawe_func.magic_attack(hero, spell, new_m_p)

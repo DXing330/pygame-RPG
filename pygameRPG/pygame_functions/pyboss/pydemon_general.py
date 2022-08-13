@@ -26,6 +26,7 @@ import draw_effects as drawe_func
 import pymonster_function as monster_func
 import pybattle_pet_action as pet_func
 import pyelement_function as element_func
+import pyeqpeffect_function as ee_func
 import pymoneffect_function as me_func
 import pybattle_hero_skill as hskl_func
 #always define the window you're drawing on
@@ -139,16 +140,17 @@ def hero_turn(hero, h_p, m_p, h_s, h_bag, h_magic, h_wpn, h_amr):
 								new_spell_power = element_func.check_element_spell(spell, monster)
 								spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
 								monster.health -= spell_atk
-							spell_text = REG_FONT.render(hero.name + " casts " + spell.name, 1, P.RED)
+							drawe_func.magic_attack(hero, spell, m_p)
 						elif spell.targets == 1:
 							mon = pick_func.pick_hero(m_p)
+							new_m_p = []
+							copy = copy.copy(mon)
+							new_m_p.append(copy)
 							new_spell_power = element_func.check_element_spell(spell, monster)
 							spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
 							monster.health -= spell_atk
-							spell_text = REG_FONT.render(hero.name + " casts " + spell.name + " on " + mon.name, 1, P.RED)
-						WIN.blit(spell_text, ((x - spell_text.get_width())//2, y//3))
+							drawe_func.magic_attack(hero, spell, new_m_p)
 						pygame.display.update()
-						pygame.time.delay(P.SMALLDELAY)
 						break
 				if event.key == pygame.K_i:
 					turn = False
@@ -302,7 +304,7 @@ def dg_phase_two_action(m_npc, h_p, b_p, h_bag, h_a):
 		WIN.blit(CASTLE_IMG, P.ORIGIN)
 		drawe_func.monster_attack(m_npc, hero)
 	elif (B.DEMON_GENERAL_HEALTH * (C.BUFF ** h_bag.dg_trophy)) * 0.2 < m_npc.health <= (B.DEMON_GENERAL_HEALTH * (C.BUFF ** h_bag.dg_trophy)) * 0.4:
-		talk_text = REG_FONT.render("Persistent insects! ", 1, P.WHITE)
+		talk_text = REG_FONT.render("Persistent insects!", 1, P.WHITE)
 		WIN.blit(talk_text, ((x - talk_text.get_width())//2, P.PADDING * 2))
 		pygame.display.update()
 		pygame.time.delay(500)
@@ -313,8 +315,10 @@ def dg_phase_two_action(m_npc, h_p, b_p, h_bag, h_a):
 		drawe_func.monster_attack(m_npc, hero)
 	elif 0 < m_npc.health <= (B.DEMON_GENERAL_HEALTH * (C.BUFF ** h_bag.dg_trophy)) * 0.2:
 		if m_npc.health > 1:
-			print("Wretched fools, you've pushed me to my limits! ")
-			print("I'll show you my final attack! ")
+			talk_text = REG_FONT.render("Fools, you've pushed me too far!", 1, P.WHITE)
+			WIN.blit(talk_text, ((x - talk_text.get_width())//2, P.PADDING * 2))
+			pygame.display.update()
+			pygame.time.delay(500)
 			m_npc.atk += m_npc.health
 			m_npc.health = 1
 		for x in range(0, len(h_p)):
@@ -322,9 +326,11 @@ def dg_phase_two_action(m_npc, h_p, b_p, h_bag, h_a):
 			hero.health -= m_npc.atk
 			WIN.blit(CASTLE_IMG, P.ORIGIN)
 			drawe_func.monster_attack(m_npc, hero)
-			print(m_npc.name, "attacks with the last of his energy! ")
 	elif m_npc.health <= 0:
-		print(m_npc.name, "coughs up blood and falls to the ground.")
+		talk_text = REG_FONT.render("The general coughs up blood and collapses.", 1, P.WHITE)
+		WIN.blit(talk_text, ((x - talk_text.get_width())//2, P.PADDING * 2))
+		pygame.display.update()
+		pygame.time.delay(500)
 
 
 #this will be phase two
@@ -492,9 +498,9 @@ def battle(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 			print ("The villagers rain praise and thanks upon them. ")
 			h_bag.coins += B.DEMON_GENERAL_DROPCHANCE
 			h_bag.dg_trophy += 1
-			h_bag.flow -= h_bag.dg_trophy ** C.DECREASE_EXPONENT
+			h_bag.flow -= round(h_bag.dg_trophy ** C.DECREASE_EXPONENT)
 			for hero in h_p:
-				hero.exp += h_bag.dg_trophy ** C.DECREASE_EXPONENT
+				hero.exp += round(h_bag.dg_trophy ** C.DECREASE_EXPONENT)
 			for hero in h_p:
 				x, y = WIN.get_size()
 				CASTLE_IMG = pygame.transform.scale(CASTLE_RAW, (x, y))
