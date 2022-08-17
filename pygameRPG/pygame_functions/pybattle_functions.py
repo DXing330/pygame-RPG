@@ -53,7 +53,7 @@ def drop_step(h_p, m_p, h_bag):
 	#get exp
 	for hero in h_p:
 		for mon in m_p:
-			x = random.randint(0, hero.level)
+			x = random.randint(0, hero.exp)
 			if x <= mon.dropchance:
 				hero.exp += 1
 	for hero in h_p:
@@ -160,26 +160,7 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 					if hero.mana > 0:
 						turn = False
 						spell = pick_func.pick_hero(h_magic)
-						WIN.blit(FOREST_IMG, P.ORIGIN)
-						draw_func.draw_heroes(h_p, h_ally)
-						draw_func.draw_monsters(m_p)
-						pygame.display.update()
-						hero.mana -= spell.cost
-						if spell.targets > 1:
-							for monster in m_p:
-								new_spell_power = element_func.check_element_spell(spell, monster)
-								spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
-								monster.health -= spell_atk
-							drawe_func.magic_attack(hero, spell, m_p)
-						elif spell.targets == 1:
-							mon = pick_func.pick_hero(m_p)
-							new_m_p = []
-							copy = copy.copy(mon)
-							new_m_p.append(copy)
-							new_spell_power = element_func.check_element_spell(spell, monster)
-							spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
-							monster.health -= spell_atk
-							drawe_func.magic_attack(hero, spell, new_m_p)
+						hskl_func.magical_attack(spell, hero, m_p)
 						pygame.display.update()
 						break
 				if event.key == pygame.K_i:

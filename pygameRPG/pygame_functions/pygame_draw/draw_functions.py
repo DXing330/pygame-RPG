@@ -563,22 +563,38 @@ def draw_recruit_menu(h_p):
 	knight = None
 	summoner = None
 	tactician = None
+	mage = None
+	warrior = None
+	cleric = None
+	ninja = None
 	#check for duplicates
 	for hero in h_p:
 		if "Knight" in hero.name:
 			knight = hero
-		if "Summoner" in hero.name:
+		elif "Summoner" in hero.name:
 			summoner = hero
-		if "Tactician" in hero.name:
+		elif "Tactician" in hero.name:
 			tactician = hero
-	warrior_text = REG_FONT.render("WARRIOR: W", 1, P.RED)
-	WIN.blit(warrior_text, ((width - warrior_text.get_width())//2, P.PADDING))
-	cleric_text = REG_FONT.render("CLERIC: C", 1, P.GREEN)
-	WIN.blit(cleric_text, ((width - cleric_text.get_width())//2, P.PADDING * 2))
-	mage_text = REG_FONT.render("MAGE: M", 1, P.RED)
-	WIN.blit(mage_text, ((width - mage_text.get_width())//2, P.PADDING * 3))
-	ninja_text = REG_FONT.render("NINJA: N", 1, P.RED)
-	WIN.blit(ninja_text, ((width - ninja_text.get_width())//2, P.PADDING * 5))
+		elif "Mage" in hero.name:
+			mage = hero
+		elif "Ninja" in hero.name:
+			ninja = hero
+		elif "Warrior" in hero.name:
+			warrior = hero
+		elif "Cleric" in hero.name:
+			cleric = hero
+	if warrior == None:
+		warrior_text = REG_FONT.render("WARRIOR: W", 1, P.RED)
+		WIN.blit(warrior_text, ((width - warrior_text.get_width())//2, P.PADDING))
+	if cleric == None:
+		cleric_text = REG_FONT.render("CLERIC: C", 1, P.GREEN)
+		WIN.blit(cleric_text, ((width - cleric_text.get_width())//2, P.PADDING * 2))
+	if mage == None:
+		mage_text = REG_FONT.render("MAGE: M", 1, P.RED)
+		WIN.blit(mage_text, ((width - mage_text.get_width())//2, P.PADDING * 3))
+	if ninja == None:
+		ninja_text = REG_FONT.render("NINJA: N", 1, P.RED)
+		WIN.blit(ninja_text, ((width - ninja_text.get_width())//2, P.PADDING * 5))
 	leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
 	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 8))
 	if knight == None:

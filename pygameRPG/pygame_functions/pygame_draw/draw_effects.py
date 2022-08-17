@@ -137,19 +137,24 @@ def hero_attack(hero, weapon, mon):
 
 #function that draws a spell
 def magic_attack(hero, spell, m_p):
-	x, y = WIN.get_size()
-	draw_func.draw_monsters(m_p)
-	draw_func.draw_hero(hero)
-	attack_text = REG_FONT.render(hero.name+" casts "+spell.name, 1, P.RED)
-	WIN.blit(attack_text, ((x - attack_text.get_width())//2, P.PADDING * 2))
-	pygame.display.update()
-	pygame.time.delay(200)
 	if spell.element == "Water":
-		drawa_func.hero_wave_attack(hero, m_p)
+		drawa_func.hero_wave_attack(hero, m_p, spell)
 		pygame.display.update()
 	elif spell.element == "Fire":
-                drawa_func.hero_fire_attack(hero, m_p)
-                pygame.display.update()
+		drawa_func.hero_fire_attack(hero, m_p, spell)
+		pygame.display.update()
+	elif spell.element == "Earth":
+		drawa_func.hero_earth_attack(hero, m_p, spell)
+		pygame.display.update()
+	elif spell.element == "Air":
+		drawa_func.hero_air_attack(hero, m_p, spell)
+		pygame.display.update()
+	'''elif spell.element == "Dark":
+		drawa_func.hero_dark_attack(hero, m_p, spell)
+		pygame.display.update()
+	elif spell.element == "Light":
+		drawa_func.hero_light_attack(hero, m_p, spell)
+		pygame.display.update()'''
 def hero_level_up(hero):
 	x, y = WIN.get_size()
 	draw_func.draw_hero(hero)

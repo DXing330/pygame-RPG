@@ -678,14 +678,26 @@ def recruit(h_p):
 		knght = None
 		smner = None
 		tact = None
+		clrc = None
+		warr = None
+		nnja = None
+		mge = None
 		#check for duplicates
 		for hero in h_p:
 			if "Knight" in hero.name:
 				knght = hero
-			if "Summoner" in hero.name:
+			elif "Summoner" in hero.name:
 				smner = hero
-			if "Tactician" in hero.name:
+			elif "Tactician" in hero.name:
 				tact = hero
+			elif "Mage" in hero.name:
+				mge = hero
+			elif "Warrior" in hero.name:
+				warr = hero
+			elif "Ninja" in hero.name:
+				nnja = hero
+			elif "Cleric" in hero.name:
+				clrc = hero
 		if len(h_p) >= C.PARTY_LIMIT:
 			recruit = False
 		for event in pygame.event.get():
@@ -702,16 +714,16 @@ def recruit(h_p):
 				if event.key == pygame.K_t and tact == None:
 					new_hero = copy.copy(tactician)
 					party_func.add_to_party(h_p, new_hero)
-				if event.key == pygame.K_w:
+				if event.key == pygame.K_w and warr == None:
 					new_hero = copy.copy(warrior)
 					party_func.add_to_party(h_p, new_hero)
-				if event.key == pygame.K_c:
+				if event.key == pygame.K_c and clrc == None:
 					new_hero = copy.copy(cleric)
 					party_func.add_to_party(h_p, new_hero)
-				if event.key == pygame.K_m:
+				if event.key == pygame.K_m and mge == None:
 					new_hero = copy.copy(mage)
 					party_func.add_to_party(h_p, new_hero)
-				if event.key == pygame.K_n:
+				if event.key == pygame.K_n and nnja == None:
 					new_hero = copy.copy(ninja)
 					party_func.add_to_party(h_p, new_hero)
 				

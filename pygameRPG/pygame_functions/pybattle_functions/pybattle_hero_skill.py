@@ -19,6 +19,8 @@ import pybattle_pet_action as pet_func
 import pypick_function as pick_func
 import pybattle_functions as pybattle_func
 import draw_functions as draw_func
+import draw_animation as drawa_func
+import draw_effects as drawe_func
 import pyelement_function as element_func
 import pyeqpeffect_function as ee_func
 import pymoneffect_function as me_func

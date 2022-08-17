@@ -14,6 +14,7 @@ from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 				   Armor_PC, QuestItems_NPC, Access_NPC)
 import draw_functions as draw_func
 import pypick_function as pick_func
+import pyparty_functions as party_func
 from rpg2_constants import Constants
 from rpg2_constant_lists import List_Constants
 from rpg2_constant_quests import Q_Constants
@@ -38,11 +39,11 @@ VILLAGE_RAW = pygame.image.load(os.path.join("Assets", "village.png"))
 VILLAGE_IMG = pygame.transform.scale(VILLAGE_RAW, (P.WIDTH, P.HEIGHT))
 #quest five is dealing with elementals
 def quest_five(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
-	x, y = WIN.get_size()
-	VILLAGE_IMG = pygame.transform.scale(VILLAGE_RAW, (x, y))
+	width, height = WIN.get_size()
+	VILLAGE_IMG = pygame.transform.scale(VILLAGE_RAW, (width, height))
 	WIN.blit(VILLAGE_IMG, (0, 0))
 	quest_text = REG_FONT.render("Some elementals are running wild!", 1, P.RED)
-	WIN.blit(quest_text, ((x - quest_text.get_width())//2, y//3))
+	WIN.blit(quest_text, ((width - quest_text.get_width())//2, height//3))
 	pygame.display.update()
 	pygame.time.delay(1000)
 	new_h_p = []
@@ -67,6 +68,15 @@ def quest_five(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 		q_i.rpackage += 1
 		a_i.fame += a_i.rank//C.INCREASE_EXPONENT
 		h_bag.coins += a_i.rank
+		#give them exp for dealing with the elementals
+		for hero in h_p:
+                        hero.exp += len(h_p)
+			width, height = WIN.get_size()
+			VILLAGE_IMG = pygame.transform.scale(VILLAGE_RAW, (width, height))
+			WIN.blit(VILLAGE_IMG, (0, 0))
+			x = party_func.check_exp(hero)
+			if x == 1:
+				drawe_func.hero_level_up(hero)
 '''#quest four is dealing with giants
 def quest_four(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 	print ("There are reports of some giants fighting nearby. ")
@@ -135,11 +145,11 @@ def quest_two(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 #quest one is goblin hunting
 #fight goblins until you get the package back
 def quest_one(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
-	x, y = WIN.get_size()
-	VILLAGE_IMG = pygame.transform.scale(VILLAGE_RAW, (x, y))
+	width, height = WIN.get_size()
+	VILLAGE_IMG = pygame.transform.scale(VILLAGE_RAW, (width, height))
 	WIN.blit(VILLAGE_IMG, (0, 0))
 	quest_text = REG_FONT.render("Some goblins stole the package, go find it!", 1, P.RED)
-	WIN.blit(quest_text, ((x - quest_text.get_width())//2, y//3))
+	WIN.blit(quest_text, ((width - quest_text.get_width())//2, height//3))
 	pygame.display.update()
 	pygame.time.delay(1000)
 	#make a copy of the heroes party to track if they are defeated
@@ -154,7 +164,7 @@ def quest_one(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 	#keep track of the current rpackages that the player has
 	x = q_i.rpackage
 	#the goblin waves will keep increasing until you find the package
-	y = len(h_p) ** C.INCREASE_EXPONENT
+	y = len(h_p) * a_i.rank
 	#after they find another rpackage then the quest is over
 	while q_i.rpackage == x and len(new_h_p) > 0:
 		for z in range(0, y):
@@ -162,10 +172,19 @@ def quest_one(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 			g_p.append(mon)
 		battle_func.battle_phase(new_h_p, g_p, p_npc, h_bag, s_pc,
 					 h_w, h_a, q_i, a_i)
+		#check exp that they gain during the quest
+		for hero in h_p:
+			for hro in new_h_p:
+				if hro.name == hero.name:
+					hero.exp = hro.exp
+			if "Knight" in hero.name:
+				for hro in new_h_p:
+					if hro.name == "Defender":
+						hero.exp = hro.exp
 		for hero in new_h_p:
 			if hero.health <= 0:
 				new_h_p.remove(hero)
-		y += len(h_p) ** C.INCREASE_EXPONENT
+		y += len(h_p) * a_i.rank
 	#if the heroes lose then they get no reward
 	if len(new_h_p) <= 0:
 		q_i.rpackage = x
@@ -176,6 +195,15 @@ def quest_one(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 		#give them a fame
 		a_i.fame += 1
 		h_bag.coins += a_i.rank
+		#also check if they level up
+		for hero in h_p:
+			width, height = WIN.get_size()
+			VILLAGE_IMG = pygame.transform.scale(VILLAGE_RAW, (width, height))
+			WIN.blit(VILLAGE_IMG, (0, 0))
+			x = party_func.check_exp(hero)
+			if x == 1:
+				drawe_func.hero_level_up(hero)
+		
 
 #function that decides what quest to give to the player
 #quests can depend on their rank in the guild and fame
@@ -189,7 +217,7 @@ def quest(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 		elif x == 5:
 			quest_five(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
 		else:
-                        quest(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
+			quest(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
 		'''elif x == 7:
 			quest_three(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
 		elif x == 8:

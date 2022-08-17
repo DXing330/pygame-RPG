@@ -68,21 +68,14 @@ def drop_step(h_p, m_p, h_bag, qi_npc, a_npc):
 			package_text = REG_FONT.render(mon.name+" dropped a package!", 1, P.BLACK)
 			WIN.blit(package_text, ((x - package_text.get_width())//2, y//3))
 			pygame.display.update()
-			pygame.time.delay(1000)
+			pygame.time.delay(500)
 		else:
 			h_bag.coins += mon.dropchance + random.randint(0, h_bag.flow)
 	for mon in m_p:
 		for hero in h_p:
-			x = random.randint(0, hero.level)
+			x = random.randint(0, hero.exp)
 			if x <= mon.dropchance:
 				hero.exp += 1
-	for hero in h_p:
-		x, y = WIN.get_size()
-		FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
-		WIN.blit(FOREST_IMG, P.ORIGIN)
-		x = party_func.check_exp(hero)
-		if x == 1:
-			drawe_func.hero_level_up(hero)
 	h_bag.flow += 1
 #function that controls using an item in battle
 def use_item(hero, h_b, h_p, h_ally, m_p):
@@ -298,9 +291,6 @@ def battle_phase(h_p, m_p, h_ally, h_bag,
 				elif check != None:
 					hero.health = min(check.health, hero.maxhealth)
 					hero.mana = min(check.mana, hero.maxmana)
-		for hero in h_p:
-			if hero.health == 0:
-				h_p.remove(hero)
 		if len(new_h_p) > 0:
 			drop_step(h_p, m_p, h_bag, qi_npc, a_npc)
 		while len(m_p) > 0:
