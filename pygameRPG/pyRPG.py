@@ -8,27 +8,20 @@ import random
 sys.path.append(".")
 sys.path.append("./pygame_functions")
 sys.path.append("../RPG2v3/RPG2v3_functions")
-sys.path.append("../RPG2v3/RPG2v3_functions/RPG2v3_quest")
-sys.path.append("../RPG2v3/RPG2v3_functions/RPG2v3_def")
+sys.path.append("./pygame_functions/pyquest")
 sys.path.append("../RPG2v3/RPG2v3_functions/RPG2v3_battle")
 sys.path.append("../RPG2v3/RPG2v3_functions/bossbattles")
 sys.path.append("./pygame_functions/pybattle_functions")
 sys.path.append("./pygame_functions/pygame_general_functions")
 sys.path.append("./pygame_functions/pygame_draw")
+sys.path.append("./pygame_functions/pyboss")
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 				   Spell_PC, Monster_NPC, Weapon_PC,
 				   Armor_PC, QuestItems_NPC, Access_NPC)
-import rpg2_city_function as city_func
-import rpg2_party_management_functions as party_func
-import rpg2_monster_function as monster_func
-import rpg2_battle_phase_function as battle_func
-import rpg2_player_action_function as player_act_func
-import rpg2_mage_tower_function as magetower_func
+import pyparty_functions as party_func
+import pymonster_function as monster_func
 import rpg2_save_function as save_func
-import rpg2_random_boss_function as boss_func
-import rpg2_monster_hunter_guild as mh_func
-import rpg2_quest_function as quest_func
-import rpg2_tavern as tavern_func
+import pyrandom_boss as boss_func
 from rpg2_constants import Constants
 C = Constants()
 from rpg2_constant_lists import List_Constants
@@ -43,6 +36,7 @@ import pycity_functions as pycity_func
 import pymage_tower_functions as pymage_func
 import pymonster_hunter_functions as pyhunt_func
 import pyquest_function as pyquest_func
+import pytutorial as tutorial_func
 #clock
 clock = pygame.time.Clock()
 #makes fonts
@@ -65,42 +59,68 @@ SPACE_IMG = pygame.transform.scale(SPACE_RAW, (P.WIDTH, P.HEIGHT))
 
 
 #function will make the plains background        
-def draw_plains():
+def draw_plains(h_p, bag, q):
 	WIN.fill(P.WHITE)
-	x, y = WIN.get_size()
-	PLAINS_IMG = pygame.transform.scale(PLAINS_RAW, (x, y))
+	width, height = WIN.get_size()
+	PLAINS_IMG = pygame.transform.scale(PLAINS_RAW, (width, height))
 	WIN.blit(PLAINS_IMG, P.ORIGIN)
-	draw_func.draw_menu()
+	draw_func.draw_menu(q)
+	x = 1
+	for hero in h_p:
+		stat_text = REG_FONT.render("Hero: "+hero.name+" ATK: "+str(hero.atk+hero.atkbonus)+
+					    " DEF: "+str(hero.defense+hero.defbonus)+" HP%: "+str((round(hero.health/hero.maxhealth, 2))*100)+
+					    " MP: "+str(hero.mana)+" SKL: "+str(hero.skill)+" PSN: "+str(hero.poison), 1, P.WHITE)
+		WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
+		x +=1
+	coins_text = REG_FONT.render("GOLD: "+str(bag.coins), 1, P.WHITE)
+	WIN.blit(coins_text, ((width - coins_text.get_width() - P.PADDING), P.PADDING * x))
 	pygame.display.update()
 
 def RPG(h_party, h_magic, h_bag, h_ally, h_wpn, h_amr, quest, access):
 	m_p = []
 	game = True
 	while game:
-		clock.tick(1)
-		draw_plains()
+		pygame.event.clear()
+		draw_plains(h_party, h_bag, quest)
 		draw_func.draw_heroes(h_party, h_ally)
+		clock.tick(1)
 		for event in pygame.event.get():
+			pygame.event.clear()
 			if event.type == pygame.QUIT:
 				game = False
 				pygame.quit()
 			if event.type == pygame.KEYDOWN:
 				pygame.event.clear()
 				if event.key == pygame.K_a:
+					pygame.event.clear()
 					for hero in h_party:
-						mon = monster_func.random_scaled_monster(hero)
-						m_p.append(mon)
+						x = random.randint(0, 2)
+						if x > 0:
+							for y in range(0, x):
+								mon = monster_func.random_scaled_monster(hero, h_bag)
+								m_p.append(mon)
 					pybattle_func.battle(h_party, m_p, h_ally, h_bag,
 							     h_magic, h_wpn, h_amr)
 				elif event.key == pygame.K_c:
+					pygame.event.clear()
 					pycity_func.city(h_party, h_bag, h_wpn, h_amr)
+				elif event.key == pygame.K_t:
+					pygame.event.clear()
+					tutorial_func.old_warrior(access)
+				elif event.key == pygame.K_v:
+					pygame.event.clear()
+					boss_func.pick_boss(h_party, h_bag, h_magic, h_ally,
+							    h_wpn, h_amr, quest, access)
 				elif event.key == pygame.K_w:
+					pygame.event.clear()
 					pymage_func.mage_tower(h_party, h_ally, h_bag,
 							       h_magic, h_wpn, h_amr)
 				elif event.key == pygame.K_p:
+					pygame.event.clear()
 					pyquest_func.quest(h_party, h_bag, h_magic, h_ally,
 							   h_wpn, h_amr, quest, access)
 				elif event.key == pygame.K_m:
+					pygame.event.clear()
 					if h_bag.dg_trophy > 0:
 						pyhunt_func.monster_hunter_guild(h_party, h_bag, h_ally,
 										 h_wpn, h_amr, quest, access)
@@ -110,11 +130,12 @@ def RPG(h_party, h_magic, h_bag, h_ally, h_wpn, h_amr, quest, access):
 						    (x, y))
 						WIN.blit(PLAINS_IMG, P.ORIGIN)
 						reject_text = REG_FONT.render("Come back when you've proven yourself.",
-									    1, P.RED)
+									    1, P.WHITE)
 						WIN.blit(reject_text, ((x - reject_text.get_width())//2, y//3))
 						pygame.display.update()
 						pygame.time.delay(1000)
 				elif event.key == pygame.K_r:
+					pygame.event.clear()
 					save_func.write_to_files(h_party, h_magic,
 								 h_bag, h_ally,
 								 h_wpn, h_amr,
@@ -186,8 +207,8 @@ def Start():
 	    heroes_weapons, heroes_armor, q_items, a_items)
 
 Start()
-#roadmap
-#quest battles
+#roadmap:
+#quest battles +
 #boss battles
 #better animations
 #better sprites
