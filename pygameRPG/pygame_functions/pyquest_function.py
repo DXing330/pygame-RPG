@@ -13,6 +13,7 @@ from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 				   Spell_PC, Monster_NPC, Weapon_PC,
 				   Armor_PC, QuestItems_NPC, Access_NPC)
 import draw_functions as draw_func
+import draw_effects as drawe_func
 import pypick_function as pick_func
 import pyparty_functions as party_func
 from rpg2_constants import Constants
@@ -70,7 +71,7 @@ def quest_five(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 		h_bag.coins += a_i.rank
 		#give them exp for dealing with the elementals
 		for hero in h_p:
-                        hero.exp += len(h_p)
+			hero.exp += len(h_p)
 			width, height = WIN.get_size()
 			VILLAGE_IMG = pygame.transform.scale(VILLAGE_RAW, (width, height))
 			WIN.blit(VILLAGE_IMG, (0, 0))

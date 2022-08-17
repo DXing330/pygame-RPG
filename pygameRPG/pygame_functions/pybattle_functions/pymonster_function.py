@@ -84,7 +84,7 @@ def monster_attack(m_npc, p_pc, h_a, h_p, m_p):
 					print (m_npc.name, "misses", p_pc.name)
 			if x < m_npc.skill:
 				#monster will do a special attack
-				y = random.randint(1, 7)
+				y = random.randint(1, 8)
 				if y == 1:
 					#monster does an attack that ignores defense
 					p_pc.health -= max((new_m_npc_atk), 1)
@@ -117,3 +117,7 @@ def monster_attack(m_npc, p_pc, h_a, h_p, m_p):
 				elif y == 7:
 					p_pc.health -= max((new_m_npc_atk - p_pc.defense - p_pc.defbonus), 1)
 					p_pc.defbonus -= min(m_npc.skill//2, p_pc.defbonus)
+				elif y == 8:
+                                        p_pc.health -= max((new_m_npc_atk - p_pc.defense - p_pc.defbonus), 1)
+                                        if p_pc.status == None:
+                                                p_pc.status = "Silence"

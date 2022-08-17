@@ -158,7 +158,7 @@ def magic_attack(hero, spell, m_p):
 def hero_level_up(hero):
 	x, y = WIN.get_size()
 	draw_func.draw_hero(hero)
-	level_up_text = REG_FONT.render(hero.name+" leveled up! ", 1, P.GREEN)
+	level_up_text = REG_FONT.render(hero.name+" leveled up! ", 1, P.BLUE)
 	WIN.blit(level_up_text, ((x - level_up_text.get_width())//2, P.PADDING * 2))
 	pygame.display.update()
 	pygame.time.delay(500)

@@ -229,9 +229,18 @@ def draw_all_stats(h_p, h_ally, h_wpn, h_amr):
 	width, height = WIN.get_size()
 	x = 1
 	for hero in h_p:
-		stat_text = REG_FONT.render("Hero: "+hero.name+" ATK: "+str(hero.atk+hero.atkbonus)+
-					    " DEF: "+str(hero.defense+hero.defbonus)+" HP%: "+str((round(hero.health/hero.maxhealth, 2))*100)+
-					    " MP: "+str(hero.mana)+" SKL: "+str(hero.skill)+" PSN: "+str(hero.poison), 1, P.RED)
+		if hero.status == None:
+			stat_text = REG_FONT.render("Hero: "+hero.name+" ATK: "+str(hero.atk+hero.atkbonus)+
+						    " DEF: "+str(hero.defense+hero.defbonus)+
+						    " HP%: "+str((round(hero.health/hero.maxhealth, 2))*100)+
+						    " MP: "+str(hero.mana)+" SKL: "+str(hero.skill)+
+						    " PSN: "+str(hero.poison), 1, P.RED)
+		elif hero.status != None:
+			stat_text = REG_FONT.render("Hero: "+hero.name+" ATK: "+str(hero.atk+hero.atkbonus)+
+						    " DEF: "+str(hero.defense+hero.defbonus)+
+						    " HP%: "+str((round(hero.health/hero.maxhealth, 2))*100)+
+						    " MP: "+str(hero.mana)+" SKL: "+str(hero.skill)+
+						    " PSN: "+str(hero.poison)+" -EFCT: "+hero.status, 1, P.RED)
 		WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
 		x +=1
 	for ally in h_ally:
@@ -253,64 +262,47 @@ def draw_all_stats(h_p, h_ally, h_wpn, h_amr):
 #function that will draw monsters in battle
 def draw_monsters(m_p):
 	width, height = WIN.get_size()
-	x = 2
+	x = 1
 	y = 0
 	z = 1
 	for mon in m_p:
 		if "Demon General" in mon.name:
-			WIN.blit(GENERAL_IMG,
-				 (P.BIG_SPRITE, height//2))
+			WIN.blit(GENERAL_IMG, (P.BIG_SPRITE * 2, height//2))
 			x -= 1
 		elif "Acid Hydra" in mon.name:
+			WIN.blit(MAIN_HYDRA, (P.BIG_SPRITE * 2, height//2))
 			x -= 1
-			WIN.blit(MAIN_HYDRA,
-				 (P.BIG_SPRITE, height//2))
 		elif "Hydra Head" in mon.name:
-			WIN.blit(HYDRA_HEAD,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = HYDRA_HEAD
 		elif "Slime" in mon.name:
-			WIN.blit(SLIME_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = SLIME_IMG
 		elif "Beast" in mon.name:
-			WIN.blit(BEAST_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = BEAST_IMG
 		elif "Bomb" in mon.name:
-			WIN.blit(BOMB_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = BOMB_IMG
 		elif "Goblin" in mon.name:
 			if "Champion" in mon.name:
-				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW, (P.BIG_SPRITE, P.BIG_SPRITE))
+				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW,
+								    (P.BIG_SPRITE, P.BIG_SPRITE))
 			elif "Hob" in mon.name:
-				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW, (P.SPRITE_WIDTH, P.SPRITE_WIDTH))
+				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW,
+								    (P.SPRITE_WIDTH, P.SPRITE_WIDTH))
 			else:
-				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW, (P.SMALL_SPRITE, P.SMALL_SPRITE))
-			WIN.blit(GOBLIN_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW,
+								    (P.SMALL_SPRITE, P.SMALL_SPRITE))
+			MONSTER = GOBLIN_IMG
 		elif "Elemental" in mon.name:
-			WIN.blit(ELEMENTAL_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = ELEMENTAL_IMG
 		elif "Demon" in mon.name:
-			WIN.blit(DEMON_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = DEMON_IMG
 		elif "Skeleton" in mon.name:
-			WIN.blit(SKELETON_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = SKELETON_IMG
 		elif "Troll" in mon.name:
-			WIN.blit(TROLL_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = TROLL_IMG
 		else:
-			WIN.blit(MON_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = MON_IMG
+		if "Demon General" not in mon.name and "Acid Hydra" not in mon.name:
+			WIN.blit(MONSTER, (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y), height - (P.BIG_SPRITE * x)))
 		x += 1
 		if x * P.BIG_SPRITE > height - P.PADDING:
 			x = 1

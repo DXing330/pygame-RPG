@@ -52,8 +52,8 @@ def ah_head_action(m_npc, h_p, b_p, h_a):
 	WIN.blit(ARENA_IMG, P.ORIGIN)
 	draw_func.draw_monster(m_npc)
 	#the heads will randomly bite or buff themselves
-	z = random.randint(0, 2)
-	if z == 0:
+	z = random.randint(0, 4)
+	if z == 0 or z == 4:
 		if m_npc.atk > 0:
 			hero = party_func.pick_random_healthy_hero(h_p)
 			monster_func.monster_attack(m_npc, hero, h_a, h_p, b_p)
@@ -65,7 +65,7 @@ def ah_head_action(m_npc, h_p, b_p, h_a):
 			WIN.blit(action_text, ((x - action_text.get_width())//2, y//3))
 			pygame.display.update()
 			pygame.time.delay(250)
-	elif z == 1:
+	elif z == 1 or z == 3:
 		m_npc.atk += m_npc.skill
 		m_npc.skill += 1
 		action_text = REG_FONT.render(m_npc.name+" coats its fangs with poison.", 1, P.RED)

@@ -194,6 +194,8 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 					if "Cleric" in hero.name:
 						healee.health += hero.mana + hero.skill + hero.level
 						healee.poison -= min(hero.skill + healee.level, healee.poison)
+						if hero.status != None:
+							hero.status = None
 					elif "Hunter" in hero.name:
 						healee.poison -= min(hero.skill + healee.level, healee.poison)
 					else:
