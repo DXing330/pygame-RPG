@@ -5,7 +5,7 @@ class Player_PC:
 	def __init__(self, name, level, health, maxhealth,
 		     atk, defense, skill, mana, maxmana, 
 		     atkbonus = 0, defbonus = 0, exp = 0, 
-		     poison = 0, status = None):
+		     poison = 0, status = None, buff = None, rname = None):
 		#player's name, usually represented by their class
 		self.name = name
 		#player's level, will increase through quests
@@ -36,6 +36,8 @@ class Player_PC:
 		#self.statusObj = Statuses_NPC(0)
 		self.poison = poison
 		self.status = status
+		self.buff = buff
+		self.rname = rname
 		
 	def hstats(self):
 		print ("Health:", self.health)
@@ -116,7 +118,7 @@ class Spell_PC:
 class Monster_NPC:
 	def __init__(self, name, health, atk, defense, skill,
 		     element, dropchance, poison = 0,
-		     buff = None, status = None):
+		     buff = None, aura = None, status = None):
 		self.name = name
 		self.health = health
 		self.atk = atk
@@ -127,6 +129,7 @@ class Monster_NPC:
 		self.dropchance = dropchance
 		self.poison = poison
 		self.buff = buff
+		self.aura = aura
 		self.status = status
 	def stats(self):
 		print(self.name, self.health, self.atk, self.defense, self.skill, "\n")

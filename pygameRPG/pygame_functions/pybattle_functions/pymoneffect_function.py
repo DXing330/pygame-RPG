@@ -58,8 +58,13 @@ def monster_buff_check_spell(m_npc, p_pc, spell, atk):
 		if "Poison Heal" in m_npc.buff:
 			new_atk -= m_npc.poison
 			m_npc.health += m_npc.poison * C.INCREASE_EXPONENT
-			m_npc.poison -= 1
+			m_npc.poison -= p_pc.mana + atk
 			print (m_npc.name, "seems to regenerate from poison. ")
+		if "Magic Resist" in m_npc.buff:
+                        if "A" in m_npc.buff:
+                                new_atk = new_atk//2
+                        elif "B" in m_npc.buff:
+                                new_atk = new_atk//4
 	return new_atk
 #function that checks what kind of passives a monster has
 def monster_passive_effect(m_npc, p_pc, h_p, m_p):

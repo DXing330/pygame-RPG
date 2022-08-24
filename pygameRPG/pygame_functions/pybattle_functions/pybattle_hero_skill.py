@@ -191,6 +191,7 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 				elif event.key == pygame.K_h:
 					healee = pick_func.pick_healee(h_p)
 					turn = False
+					#cleric is the best at healing
 					if "Cleric" in hero.name:
 						healee.health += hero.mana + hero.skill + hero.level
 						healee.poison -= min(hero.skill + healee.level, healee.poison)
@@ -202,6 +203,7 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 						healee.health += healee.level
 						healee.poison -= min(healee.level, healee.poison)
 				elif event.key == pygame.K_d:
+					#different heroes debuff different aspects
 					mon = pick_func.pick_hero(m_p)
 					turn = False
 					if "Ninja" in hero.name:
@@ -224,6 +226,7 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 					else:
 						mon.atk -= min(hero.level, mon.atk)
 				elif event.key == pygame.K_b:
+					#different heroes buff different aspects
 					armor = party_func.check_equipment(hero, h_amr)
 					weapon = party_func.check_equipment(hero, h_wpn)
 					turn = False
@@ -315,13 +318,30 @@ def magical_attack(spell, hero, m_p):
 			new_spell_power = element_func.check_element_spell(spell, monster)
 			spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
 			monster.health -= spell_atk
+			#mages are stronger at casting magic
+			if "Mage" in hero.name:
+				monster.health -= max(spell_atk//2, 0)
 		drawe_func.magic_attack(hero, spell, m_p)
 	elif spell.targets == 1:
 		mon = pick_func.pick_hero(m_p)
 		new_spell_power = element_func.check_element_spell(spell, monster)
 		spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
 		monster.health -= spell_atk
+		if "Mage" in hero.name:
+			monster.health -= max(spell_atk//2, 0)
 		new_m_p = []
 		copy = copy.copy(mon)
 		new_m_p.append(copy)
 		drawe_func.magic_attack(hero, spell, new_m_p)
+
+#hero buffs
+def hero_buff(hero, h_p, h_ally):
+	#if there is no buff then nothing happens
+	if hero.buff == None:
+		pass
+	else:
+		#this buff will boost the hero's stats at the cost of their health
+		if "Advance" in hero.buff:
+			hero.health -= hero.level
+			hero.atkbonus += hero.level//2
+			hero.defbonuse += hero.level//4

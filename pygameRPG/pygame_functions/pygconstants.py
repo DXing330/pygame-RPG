@@ -11,7 +11,7 @@ class PYGConstants:
                 self.ORIGIN = (0, 0)
                 self.WIDTH = 1400
                 self.HEIGHT = 750
-                self.PADDING = 25
+                self.PADDING = 30
                 self.SCREEN = (self.WIDTH, self.HEIGHT)
                 self.FPS = 30
                 self.SLOWFPS = 3

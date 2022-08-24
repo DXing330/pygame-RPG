@@ -164,12 +164,13 @@ def hero_level_up(hero):
 	pygame.time.delay(500)
 	
 #function that draws the monster attacking
-def monster_attack(mon, hero, armor):
+def monster_attack(mon, hero, armor, attack_text):
+	if attack_text == None:
+		attack_text = REG_FONT.render(m_npc.name+" attacks "+hero.name, 1, P.RED)
 	draw_func.draw_monster(mon)
 	draw_func.draw_hero(hero)
 	x, y = WIN.get_size()
 	if "Beast" in mon.name:
-		attack_text = REG_FONT.render(mon.name+" slashes "+hero.name, 1, P.RED)
 		WIN.blit(attack_text, ((x - attack_text.get_width())//2, P.PADDING * 2))
 		for z in range(0, 2):
 			SLASHATK_IMAGE = pygame.transform.rotate(CLAWATK_IMG, z * random.randint(13, 91))
@@ -179,7 +180,6 @@ def monster_attack(mon, hero, armor):
 	elif "Hydra" in mon.name:
 		SWAMP_IMG = pygame.transform.scale(SWAMP_RAW, (x, y))
 		WIN.blit(SWAMP_IMG, P.ORIGIN)
-		attack_text = REG_FONT.render(mon.name+" bites "+hero.name, 1, P.RED)
 		WIN.blit(attack_text, ((x - attack_text.get_width())//2, P.PADDING * 2))
 		BFANG_IMG = pygame.transform.rotate(FANG_IMG, 180)
 		for z in range(0, 100):
@@ -191,7 +191,6 @@ def monster_attack(mon, hero, armor):
 			WIN.blit(BFANG_IMG, (x//2, y/(1.5 + z/200)))
 			pygame.display.update()
 	else:
-		attack_text = REG_FONT.render(mon.name+" attacks "+hero.name, 1, P.RED)
 		WIN.blit(attack_text, ((x - attack_text.get_width())//2, P.PADDING * 2))
 		for z in range(0, 2):
 			SLASHATK_IMAGE = pygame.transform.rotate(CLAWATK_IMG, z * random.randint(13, 91))

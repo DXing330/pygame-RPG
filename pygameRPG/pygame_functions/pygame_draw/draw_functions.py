@@ -8,7 +8,7 @@ P = PYGConstants()
 from rpg2_constants import Constants
 C = Constants()
 import draw_bosses as boss_func
-REG_FONT = pygame.font.SysFont("comicsans", 20)
+REG_FONT = pygame.font.SysFont("comicsans", 25)
 WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT))
 pygame.display.set_caption("RPG")
 width, height = WIN.get_size()
@@ -70,7 +70,7 @@ HYDRA_HEAD = pygame.transform.scale(HYDRA_RAW, (P.BIG_SPRITE//2, P.BIG_SPRITE))
 def draw_heroes(h_p, h_ally):
 	width, height = WIN.get_size()
 	x = 1
-	y = 2
+	y = 1
 	z = 2
 	for player in h_p:
 		if "Hunter" in player.name:
@@ -260,6 +260,7 @@ def draw_all_stats(h_p, h_ally, h_wpn, h_amr):
 			WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
 			x += 1
 #function that will draw monsters in battle
+#will draw static monsters starting from the bottom left corner
 def draw_monsters(m_p):
 	width, height = WIN.get_size()
 	x = 1
@@ -337,6 +338,7 @@ def draw_monster(mon):
 		WIN.blit(TROLL_IMG, (x//3, y//2))
 	else:
 		WIN.blit(MON_IMG, (x//3, y//2))
+#function that draws a monster being attacked by another monster
 def draw_monster2(mon):
 	width, height = WIN.get_size()
 	x, y = WIN.get_size()
@@ -453,11 +455,25 @@ def draw_city_menu():
 			    P.PADDING))
 	store_text = REG_FONT.render("FORGE: F", 1, P.BLACK)
 	WIN.blit(store_text, ((width - store_text.get_width())//2, P.PADDING * 2))
-	practice_text = REG_FONT.render("PRACTICE arena: P", 1, P.BLACK)
+	practice_text = REG_FONT.render("TRAINING ARENA: T", 1, P.BLACK)
 	WIN.blit(practice_text, ((width - practice_text.get_width())//2, P.PADDING * 3))
+	potion_text = REG_FONT.render("POTIONS: P", 1, P.BLACK)
+	WIN.blit(potion_text, ((width - potion_text.get_width())//2, P.PADDING * 4))
 	leave_text = REG_FONT.render("LEAVE: L", 1, P.BLACK)
+	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 5))
+
+def draw_potion_menu(h_bag):
+	width, height = WIN.get_size()
+	price_text = REG_FONT.render("Welcome, currently our potions cost "+
+				     str(2+(h_bag.flow//100))+" coins.", 1, P.WHITE)
+	WIN.blit(price_text, ((width - price_text.get_width())//2, P.PADDING * 1))
+	type_text = REG_FONT.render("We have HEAL, MANA, and BOOST potions for sale here.", 1, P.WHITE)
+	WIN.blit(type_text, ((width - type_text.get_width())//2, P.PADDING * 2))
+	inventory_text = REG_FONT.render("COINS: "+str(h_bag.coins)+" HEAL: "+str(h_bag.heal)+
+					 " MANA: "+str(h_bag.mana)+" BOOST: "+str(h_bag.buff), 1, P.WHITE)
+	WIN.blit(inventory_text, ((width - inventory_text.get_width())//2, P.PADDING * 3))
+	leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
 	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 4))
-	
 def draw_inn_menu():
 	width, height = WIN.get_size()
 	sleep_text = REG_FONT.render("SLEEP: S", 1, P.WHITE)

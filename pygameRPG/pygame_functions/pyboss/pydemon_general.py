@@ -388,6 +388,8 @@ def battle(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 	b_p = []
 	Demon_General = copy.copy(D_G)
 	Demon_General.health = round(Demon_General.health * (C.BUFF ** h_bag.dg_trophy))
+	Demon_General.atk += random.randint(0, h_bag.flow//2)
+	Demon_General.defense += random.randint(0, h_bag.flow//4)
 	b_p.append(Demon_General)
 	new_h_p = []
 	new_h_s = []

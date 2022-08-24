@@ -236,7 +236,7 @@ def silenced_turn(hero, h_p, m_p, h_ally, h_bag,
 					turn = False
 					WIN.blit(FOREST_IMG, P.ORIGIN)
 					silence_text = REG_FONT.render("You can't use magic while silenced!", 1, P.RED)
-					WIN.blit(silence_text, ((x - coins_text.get_width())//2, P.PADDING))
+					WIN.blit(silence_text, ((x - silence_text.get_width())//2, P.PADDING))
 					pygame.display.update()
 					pygame.time.delay(500)
 					break

@@ -31,6 +31,7 @@ ARENA_RAW = pygame.image.load(os.path.join("Assets", "practice_arena.png"))
 ARENA_IMG = pygame.transform.scale(ARENA_RAW, (P.WIDTH, P.HEIGHT))
 FORGE_RAW = pygame.image.load(os.path.join("Assets", "forge.png"))
 FORGE_IMG = pygame.transform.scale(FORGE_RAW, (P.WIDTH, P.HEIGHT))
+STORE_RAW = pygame.image.load(os.path.join("Assets", "potionstore.png"))
 #need additional images for the inn, equipment store and practice arena
 #store the starter characters incase the player recruits them
 summoner = Player_PC("Summoner", 1, 10, 10, 2, 2, 2, 2, 2)
@@ -40,6 +41,58 @@ warrior = Player_PC("Warrior", 1, 15, 15, 5, 3, 2, 0, 0)
 ninja = Player_PC("Ninja", 1, 15, 15, 3, 3, 5, 2, 2)
 knight = Player_PC("Knight", 1, 20, 20, 3, 4, 2, 0, 0)
 tactician = Player_PC("Tactician", 1, 10, 10, 1, 1, 5, 0, 0)
+#function that will let the heroes buy potions
+def potion_store(h_bag):
+	price = 1 + (h_bag.flow//100)
+	choose = True
+	while choose:
+		pygame.event.clear()
+		clock.tick(10)
+		width, height = WIN.get_size()
+		STORE_IMG = pygame.transform.scale(STORE_RAW, (width, height))
+		WIN.blit(STORE_IMG, P.ORIGIN)
+		draw_func.draw_potion_menu(h_bag)
+		pygame.display.update()
+		if h_bag.coins < price:
+			choose = False
+			poor_text = REG_FONT.render("You can't afford anymore potions. ", 1, P.RED)
+			WIN.blit(STORE_IMG, P.ORIGIN)
+			WIN.blit(poor_text, ((x - poor_text.get_width())//2, P.PADDING))
+			pygame.display.update()
+			pygame.time.delay(P.SMALLDELAY)
+			break
+		keys = pygame.key.get_pressed()
+		if keys[pygame.K_l]:
+			choose = False
+		if keys[pygame.K_h]:
+			if h_bag.coins > price:
+				h_bag.coins -= price
+				h_bag.heal += 1
+		if keys[pygame.K_b]:
+			if h_bag.coins > price:
+				h_bag.coins -= price
+				h_bag.buff += 1
+		if keys[pygame.K_m]:
+			if h_bag.coins > price:
+				h_bag.coins -= price
+				h_bag.mana += 1
+		'''for event in pygame.event.get():
+			if event.type == pygame.KEYDOWN:
+				pygame.event.clear()
+				if event.key == pygame.K_l:
+					choose = False
+				if event.key == pygame.K_h:
+					if h_bag.coins > price:
+						h_bag.coins -= price
+						h_bag.heal += 1
+				if event.key == pygame.K_b:
+					if h_bag.coins > price:
+						h_bag.coins -= price
+						h_bag.buff += 1
+				if event.key == pygame.K_m:
+					if h_bag.coins > price:
+						h_bag.coins -= price
+						h_bag.mana += 1'''
 #function that will train equipment stats
 def forge(h_b, h_w, h_a):
 	weapon = None
@@ -50,16 +103,17 @@ def forge(h_b, h_w, h_a):
 	pick_amr = False
 	choose = True
 	while choose:
+		pygame.event.clear()
 		clock.tick(P.FPS)
 		WIN.fill(P.WHITE)
 		x, y = WIN.get_size()
-		FORGE_IMG = pygame.transform.scale(FORGE_RAW,
-						   (x, y))
+		FORGE_IMG = pygame.transform.scale(FORGE_RAW, (x, y))
 		WIN.blit(FORGE_IMG, P.ORIGIN)
 		draw_func.draw_forge_menu()
 		pygame.display.update()
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN:
+				pygame.event.clear()
 				if event.key == pygame.K_l:
 					choose = False
 				if event.key == pygame.K_w:
@@ -759,11 +813,11 @@ def inn(h_p, h_b, h_w, h_a):
 def city(h_p, h_b, h_w, h_a):
 	city = True
 	while city:
-		clock.tick(P.FPS)
+		pygame.event.clear()
+		clock.tick(10)
 		WIN.fill(P.WHITE)
 		x, y = WIN.get_size()
-		CITY_IMG = pygame.transform.scale(CITY_RAW,
-						  (x, y))
+		CITY_IMG = pygame.transform.scale(CITY_RAW, (x, y))
 		WIN.blit(CITY_IMG, P.ORIGIN)
 		draw_func.draw_city_menu()
 		pygame.display.update()
@@ -772,11 +826,14 @@ def city(h_p, h_b, h_w, h_a):
 				city = False
 				pygame.quit()
 			if event.type == pygame.KEYDOWN:
+				pygame.event.clear()
 				if event.key == pygame.K_i:
 					inn(h_p, h_b, h_w, h_a)
 				if event.key == pygame.K_l:
 					city = False
 				if event.key == pygame.K_f:
 					forge(h_b, h_w, h_a)
-				if event.key == pygame.K_p:
+				if event.key == pygame.K_t:
 					practice_arena(h_p, h_b)
+				if event.key == pygame.K_p:
+					potion_store(h_b)

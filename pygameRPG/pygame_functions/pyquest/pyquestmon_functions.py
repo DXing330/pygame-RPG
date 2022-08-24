@@ -1,7 +1,7 @@
 import copy
 import random
 import sys
-sys.path.append("../RPG2v3_def")
+sys.path.append("../pygame_general_functions")
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 				   Spell_PC, Monster_NPC, Weapon_PC,
 				   Armor_PC, QuestItems_NPC, Access_NPC)
