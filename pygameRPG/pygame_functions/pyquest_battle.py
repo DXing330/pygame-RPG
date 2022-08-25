@@ -68,21 +68,14 @@ def drop_step(h_p, m_p, h_bag, qi_npc, a_npc):
 			package_text = REG_FONT.render(mon.name+" dropped a package!", 1, P.BLACK)
 			WIN.blit(package_text, ((x - package_text.get_width())//2, y//3))
 			pygame.display.update()
-			pygame.time.delay(1000)
+			pygame.time.delay(500)
 		else:
 			h_bag.coins += mon.dropchance + random.randint(0, h_bag.flow)
 	for mon in m_p:
 		for hero in h_p:
-			x = random.randint(0, hero.level)
+			x = random.randint(0, hero.exp)
 			if x <= mon.dropchance:
 				hero.exp += 1
-	for hero in h_p:
-		x, y = WIN.get_size()
-		FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
-		WIN.blit(FOREST_IMG, P.ORIGIN)
-		x = party_func.check_exp(hero)
-		if x == 1:
-			drawe_func.hero_level_up(hero)
 	h_bag.flow += 1
 #function that controls using an item in battle
 def use_item(hero, h_b, h_p, h_ally, m_p):
@@ -122,9 +115,9 @@ def use_item(hero, h_b, h_p, h_ally, m_p):
 					break
 					
 						
-#function that controls the turns in battle
-def hero_turn(hero, h_p, m_p, h_ally, h_bag,
-	      h_magic, h_wpn, h_amr):
+#function that controls status turns in battle
+def cursed_turn(hero, h_p, m_p, h_ally, h_bag,
+		h_magic, h_wpn, h_amr):
 	x, y = WIN.get_size()
 	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
 	WIN.blit(FOREST_IMG, P.ORIGIN)
@@ -136,9 +129,11 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 	turn = True
 	while turn:
 		pygame.event.clear()
-		x, y = WIN.get_size()
 		clock.tick(P.SLOWFPS)
-		pygame.display.update()
+		if "Totem" in hero.name:
+			pet_func.totem_turn(hero, h_p, m_p, h_ally)
+			turn = False
+			break
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				game = False
@@ -146,16 +141,147 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 			if event.type == pygame.KEYDOWN:
 				pygame.event.clear()
 				if event.key == pygame.K_a and len(m_p) == 1:
+					pygame.event.clear()
 					turn = False
 					mon = m_p[0]
-					hskl_func.player_attack(hero, mon, h_wpn,
-								      h_amr, h_p, m_p)
+					hskl_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
 					WIN.blit(FOREST_IMG, P.ORIGIN)
 					weapon = party_func.check_equipment(hero, h_wpn)
 					drawe_func.hero_attack(hero, weapon, mon)
 					pygame.display.update()
 					break
 				if event.key == pygame.K_a and len(m_p) > 1:
+					pygame.event.clear()
+					turn = False
+					mon = pick_func.pick_hero(m_p)
+					pygame.event.clear()
+					hskl_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
+					WIN.blit(FOREST_IMG, P.ORIGIN)
+					weapon = party_func.check_equipment(hero, h_wpn)
+					drawe_func.hero_attack(hero, weapon, mon)
+					pygame.display.update()
+					break
+				if event.key == pygame.K_s:
+					turn = False
+					WIN.blit(FOREST_IMG, P.ORIGIN)
+					silence_text = REG_FONT.render("You can't use skills while cursed!", 1, P.RED)
+					WIN.blit(silence_text, ((x - silence_text.get_width())//2, P.PADDING))
+					pygame.display.update()
+					pygame.time.delay(500)
+					break
+				if event.key == pygame.K_m and len(h_magic) > 0:
+					turn = False
+					WIN.blit(FOREST_IMG, P.ORIGIN)
+					silence_text = REG_FONT.render("You can't use magic while cursed!", 1, P.RED)
+					WIN.blit(silence_text, ((x - silence_text.get_width())//2, P.PADDING))
+					pygame.display.update()
+					pygame.time.delay(500)
+					break
+				if event.key == pygame.K_i:
+					turn = False
+					use_item(hero, h_bag, h_p, h_ally, m_p)
+					break
+def silenced_turn(hero, h_p, m_p, h_ally, h_bag,
+		  h_magic, h_wpn, h_amr):
+	x, y = WIN.get_size()
+	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
+	WIN.blit(FOREST_IMG, P.ORIGIN)
+	draw_func.draw_heroes(h_p, h_ally)
+	draw_func.draw_monsters(m_p)
+	draw_func.draw_battle_menu(hero)
+	draw_func.draw_hero_stats(hero)
+	pygame.display.update()
+	turn = True
+	while turn:
+		pygame.event.clear()
+		clock.tick(P.SLOWFPS)
+		if "Totem" in hero.name:
+			pet_func.totem_turn(hero, h_p, m_p, h_ally)
+			turn = False
+			break
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				game = False
+				pygame.quit()
+			if event.type == pygame.KEYDOWN:
+				pygame.event.clear()
+				if event.key == pygame.K_a and len(m_p) == 1:
+					pygame.event.clear()
+					turn = False
+					mon = m_p[0]
+					hskl_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
+					WIN.blit(FOREST_IMG, P.ORIGIN)
+					weapon = party_func.check_equipment(hero, h_wpn)
+					drawe_func.hero_attack(hero, weapon, mon)
+					pygame.display.update()
+					break
+				if event.key == pygame.K_a and len(m_p) > 1:
+					pygame.event.clear()
+					turn = False
+					mon = pick_func.pick_hero(m_p)
+					pygame.event.clear()
+					hskl_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
+					WIN.blit(FOREST_IMG, P.ORIGIN)
+					weapon = party_func.check_equipment(hero, h_wpn)
+					drawe_func.hero_attack(hero, weapon, mon)
+					pygame.display.update()
+					break
+				if event.key == pygame.K_s:
+					turn = False
+					WIN.blit(FOREST_IMG, P.ORIGIN)
+					pygame.display.update()
+					hskl_func.hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic)
+					break
+				if event.key == pygame.K_m:
+					turn = False
+					WIN.blit(FOREST_IMG, P.ORIGIN)
+					silence_text = REG_FONT.render("You can't use magic while silenced!", 1, P.RED)
+					WIN.blit(silence_text, ((x - silence_text.get_width())//2, P.PADDING))
+					pygame.display.update()
+					pygame.time.delay(500)
+					break
+				if event.key == pygame.K_i:
+					turn = False
+					use_item(hero, h_bag, h_p, h_ally, m_p)
+					break
+#function that controls the turns in battle
+def hero_turn(hero, h_p, m_p, h_ally, h_bag,
+	      h_magic, h_wpn, h_amr):
+	x, y = WIN.get_size()
+	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
+	WIN.blit(FOREST_IMG, P.ORIGIN)
+	draw_func.draw_heroes(h_p, h_ally)
+	draw_func.draw_monsters(m_p)
+	draw_func.draw_battle_menu(hero)
+	if "Totem" not in hero.name:
+		draw_func.draw_hero_stats(hero)
+	pygame.display.update()
+	turn = True
+	while turn:
+		pygame.event.clear()
+		clock.tick(P.SLOWFPS)
+		if "Totem" in hero.name:
+			pet_func.totem_turn(hero, h_p, m_p, h_ally)
+			turn = False
+			break
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				game = False
+				pygame.quit()
+			if event.type == pygame.KEYDOWN:
+				pygame.event.clear()
+				if event.key == pygame.K_a and len(m_p) == 1:
+					pygame.event.clear()
+					turn = False
+					mon = m_p[0]
+					hskl_func.player_attack(hero, mon, h_wpn, h_amr, h_p, m_p)
+					WIN.blit(FOREST_IMG, P.ORIGIN)
+					weapon = party_func.check_equipment(hero, h_wpn)
+					drawe_func.hero_attack(hero, weapon, mon)
+					pygame.display.update()
+					break
+				if event.key == pygame.K_a and len(m_p) > 1:
+					pygame.event.clear()
 					turn = False
 					mon = pick_func.pick_hero(m_p)
 					pygame.event.clear()
@@ -175,26 +301,8 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 					if hero.mana > 0:
 						turn = False
 						spell = pick_func.pick_hero(h_magic)
-						WIN.blit(FOREST_IMG, P.ORIGIN)
-						draw_func.draw_heroes(h_p, h_ally)
-						draw_func.draw_monsters(m_p)
+						hskl_func.magical_attack(spell, hero, m_p)
 						pygame.display.update()
-						hero.mana -= spell.cost
-						if spell.targets > 1:
-							for monster in m_p:
-								new_spell_power = element_func.check_element_spell(spell, monster)
-								spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
-								monster.health -= spell_atk
-							spell_text = REG_FONT.render(hero.name + " casts " + spell.name, 1, P.RED)
-						elif spell.targets == 1:
-							mon = pick_func.pick_hero(m_p)
-							new_spell_power = element_func.check_element_spell(spell, monster)
-							spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
-							monster.health -= spell_atk
-							spell_text = REG_FONT.render(hero.name + " casts " + spell.name + " on " + mon.name, 1, P.RED)
-						WIN.blit(spell_text, ((x - spell_text.get_width())//2, y//3))
-						pygame.display.update()
-						pygame.time.delay(P.SMALLDELAY)
 						break
 				if event.key == pygame.K_i:
 					turn = False
@@ -241,13 +349,18 @@ def battle_phase(h_p, m_p, h_ally, h_bag,
 			if hero.health <= 0:
 				new_h_p.remove(hero)
 		for hero in new_h_p:
-			if "Totem" in hero.name:
-				pass
-			elif hero.status == "Stun":
-				hero.status = None
-			elif hero.health > 0:
-				hero_turn(hero, new_h_p, new_m_p, new_h_ally, h_bag,
-					  h_magic, new_h_wpn, new_h_amr)
+			if hero.health > 0:
+				if hero.status == None:
+					hero_turn(hero, new_h_p, new_m_p, new_h_ally, h_bag,
+						  h_magic, new_h_wpn, new_h_amr)
+				elif hero.status == "Stun":
+					hero.status = None
+				elif hero.status == "Silence":
+					silenced_turn(hero, new_h_p, new_m_p, new_h_ally, h_bag,
+						      h_magic, new_h_wpn, new_h_amr)
+				elif hero.status == "Curse":
+					cursed_turn(hero, new_h_p, new_m_p, new_h_ally, h_bag,
+						    h_magic, new_h_wpn, new_h_amr)
 		for num in range(0, len(m_p)):
 			for mon in new_m_p:
 				if mon.health <= 0:
@@ -297,9 +410,6 @@ def battle_phase(h_p, m_p, h_ally, h_bag,
 				elif check != None:
 					hero.health = min(check.health, hero.maxhealth)
 					hero.mana = min(check.mana, hero.maxmana)
-		for hero in h_p:
-			if hero.health == 0:
-				h_p.remove(hero)
 		if len(new_h_p) > 0:
 			drop_step(h_p, m_p, h_bag, qi_npc, a_npc)
 		while len(m_p) > 0:

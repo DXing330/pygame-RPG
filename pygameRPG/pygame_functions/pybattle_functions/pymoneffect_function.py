@@ -20,17 +20,17 @@ def monster_def_buff_effect(m_npc, atk, p_pc, h_p, wpn, h_a, m_p):
 			if wpn.element in m_npc.buff:
 				new_atk = -new_atk
 				print (m_npc.name, "absorbs the attack of", p_pc.name)
-		if "Poison Heal" in m_npc.buff:
+		if "PoisonHeal" in m_npc.buff:
 			m_npc.health += m_npc.poison * C.INCREASE_EXPONENT
 			m_npc.poison -= new_atk
 			new_atk -= m_npc.poison
 			print (m_npc.name, "seems to regenerate from poison. ")
-		if "Dmg Void" in m_npc.buff:
-			if "A" in m_npc.buff:
+		if "DmgVoid" in m_npc.buff:
+			if "DmgVoidA" in m_npc.buff:
 				if new_atk > C.DMG_A:
 					new_atk = 0
 				print (m_npc.name, "negates the attack of ", p_pc.name)
-			elif "B" in m_npc.buff:
+			elif "DmgVoidB" in m_npc.buff:
 				if new_atk > C.DMG_B:
 					new_atk = 0
 				print (m_npc.name, "negates the attack of ", p_pc.name)
@@ -46,20 +46,25 @@ def monster_buff_check_spell(m_npc, p_pc, spell, atk):
 			if spell.element in m_npc.buff:
 				new_atk = -new_atk
 				print (m_npc.name, "absorbs the attack of", p_pc.name)
-		if "Dmg Void" in m_npc.buff:
-			if "A" in m_npc.buff:
+		if "DmgVoid" in m_npc.buff:
+			if "DmgVoidA" in m_npc.buff:
 				if new_atk > C.DMG_A:
 					new_atk = 0
 				print (m_npc.name, "negates the attack of ", p_pc.name)
-			elif "B" in m_npc.buff:
+			elif "DmgVoidB" in m_npc.buff:
 				if new_atk > C.DMG_B:
 					new_atk = 0
 				print (m_npc.name, "negates the attack of ", p_pc.name)
-		if "Poison Heal" in m_npc.buff:
+		if "PoisonHeal" in m_npc.buff:
 			new_atk -= m_npc.poison
 			m_npc.health += m_npc.poison * C.INCREASE_EXPONENT
-			m_npc.poison -= 1
+			m_npc.poison -= p_pc.mana + atk
 			print (m_npc.name, "seems to regenerate from poison. ")
+		if "MagicResist" in m_npc.buff:
+			if "MagicResistA" in m_npc.buff:
+				new_atk = new_atk//2
+			elif "MagicResistB" in m_npc.buff:
+				new_atk = new_atk//4
 	return new_atk
 #function that checks what kind of passives a monster has
 def monster_passive_effect(m_npc, p_pc, h_p, m_p):
@@ -68,6 +73,12 @@ def monster_passive_effect(m_npc, p_pc, h_p, m_p):
 			if passive == "Fire":
 				p_pc.health -= m_npc.skill
 				print (p_pc.name, "is burned by", m_npc.name)
+				num = random.randint(0, p_pc.health)
+				if num <= m_npc.skill:
+					if p_pc.status == None:
+						p_pc.status = "Burn"
+					elif "Burn" not in p_pc.status:
+						p_pc.status += " Burn"
 			if passive == "Water":
 				p_pc.atkbonus -= min(m_npc.skill, p_pc.atkbonus)
 				print (p_pc.name, "is bogged down by", m_npc.name)
@@ -110,7 +121,7 @@ def monster_passive_effect(m_npc, p_pc, h_p, m_p):
 					m_npc.skill += 1
 				print (m_npc.name, "pulses erratically. ")
 			if passive == "Troll":
-				if m_npc.poison == 0:
+				if m_npc.poison == 0 and "Burn" not in m_npc.status:
 					m_npc.health += m_npc.skill
 					print (m_npc.name, "regenerates. ")
 			if passive == "Goblin":

@@ -91,12 +91,12 @@ class Constants:
              self.LVL_UP_HP_LOW = 10
              self.LVL_UP_HP_MID = 15
              self.LVL_UP_HP_HIGH = 20
-             self.LVL_UP_ATK_LOW = 2
-             self.LVL_UP_ATK_MID = 3
+             self.LVL_UP_ATK_LOW = 3
+             self.LVL_UP_ATK_MID = 4
              self.LVL_UP_ATK_HIGH = 5
              self.LVL_UP_DEF_LOW = 1
              self.LVL_UP_DEF_MID = 2
-             self.LVL_UP_DEF_HIGH = 4
+             self.LVL_UP_DEF_HIGH = 3
              self.LVL_UP_SKL_LOW = 2
              self.LVL_UP_SKL_MID = 3
              self.LVL_UP_SKL_HIGH = 5

@@ -4,10 +4,10 @@ import sys
 import copy
 import random
 sys.path.append(".")
-sys.path.append("../../../RPG2v3/RPG2v3_functions/RPG2v3_battle")
-sys.path.append("../../../RPG2v3/RPG2v3_functions/RPG2v3_def")
-sys.path.append("../../../RPG2v3/RPG2v3_functions/")
-sys.path.append("../../pygame_functions/pygame_general_functions/")
+sys.path.append("../pygame_general_functions")
+sys.path.append("..")
+sys.path.append("../pygame_draw")
+sys.path.append("../../Assets")
 from pygconstants import PYGConstants
 P = PYGConstants()
 from rpg2_classdefinitions import (Player_PC, Monster_NPC, Pet_NPC,
@@ -25,6 +25,7 @@ import draw_effects as drawe_func
 import pymonster_function as monster_func
 import pybattle_pet_action as pet_func
 import pyelement_function as element_func
+import pyeqpeffect_function as ee_func
 import pymoneffect_function as me_func
 import pybattle_hero_skill as hskl_func
 #always define the window you're drawing on
@@ -49,40 +50,37 @@ def ah_head_action(m_npc, h_p, b_p, h_a):
 	x, y = WIN.get_size()
 	ARENA_IMG = pygame.transform.scale(ARENA_RAW, (x, y))
 	WIN.blit(ARENA_IMG, P.ORIGIN)
-	draw_func.draw_monster(mon)
+	draw_func.draw_monster(m_npc)
 	#the heads will randomly bite or buff themselves
-	x = random.randint(0, 2)
-	if x == 0:
+	z = random.randint(0, 4)
+	if z == 0 or z == 4:
 		if m_npc.atk > 0:
 			hero = party_func.pick_random_healthy_hero(h_p)
 			monster_func.monster_attack(m_npc, hero, h_a, h_p, b_p)
 			hero.poison += m_npc.atk
-			print (m_npc.name, "bites", hero.name)
-			action_text = REG_FONT.render(m_npc.name+" bites "+hero.name, 1, P.RED)
-			WIN.blit(action_text, ((x - action_text.get_width())//2, y//3))
 		else:
 			m_npc.atk += m_npc.skill
 			m_npc.skill += 1
 			action_text = REG_FONT.render(m_npc.name+" coats its fangs with poison.", 1, P.RED)
 			WIN.blit(action_text, ((x - action_text.get_width())//2, y//3))
 			pygame.display.update()
-			pygame.time.delay(500)
-	elif x == 1:
+			pygame.time.delay(250)
+	elif z == 1 or z == 3:
 		m_npc.atk += m_npc.skill
 		m_npc.skill += 1
 		action_text = REG_FONT.render(m_npc.name+" coats its fangs with poison.", 1, P.RED)
 		WIN.blit(action_text, ((x - action_text.get_width())//2, y//3))
 		pygame.display.update()
-		pygame.time.delay(500)
-	elif x == 2:
+		pygame.time.delay(250)
+	elif z == 2:
 		for hero in h_p:
 			hero.health -= max((m_npc.health//2 - hero.defense - hero.skill), 1)
-			m_npc.health = m_npc.health//2
+		m_npc.health = m_npc.health//2
 		drawe_func.mon_aoe(m_npc, h_p)
 		action_text = REG_FONT.render(m_npc.name+" sprays its acidic blood on the heroes.", 1, P.RED)
 		WIN.blit(action_text, ((x - action_text.get_width())//2, y//3))
 		pygame.display.update()
-		pygame.time.delay(500)
+		pygame.time.delay(250)
 
 #using items in battle
 def use_item(hero, h_b, h_p, h_s, m_p):
@@ -128,11 +126,16 @@ def magic_attack(spell, hero, m_p):
 			new_spell_power = element_func.check_element_spell(spell, monster)
 			spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
 			monster.health -= spell_atk
+		drawe_func.magic_attack(hero, spell, m_p)
 	elif spell.targets == 1:
 		mon = pick_func.pick_hero(m_p)
 		new_spell_power = element_func.check_element_spell(spell, monster)
 		spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
 		monster.health -= spell_atk
+		new_m_p = []
+		copy = copy.copy(mon)
+		new_m_p.append(copy)
+		drawe_func.magic_attack(hero, spell, new_m_p)
 #hero turn
 def hero_turn(hero, h_p, m_p, h_s, h_bag, h_magic, h_wpn, h_amr):
 	x, y = WIN.get_size()
@@ -187,14 +190,23 @@ def hero_turn(hero, h_p, m_p, h_s, h_bag, h_magic, h_wpn, h_amr):
 						draw_func.draw_heroes(h_p, h_s)
 						draw_func.draw_monsters(m_p)
 						pygame.display.update()
-						magic_attack(spell, hero, m_p)
+						hero.mana -= spell.cost
 						if spell.targets > 1:
-							spell_text = REG_FONT.render(hero.name+" casts "+spell.name, 1, P.RED)
+							for monster in m_p:
+								new_spell_power = element_func.check_element_spell(spell, monster)
+								spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
+								monster.health -= spell_atk
+							drawe_func.magic_attack(hero, spell, m_p)
 						elif spell.targets == 1:
-							spell_text = REG_FONT.render(hero.name+" casts "+spell.name+" on "+mon.name, 1, P.RED)
-						WIN.blit(spell_text, ((x - spell_text.get_width())//2, y//3))
+							mon = pick_func.pick_hero(m_p)
+							new_m_p = []
+							copy = copy.copy(mon)
+							new_m_p.append(copy)
+							new_spell_power = element_func.check_element_spell(spell, monster)
+							spell_atk = me_func.monster_buff_check_spell(monster, hero, spell, new_spell_power)
+							monster.health -= spell_atk
+							drawe_func.magic_attack(hero, spell, new_m_p)
 						pygame.display.update()
-						pygame.time.delay(P.SMALLDELAY)
 						break
 				if event.key == pygame.K_i:
 					turn = False
@@ -208,31 +220,31 @@ def ah_phase_one_action(m_npc, h_p, b_p, h_bag):
 	WIN.blit(ARENA_IMG, P.ORIGIN)
 	draw_func.draw_monster(m_npc)
 	draw_func.draw_just_hero(h_p)
-	x = random.randint(0, 3)
-	if x == 0:                       
+	z = random.randint(0, 3)
+	if z == 0:                       
 		for hero in h_p:
 			if hero.poison > 0:
 				hero.health -= hero.poison
 				hero.atkbonus -= min(hero.poison, hero.atkbonus)
-				poison_text = REG_FONT.render(m_npc.name+" curses the acid to weaken.", 1, P.RED)
-	elif x == 1:
+		poison_text = REG_FONT.render(m_npc.name+" curses the acid to weaken.", 1, P.RED)
+	elif z == 1:
 		for hero in h_p:
 			if hero.poison > 0:
 				hero.health -= hero.poison
 				hero.defbonus -= min(hero.poison, hero.defbonus)
-				poison_text = REG_FONT.render(m_npc.name+" curses the acid to corrode.", 1, P.RED)
-	elif x == 2:
+		poison_text = REG_FONT.render(m_npc.name+" curses the acid to corrode.", 1, P.RED)
+	elif z == 2:
 		for hero in h_p:
 			if hero.poison > 0:
 				hero.health -= hero.poison
 				hero.skill -= min(hero.poison, hero.skill)
-				poison_text = REG_FONT.render(m_npc.name+" curses the acid to confuse.", 1, P.RED)
-	elif x == 3:
+		poison_text = REG_FONT.render(m_npc.name+" curses the acid to confuse.", 1, P.RED)
+	elif z == 3:
 		for hero in h_p:
 			if hero.poison > 0:
 				hero.health -= hero.poison
 				hero.maxhealth -= hero.poison
-				poison_text = REG_FONT.render(m_npc.name+" curses the acid to dissolve.", 1, P.RED)
+		poison_text = REG_FONT.render(m_npc.name+" curses the acid to dissolve.", 1, P.RED)
 	WIN.blit(poison_text, ((x - poison_text.get_width())//2, y//3))
 	pygame.display.update()
 	pygame.time.delay(P.SMALLDELAY)
@@ -289,7 +301,7 @@ def phase_one(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 					mon = hydra_head_spawn()
 					b_p.append(mon)
 				elif mon.health >= 0 and mon.name != "Acid Hydra":
-                                        ah_head_action(mon, h_p, b_p, h_a)
+					ah_head_action(mon, h_p, b_p, h_a)
 				elif mon.health >= 0 and mon.name == "Acid Hydra":
 					ah_phase_one_action(mon, h_p, b_p, h_bag)
 				elif mon.health <= 0 and mon.name == "Acid Hydra":
@@ -313,15 +325,15 @@ def ah_phase_two_action(m_npc, h_p, b_p, h_bag, h_a):
 			WIN.blit(ARENA_IMG, P.ORIGIN)
 			draw_func.draw_hero(hero)
 			draw_func.draw_monster(m_npc)
-			if hero.get_poison() > 0:
-				hero.health -= hero.get_poison()
+			if hero.poison > 0:
+				hero.health -= hero.poison
 				hero.atkbonus -= min(hero.poison, hero.atkbonus)
 				hero.defbonus -= min(hero.poison, hero.defbonus)
 				action_text = REG_FONT.render(m_npc.name+" corrupts the poison of "+hero.name+".", 1, P.RED)
 				WIN.blit(action_text, ((x - action_text.get_width())//2, y//3))
 				pygame.display.update()
 				pygame.time.delay(250)
-			elif hero.get_poison() <= 0:
+			elif hero.poison <= 0:
 				hero.poison += m_npc.atk
 				action_text = REG_FONT.render(m_npc.name+" sprays acid on "+hero.name+".", 1, P.RED)
 				WIN.blit(action_text, ((x - action_text.get_width())//2, y//3))
@@ -356,6 +368,10 @@ def ah_phase_two_action(m_npc, h_p, b_p, h_bag, h_a):
 					WIN.blit(ARENA_IMG, P.ORIGIN)
 					drawe_func.mon_atk_mon(m_npc, mon)
 					b_p.remove(mon)
+					pygame.display.update()
+					pygame.time.delay(100)
+		WIN.blit(ARENA_IMG, P.ORIGIN)
+		draw_func.draw_monsters(b_p)
 		action_text = REG_FONT.render(m_npc.name+" eats it's other heads to heal!", 1, P.RED)
 		WIN.blit(action_text, ((x - action_text.get_width())//2, y//3))
 		pygame.display.update()
@@ -365,14 +381,14 @@ def ah_phase_two_action(m_npc, h_p, b_p, h_bag, h_a):
 		m_npc.skill = 0
 		if m_npc.health > 0:
 			action_text = REG_FONT.render(m_npc.name+" manages to hang onto life by a thread!", 1, P.RED)
-                        WIN.blit(action_text, ((x - action_text.get_width())//2, y//3))
-                        pygame.display.update()
-                        pygame.time.delay(1000)
+			WIN.blit(action_text, ((x - action_text.get_width())//2, y//3))
+			pygame.display.update()
+			pygame.time.delay(1000)
 		elif m_npc.health <= 0:
 			action_text = REG_FONT.render(m_npc.name+" finally collapses!", 1, P.RED)
-                        WIN.blit(action_text, ((x - action_text.get_width())//2, y//3))
-                        pygame.display.update()
-                        pygame.time.delay(1000)
+			WIN.blit(action_text, ((x - action_text.get_width())//2, y//3))
+			pygame.display.update()
+			pygame.time.delay(1000)
 
 
 #this will be phase two
@@ -436,6 +452,7 @@ def battle(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 	new_h_s = []
 	new_h_w = []
 	new_h_a = []
+	new_b_p = []
 	for hero in h_p:
 		copy_hero = copy.copy(hero)
 		new_h_p.append(copy_hero)
@@ -448,7 +465,9 @@ def battle(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 	for amr in h_a:
 		copy_armor = copy.copy(amr)
 		new_h_a.append(copy_armor)
-	new_b_p = list(b_p)
+	for mon in b_p:
+		copy_mon = copy.copy(mon)
+		new_b_p.append(mon)
 	#boolean to loop the battle phase until it finishes
 	bBattle = True
 	while bBattle:
@@ -464,22 +483,25 @@ def battle(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 					bBattle = False
 					end_text = REG_FONT.render("At last it seems no new heads appear.", 1, P.WHITE)
 					WIN.blit(end_text, ((x - end_text.get_width())//2, P.PADDING * 2))
-					pygame.time.delay(1000)
 					pygame.display.update()
+					pygame.time.delay(1000)
+					#copy the end hydra to keep track of his dropchance
+					fhydra = copy.copy(mon)
+					b_p.append(fhydra)
 					new_b_p.remove(mon)
 					
 		if len(new_h_p) == 0:
 			end_text = REG_FONT.render("The heroes have been routed and flee back to town.", 1, P.WHITE)
 			WIN.blit(end_text, ((x - end_text.get_width())//2, P.PADDING * 2))
-			pygame.time.delay(1000)
 			pygame.display.update()
+			pygame.time.delay(1000)
 			bBattle = False
 			break
 		elif len(new_b_p) == 0:
 			end_text = REG_FONT.render("The swamp is relatively safe, for now.", 1, P.WHITE)
 			WIN.blit(end_text, ((x - end_text.get_width())//2, P.PADDING * 2))
-			pygame.time.delay(1000)
 			pygame.display.update()
+			pygame.time.delay(1000)
 			bBattle = False
 			break
 
@@ -525,12 +547,12 @@ def battle(h_p, b_p, h_s, h_bag, s_pc, h_w, h_a):
 				hero.mana = min(check.mana, hero.maxmana)
 		#give the heroes rewards if they win
 		if len(new_h_p) > 0:
-			for mon in new_b_p:
+			for mon in b_p:
 				h_bag.coins += round(mon.dropchance)
 			h_bag.ah_trophy += 1
-			h_bag.flow -= h_bag.ah_trophy ** C.DECREASE_EXPONENT
+			h_bag.flow -= round(h_bag.ah_trophy ** C.DECREASE_EXPONENT)
 			for hero in h_p:
-				hero.exp += h_bag.ah_trophy ** C.DECREASE_EXPONENT
+				hero.exp += round(h_bag.ah_trophy ** C.DECREASE_EXPONENT)
 			for hero in h_p:
 				x, y = WIN.get_size()
 				ARENA_IMG = pygame.transform.scale(ARENA_RAW, (x, y))

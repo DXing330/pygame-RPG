@@ -9,6 +9,8 @@ from rpg2_constants import Constants
 C = Constants()
 import draw_bosses as boss_func
 REG_FONT = pygame.font.SysFont("comicsans", 20)
+SMALL_FONT = pygame.font.SysFont("comicsans", 17)
+LARGE_FONT = pygame.font.SysFont("comicsans", 25)
 WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT))
 pygame.display.set_caption("RPG")
 width, height = WIN.get_size()
@@ -70,7 +72,7 @@ HYDRA_HEAD = pygame.transform.scale(HYDRA_RAW, (P.BIG_SPRITE//2, P.BIG_SPRITE))
 def draw_heroes(h_p, h_ally):
 	width, height = WIN.get_size()
 	x = 1
-	y = 2
+	y = 1
 	z = 2
 	for player in h_p:
 		if "Hunter" in player.name:
@@ -189,23 +191,28 @@ def draw_ally(ally):
 #function that will draw monster stats
 def draw_monster_stats(m_p):
 	width, height = WIN.get_size()
-	x = 2
+	x = 1
 	for mon in m_p:
-		if mon.buff == None:
-			stats_text = REG_FONT.render((mon.name+" HP: "+str(mon.health)+
-						      " ATK: "+str(mon.atk)+" DEF: "+str(mon.defense)+
-						      " SKL: "+str(mon.skill)+" ELMT: "+mon.element+
-						      " PSN: "+str(mon.poison)),
-						     1, P.RED)
-		elif mon.buff != None:
-			stats_text = REG_FONT.render((mon.name+" HP: "+str(mon.health)+
-						      " ATK: "+str(mon.atk)+" DEF: "+str(mon.defense)+
-						      " SKL: "+str(mon.skill)+" ELMT: "+mon.element+
-						      " BUFF: "+mon.buff+" PSN: "+str(mon.poison)),
-						     1, P.RED)
+		stats_text = SMALL_FONT.render((mon.name+" HP: "+str(mon.health)+
+					      " ATK: "+str(mon.atk)+" DEF: "+str(mon.defense)+
+					      " SKL: "+str(mon.skill)+" ELMT: "+mon.element+
+					      " PSN: "+str(mon.poison)),
+					     1, P.RED)
 		WIN.blit(stats_text, (P.PADDING, P.PADDING + stats_text.get_height() * x))
-		pygame.display.update()
 		x += 1
+		if mon.buff != None or mon.status != None or mon.aura != None:
+			passives = " "
+			if mon.buff != None:
+				passives += " BOOST: "+mon.buff
+			if mon.status != None:
+				passives += " -EFCT: "+mon.status
+			if mon.aura != None:
+				passives += " AURA: "+mon.aura
+			passive_text = SMALL_FONT.render(passives, 1, P.RED)
+			WIN.blit(passive_text, (P.PADDING, P.PADDING + passive_text.get_height() * x))
+			x += 1
+		pygame.display.update()
+		
 #hero stats
 def draw_hero_stats(hero):
 	width, height = WIN.get_size()
@@ -229,88 +236,85 @@ def draw_all_stats(h_p, h_ally, h_wpn, h_amr):
 	width, height = WIN.get_size()
 	x = 1
 	for hero in h_p:
-		stat_text = REG_FONT.render("Hero: "+hero.name+" ATK: "+str(hero.atk+hero.atkbonus)+
-					    " DEF: "+str(hero.defense+hero.defbonus)+" HP%: "+str((round(hero.health/hero.maxhealth, 2))*100)+
-					    " MP: "+str(hero.mana)+" SKL: "+str(hero.skill)+" PSN: "+str(hero.poison), 1, P.RED)
+		stat_text = SMALL_FONT.render("Hero: "+hero.name+" ATK: "+str(hero.atk+hero.atkbonus)+
+					    " DEF: "+str(hero.defense+hero.defbonus)+
+					    " HP%: "+str((round(hero.health/hero.maxhealth, 2))*100)+
+					    " MP: "+str(hero.mana)+" SKL: "+str(hero.skill)+
+					    " PSN: "+str(hero.poison), 1, P.RED)
+		x += 1
 		WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
-		x +=1
+		if hero.status != None or hero.buff != None or hero.passive != None:
+			passives = " "
+			if hero.status != None:
+				passives += " -EFCT: "+hero.status
+			if hero.buff != None:
+				passives += " BOOST: "+hero.buff
+			if hero.passive != None:
+				passives += " PSVE: "+hero.passive
+			passive_text = SMALL_FONT.render(passives, 1, P.RED)
+			x += 1
+			WIN.blit(passive_text, ((width - passive_text.get_width() - P.PADDING), P.PADDING * x))
 	for ally in h_ally:
-		stat_text = REG_FONT.render("Ally: "+ally.name+" ATK: "+str(ally.atk)+" STAGE: "+str(ally.stage), 1, P.RED)
-		WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
 		x +=1
+		stat_text = SMALL_FONT.render("Ally: "+ally.name+" ATK: "+str(ally.atk)+" STAGE: "+str(ally.stage), 1, P.RED)
+		WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
 	for wpn in h_wpn:
 		if wpn.user != "None":
-			stat_text = REG_FONT.render("User: "+wpn.user+" Effect: "+wpn.effect+" Strength: "+str(wpn.strength)+
+			x += 1
+			stat_text = SMALL_FONT.render("User: "+wpn.user+" Effect: "+wpn.effect+" Strength: "+str(wpn.strength)+
 						    " ATK: "+str(wpn.atk)+" Element: "+wpn.element, 1, P.RED)
 			WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
-			x += 1
 	for amr in h_amr:
 		if amr.user != "None":
-			stat_text = REG_FONT.render("User: "+amr.user+" Effect: "+amr.effect+" Strength: "+str(amr.strength)+
+			x += 1
+			stat_text = SMALL_FONT.render("User: "+amr.user+" Effect: "+amr.effect+" Strength: "+str(amr.strength)+
 						    " DEF: "+str(amr.defense)+" Element: "+amr.element, 1, P.RED)
 			WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
-			x += 1
 #function that will draw monsters in battle
+#will draw static monsters starting from the bottom left corner
 def draw_monsters(m_p):
 	width, height = WIN.get_size()
-	x = 2
+	x = 1
 	y = 0
 	z = 1
 	for mon in m_p:
 		if "Demon General" in mon.name:
-			WIN.blit(GENERAL_IMG,
-				 (P.BIG_SPRITE, height//2))
+			WIN.blit(GENERAL_IMG, (P.BIG_SPRITE * 2, height//2))
 			x -= 1
 		elif "Acid Hydra" in mon.name:
-                        x -= 1
-                        WIN.blit(MAIN_HYDRA,
-                                 (P.BIG_SPRITE, height//2))
-                elif "Hydra Head" in mon.name:
-                        WIN.blit(HYDRA_HEAD,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			WIN.blit(MAIN_HYDRA, (P.BIG_SPRITE * 2, height//2))
+			x -= 1
+		elif "Hydra Head" in mon.name:
+			MONSTER = HYDRA_HEAD
 		elif "Slime" in mon.name:
-			WIN.blit(SLIME_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = SLIME_IMG
 		elif "Beast" in mon.name:
-			WIN.blit(BEAST_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = BEAST_IMG
 		elif "Bomb" in mon.name:
-			WIN.blit(BOMB_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = BOMB_IMG
 		elif "Goblin" in mon.name:
 			if "Champion" in mon.name:
-				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW, (P.BIG_SPRITE, P.BIG_SPRITE))
+				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW,
+								    (P.BIG_SPRITE, P.BIG_SPRITE))
 			elif "Hob" in mon.name:
-				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW, (P.SPRITE_WIDTH, P.SPRITE_WIDTH))
+				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW,
+								    (P.SPRITE_WIDTH, P.SPRITE_WIDTH))
 			else:
-				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW, (P.SMALL_SPRITE, P.SMALL_SPRITE))
-			WIN.blit(GOBLIN_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+				GOBLIN_IMG = pygame.transform.scale(GOBLIN_RAW,
+								    (P.SMALL_SPRITE, P.SMALL_SPRITE))
+			MONSTER = GOBLIN_IMG
 		elif "Elemental" in mon.name:
-			WIN.blit(ELEMENTAL_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = ELEMENTAL_IMG
 		elif "Demon" in mon.name:
-			WIN.blit(DEMON_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = DEMON_IMG
 		elif "Skeleton" in mon.name:
-			WIN.blit(SKELETON_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = SKELETON_IMG
 		elif "Troll" in mon.name:
-			WIN.blit(TROLL_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = TROLL_IMG
 		else:
-			WIN.blit(MON_IMG,
-				 (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y),
-				  height - (P.BIG_SPRITE * x)))
+			MONSTER = MON_IMG
+		if "Demon General" not in mon.name and "Acid Hydra" not in mon.name:
+			WIN.blit(MONSTER, (P.PADDING//5 * x + (P.SPRITE_WIDTH//2 * y), height - (P.BIG_SPRITE * x)))
 		x += 1
 		if x * P.BIG_SPRITE > height - P.PADDING:
 			x = 1
@@ -323,10 +327,10 @@ def draw_monster(mon):
 	if "Demon General" in mon.name:
 		WIN.blit(GENERAL_IMG, (x//3, y//2))
 	elif "Hydra" in mon.name:
-                if "Acid" in mon.name:
-                        WIN.blit(MAIN_HYDRA, (x//3, y//2))
-                elif "Head" in mon.name:
-                        WIN.blit(HYDRA_HEAD, (x//3, y//2))
+		if "Acid" in mon.name:
+			WIN.blit(MAIN_HYDRA, (x//3, y//2))
+		elif "Head" in mon.name:
+			WIN.blit(HYDRA_HEAD, (x//3, y//2))
 	elif "Slime" in mon.name:
 		WIN.blit(SLIME_IMG, (x//3, y//2))
 	elif "Beast" in mon.name:
@@ -345,16 +349,17 @@ def draw_monster(mon):
 		WIN.blit(TROLL_IMG, (x//3, y//2))
 	else:
 		WIN.blit(MON_IMG, (x//3, y//2))
+#function that draws a monster being attacked by another monster
 def draw_monster2(mon):
 	width, height = WIN.get_size()
 	x, y = WIN.get_size()
 	if "Slime" in mon.name:
 		WIN.blit(SLIME_IMG, (x//2, y//2))
 	elif "Hydra" in mon.name:
-                if "Acid" in mon.name:
-                        WIN.blit(MAIN_HYDRA, (x//2, y//2))
-                elif "Head" in mon.name:
-                        WIN.blit(HYDRA_HEAD, (x//2, y//2))
+		if "Acid" in mon.name:
+			WIN.blit(MAIN_HYDRA, (x//2, y//2))
+		elif "Head" in mon.name:
+			WIN.blit(HYDRA_HEAD, (x//2, y//2))
 	elif "Beast" in mon.name:
 		WIN.blit(BEAST_IMG, (x//2, y//2))
 	elif "Bomb" in mon.name:
@@ -461,11 +466,25 @@ def draw_city_menu():
 			    P.PADDING))
 	store_text = REG_FONT.render("FORGE: F", 1, P.BLACK)
 	WIN.blit(store_text, ((width - store_text.get_width())//2, P.PADDING * 2))
-	practice_text = REG_FONT.render("PRACTICE arena: P", 1, P.BLACK)
+	practice_text = REG_FONT.render("TRAINING ARENA: T", 1, P.BLACK)
 	WIN.blit(practice_text, ((width - practice_text.get_width())//2, P.PADDING * 3))
+	potion_text = REG_FONT.render("POTIONS: P", 1, P.BLACK)
+	WIN.blit(potion_text, ((width - potion_text.get_width())//2, P.PADDING * 4))
 	leave_text = REG_FONT.render("LEAVE: L", 1, P.BLACK)
+	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 5))
+
+def draw_potion_menu(h_bag):
+	width, height = WIN.get_size()
+	price_text = REG_FONT.render("Welcome, currently our potions cost "+
+				     str(2+(h_bag.flow//100))+" coins.", 1, P.WHITE)
+	WIN.blit(price_text, ((width - price_text.get_width())//2, P.PADDING * 1))
+	type_text = REG_FONT.render("We have HEAL, MANA, and BOOST potions for sale here.", 1, P.WHITE)
+	WIN.blit(type_text, ((width - type_text.get_width())//2, P.PADDING * 2))
+	inventory_text = REG_FONT.render("COINS: "+str(h_bag.coins)+" HEAL: "+str(h_bag.heal)+
+					 " MANA: "+str(h_bag.mana)+" BOOST: "+str(h_bag.buff), 1, P.WHITE)
+	WIN.blit(inventory_text, ((width - inventory_text.get_width())//2, P.PADDING * 3))
+	leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
 	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 4))
-	
 def draw_inn_menu():
 	width, height = WIN.get_size()
 	sleep_text = REG_FONT.render("SLEEP: S", 1, P.WHITE)
@@ -563,22 +582,38 @@ def draw_recruit_menu(h_p):
 	knight = None
 	summoner = None
 	tactician = None
+	mage = None
+	warrior = None
+	cleric = None
+	ninja = None
 	#check for duplicates
 	for hero in h_p:
 		if "Knight" in hero.name:
 			knight = hero
-		if "Summoner" in hero.name:
+		elif "Summoner" in hero.name:
 			summoner = hero
-		if "Tactician" in hero.name:
+		elif "Tactician" in hero.name:
 			tactician = hero
-	warrior_text = REG_FONT.render("WARRIOR: W", 1, P.RED)
-	WIN.blit(warrior_text, ((width - warrior_text.get_width())//2, P.PADDING))
-	cleric_text = REG_FONT.render("CLERIC: C", 1, P.GREEN)
-	WIN.blit(cleric_text, ((width - cleric_text.get_width())//2, P.PADDING * 2))
-	mage_text = REG_FONT.render("MAGE: M", 1, P.RED)
-	WIN.blit(mage_text, ((width - mage_text.get_width())//2, P.PADDING * 3))
-	ninja_text = REG_FONT.render("NINJA: N", 1, P.RED)
-	WIN.blit(ninja_text, ((width - ninja_text.get_width())//2, P.PADDING * 5))
+		elif "Mage" in hero.name:
+			mage = hero
+		elif "Ninja" in hero.name:
+			ninja = hero
+		elif "Warrior" in hero.name:
+			warrior = hero
+		elif "Cleric" in hero.name:
+			cleric = hero
+	if warrior == None:
+		warrior_text = REG_FONT.render("WARRIOR: W", 1, P.RED)
+		WIN.blit(warrior_text, ((width - warrior_text.get_width())//2, P.PADDING))
+	if cleric == None:
+		cleric_text = REG_FONT.render("CLERIC: C", 1, P.GREEN)
+		WIN.blit(cleric_text, ((width - cleric_text.get_width())//2, P.PADDING * 2))
+	if mage == None:
+		mage_text = REG_FONT.render("MAGE: M", 1, P.RED)
+		WIN.blit(mage_text, ((width - mage_text.get_width())//2, P.PADDING * 3))
+	if ninja == None:
+		ninja_text = REG_FONT.render("NINJA: N", 1, P.RED)
+		WIN.blit(ninja_text, ((width - ninja_text.get_width())//2, P.PADDING * 5))
 	leave_text = REG_FONT.render("LEAVE: L", 1, P.WHITE)
 	WIN.blit(leave_text, ((width - leave_text.get_width())//2, P.PADDING * 8))
 	if knight == None:
