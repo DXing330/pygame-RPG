@@ -5,7 +5,8 @@ class Player_PC:
 	def __init__(self, name, level, health, maxhealth,
 		     atk, defense, skill, mana, maxmana, 
 		     atkbonus = 0, defbonus = 0, exp = 0, 
-		     poison = 0, status = None, buff = None, rname = None):
+		     poison = 0, status = None, buff = None,
+		     passive = None, rname = None):
 		#player's name, usually represented by their class
 		self.name = name
 		#player's level, will increase through quests
@@ -37,6 +38,7 @@ class Player_PC:
 		self.poison = poison
 		self.status = status
 		self.buff = buff
+		self.passive = passive
 		self.rname = rname
 		
 	def hstats(self):
@@ -118,7 +120,8 @@ class Spell_PC:
 class Monster_NPC:
 	def __init__(self, name, health, atk, defense, skill,
 		     element, dropchance, poison = 0,
-		     buff = None, aura = None, status = None):
+		     buff = None, aura = None, passive = None,
+		     status = None):
 		self.name = name
 		self.health = health
 		self.atk = atk
@@ -197,7 +200,7 @@ class QuestItems_NPC:
 		print ("Packages:", self.package, "Mana Gems:", self.managem, "\n")
 #obtained through gameplay and allows access to new content
 class Access_NPC:
-	def __init__(self, fame = 0, rank = 0, posrep = 0, negrep = 0):
+	def __init__(self, fame = 0, rank = 0, posrep = 0, negrep = 0, srank = 0):
 		#affects what kind of quests you can take
 		self.fame = fame
 		#affects what kind of facilities you can use at the monster hunter guild
@@ -206,6 +209,8 @@ class Access_NPC:
 		#rep is for reputation
 		self.posrep = posrep
 		self.negrep = negrep
+		#streetrank affects the gangster and gambling storyline
+		self.srank = srank
 	def stats(self):
 		print ("Fame:", self.fame, ", Rank:", self.rank, "+:", self.posrep,
 		       "-:", self.negrep)

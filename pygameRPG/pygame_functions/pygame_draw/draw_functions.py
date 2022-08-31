@@ -8,7 +8,9 @@ P = PYGConstants()
 from rpg2_constants import Constants
 C = Constants()
 import draw_bosses as boss_func
-REG_FONT = pygame.font.SysFont("comicsans", 25)
+REG_FONT = pygame.font.SysFont("comicsans", 20)
+SMALL_FONT = pygame.font.SysFont("comicsans", 17)
+LARGE_FONT = pygame.font.SysFont("comicsans", 25)
 WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT))
 pygame.display.set_caption("RPG")
 width, height = WIN.get_size()
@@ -86,9 +88,19 @@ def draw_heroes(h_p, h_ally):
 				 (width - (P.SPRITE_WIDTH * x),
 				 height - (P.BIG_SPRITE * y)))
 		if "Knight" in player.name:
-			WIN.blit(KNIGHT_IMG,
-				 (width - (P.SPRITE_WIDTH * x),
-				 height - (P.BIG_SPRITE * y)))
+			if player.buff != None:
+				if "Taunt" in player.buff:
+					WIN.blit(KNIGHT_IMG,
+						 (width//2 + P.SPRITE_WIDTH,
+						  height//2))
+				else:
+					WIN.blit(KNIGHT_IMG,
+						 (width - (P.SPRITE_WIDTH * x),
+						  height - (P.BIG_SPRITE * y)))
+			else:
+				WIN.blit(KNIGHT_IMG,
+					 (width - (P.SPRITE_WIDTH * x),
+					 height - (P.BIG_SPRITE * y)))
 		if "Defender" in player.name:
 			WIN.blit(KNIGHT_IMG,
 				 (width//2 + P.SPRITE_WIDTH,
@@ -189,23 +201,28 @@ def draw_ally(ally):
 #function that will draw monster stats
 def draw_monster_stats(m_p):
 	width, height = WIN.get_size()
-	x = 2
+	x = 1
 	for mon in m_p:
-		if mon.buff == None:
-			stats_text = REG_FONT.render((mon.name+" HP: "+str(mon.health)+
-						      " ATK: "+str(mon.atk)+" DEF: "+str(mon.defense)+
-						      " SKL: "+str(mon.skill)+" ELMT: "+mon.element+
-						      " PSN: "+str(mon.poison)),
-						     1, P.RED)
-		elif mon.buff != None:
-			stats_text = REG_FONT.render((mon.name+" HP: "+str(mon.health)+
-						      " ATK: "+str(mon.atk)+" DEF: "+str(mon.defense)+
-						      " SKL: "+str(mon.skill)+" ELMT: "+mon.element+
-						      " BUFF: "+mon.buff+" PSN: "+str(mon.poison)),
-						     1, P.RED)
+		stats_text = SMALL_FONT.render((mon.name+" HP: "+str(mon.health)+
+					      " ATK: "+str(mon.atk)+" DEF: "+str(mon.defense)+
+					      " SKL: "+str(mon.skill)+" ELMT: "+mon.element+
+					      " PSN: "+str(mon.poison)),
+					     1, P.RED)
 		WIN.blit(stats_text, (P.PADDING, P.PADDING + stats_text.get_height() * x))
-		pygame.display.update()
 		x += 1
+		if mon.buff != None or mon.status != None or mon.aura != None:
+			passives = " "
+			if mon.buff != None:
+				passives += " BOOST: "+mon.buff
+			if mon.status != None:
+				passives += " -EFCT: "+mon.status
+			if mon.aura != None:
+				passives += " AURA: "+mon.aura
+			passive_text = SMALL_FONT.render(passives, 1, P.RED)
+			WIN.blit(passive_text, (P.PADDING, P.PADDING + passive_text.get_height() * x))
+			x += 1
+		pygame.display.update()
+		
 #hero stats
 def draw_hero_stats(hero):
 	width, height = WIN.get_size()
@@ -229,36 +246,40 @@ def draw_all_stats(h_p, h_ally, h_wpn, h_amr):
 	width, height = WIN.get_size()
 	x = 1
 	for hero in h_p:
-		if hero.status == None:
-			stat_text = REG_FONT.render("Hero: "+hero.name+" ATK: "+str(hero.atk+hero.atkbonus)+
-						    " DEF: "+str(hero.defense+hero.defbonus)+
-						    " HP%: "+str((round(hero.health/hero.maxhealth, 2))*100)+
-						    " MP: "+str(hero.mana)+" SKL: "+str(hero.skill)+
-						    " PSN: "+str(hero.poison), 1, P.RED)
-		elif hero.status != None:
-			stat_text = REG_FONT.render("Hero: "+hero.name+" ATK: "+str(hero.atk+hero.atkbonus)+
-						    " DEF: "+str(hero.defense+hero.defbonus)+
-						    " HP%: "+str((round(hero.health/hero.maxhealth, 2))*100)+
-						    " MP: "+str(hero.mana)+" SKL: "+str(hero.skill)+
-						    " PSN: "+str(hero.poison)+" -EFCT: "+hero.status, 1, P.RED)
+		stat_text = SMALL_FONT.render("Hero: "+hero.name+" ATK: "+str(hero.atk+hero.atkbonus)+
+					    " DEF: "+str(hero.defense+hero.defbonus)+
+					    " HP%: "+str((round(hero.health/hero.maxhealth, 2))*100)+
+					    " MP: "+str(hero.mana)+" SKL: "+str(hero.skill)+
+					    " PSN: "+str(hero.poison), 1, P.RED)
+		x += 1
 		WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
-		x +=1
+		if hero.status != None or hero.buff != None or hero.passive != None:
+			passives = " "
+			if hero.status != None:
+				passives += " -EFCT: "+hero.status
+			if hero.buff != None:
+				passives += " BOOST: "+hero.buff
+			if hero.passive != None:
+				passives += " PSVE: "+hero.passive
+			passive_text = SMALL_FONT.render(passives, 1, P.RED)
+			x += 1
+			WIN.blit(passive_text, ((width - passive_text.get_width() - P.PADDING), P.PADDING * x))
 	for ally in h_ally:
-		stat_text = REG_FONT.render("Ally: "+ally.name+" ATK: "+str(ally.atk)+" STAGE: "+str(ally.stage), 1, P.RED)
-		WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
 		x +=1
+		stat_text = SMALL_FONT.render("Ally: "+ally.name+" ATK: "+str(ally.atk)+" STAGE: "+str(ally.stage), 1, P.RED)
+		WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
 	for wpn in h_wpn:
 		if wpn.user != "None":
-			stat_text = REG_FONT.render("User: "+wpn.user+" Effect: "+wpn.effect+" Strength: "+str(wpn.strength)+
+			x += 1
+			stat_text = SMALL_FONT.render("User: "+wpn.user+" Effect: "+wpn.effect+" Strength: "+str(wpn.strength)+
 						    " ATK: "+str(wpn.atk)+" Element: "+wpn.element, 1, P.RED)
 			WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
-			x += 1
 	for amr in h_amr:
 		if amr.user != "None":
-			stat_text = REG_FONT.render("User: "+amr.user+" Effect: "+amr.effect+" Strength: "+str(amr.strength)+
+			x += 1
+			stat_text = SMALL_FONT.render("User: "+amr.user+" Effect: "+amr.effect+" Strength: "+str(amr.strength)+
 						    " DEF: "+str(amr.defense)+" Element: "+amr.element, 1, P.RED)
 			WIN.blit(stat_text, ((width - stat_text.get_width() - P.PADDING), P.PADDING * x))
-			x += 1
 #function that will draw monsters in battle
 #will draw static monsters starting from the bottom left corner
 def draw_monsters(m_p):

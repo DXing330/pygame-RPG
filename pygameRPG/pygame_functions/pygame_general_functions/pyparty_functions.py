@@ -194,6 +194,7 @@ def remove_from_party(heroes_party):
 		print ("That's fine if you changed your mind.")
 
 #function that will pick a hero from the party
+	#deprecated due to general pick function
 def pick_hero(heroes_party):
 	hero = None
 	if len(heroes_party) > 1:
@@ -215,9 +216,12 @@ def pick_hero(heroes_party):
 def pick_random_healthy_hero(heroes_party):
 	hero = None
 	#if there's a defender in the party, pick him first
-	for player  in heroes_party:
+	for player in heroes_party:
 		if "Defender" in player.name and player.health > 0:
 			hero = player
+		if player.buff != None:
+			if "Taunt" in player.buff and player.health > 0:
+				hero = player
 	#if there's no defender then try to pick a random hero
 	if hero == None:
 		try:

@@ -27,7 +27,7 @@ def random_elite_monster(bag):
 	health = C.MONSTER_MAX_HP + random.randint(0, bag.flow//2)
 	atk = C.MONSTER_MAX_ATK + random.randint(0, bag.flow//4)
 	defense = C.MONSTER_MAX_DEF + random.randint(0, bag.flow//8)
-	skill = C.MONSTER_MAX_SKILL
+	skill = C.MONSTER_MAX_SKILL + random.randint(0, bag.flow//16)
 	dropchance = C.MONSTER_MAX_DROPCHANCE * C.LEVEL_LIMIT
 	random_monster = Monster_NPC("Elite " + element + " " + name, health, atk, defense, skill, element, dropchance)
 	return random_monster
@@ -40,21 +40,33 @@ def random_scaled_monster(p_pc, bag):
 	health = random.randint(C.MONSTER_MIN_HP * p_pc.level//2, C.MONSTER_SCALE_HP * p_pc.level) + random.randint(0, bag.flow//4)
 	atk = random.randint(C.MONSTER_MIN_ATK * p_pc.level//2, C.MONSTER_SCALE_ATK * p_pc.level) + random.randint(0, bag.flow//8)
 	defense = random.randint(C.MONSTER_MIN_DEF * p_pc.level//2, C.MONSTER_SCALE_DEF * p_pc.level) + random.randint(0, bag.flow//16)
-	skill = random.randint(C.MONSTER_MAX_SKILL, C.MONSTER_MAX_SKILL + p_pc.level)
+	skill = random.randint(C.MONSTER_MAX_SKILL, C.MONSTER_MAX_SKILL + p_pc.level) + random.randint(0, bag.flow//32)
 	dropchance = C.MONSTER_MAX_DROPCHANCE + random.randint(0, p_pc.level)
 	random_monster = Monster_NPC(element + " " + name, health, atk, defense, skill, element, dropchance)
 	return random_monster
-#function that controls the monster's aura effect
-def monster_aura(mon, m_p, h_p):
-	if mon.aura == None:
-		pass
-	else:
-		if mon.aura == "Command":
-			for monster in m_p:
-				monster.skill += 1
+#function that controls the monster's status effects
+def monster_status(m_npc):
+	#burn will weaken them
+	if "Burn" in m_npc.status:
+		m_npc.atk -= m_npc.atk//m_npc.skill
+	if "Bleed" in m_npc.status:
+		m_npc.health -= m_npc.health//4
+	#slogged will wear off after the monster shakes off the water
+	if "Slog" in m_npc.status:
+		m_npc.skill -= m_npc.skill//4
+		m_npc.status = m_npc.status.replace("Slog", "")
+	if "Decay" in m_npc.status:
+                m_npc.defense -= m_npc.defense//10
+                m_npc.atk -= m_npc.atk//10
+                m_npc.health -= m_npc.health//10
 #function where the monster performs an action
 def monster_attack(m_npc, p_pc, h_a, h_p, m_p):
 	text = REG_FONT.render(m_npc.name+" attacks "+p_pc.name, 1, P.RED)
+	#check what kind of statuses the monster has
+	if m_npc.status != None:
+		monster_status(m_npc)
+	if m_npc.aura != None:
+		me_func.monster_aura(m_npc, m_p, h_p)
 	#check what kind of effect the monster has
 	me_func.monster_passive_effect(m_npc, p_pc, h_p, m_p)
 	#account for special monsters
@@ -95,7 +107,7 @@ def monster_attack(m_npc, p_pc, h_a, h_p, m_p):
 					text = REG_FONT.render(m_npc.name+" misses "+p_pc.name, 1, P.RED)
 			if x < m_npc.skill:
 				#monster will do a special attack
-				y = random.randint(1, 8)
+				y = random.randint(1, 10)
 				if y == 1:
 					#monster does an attack that ignores defense
 					p_pc.health -= max((new_m_npc_atk), 1)
@@ -133,7 +145,27 @@ def monster_attack(m_npc, p_pc, h_a, h_p, m_p):
 					text = REG_FONT.render(m_npc.name+" dents "+p_pc.name+"'s armor.", 1, P.RED)
 				elif y == 8:
 					p_pc.health -= max((new_m_npc_atk - p_pc.defense - p_pc.defbonus), 1)
+					text = REG_FONT.render(m_npc.name+" hits "+p_pc.name+" in the throat.", 1, P.RED)
 					if p_pc.status == None:
 						p_pc.status = "Silence"
-						text = REG_FONT.render(m_npc.name+" hits "+p_pc.name+" in the throat.", 1, P.RED)
+					elif "Silence" not in p_pc.status:
+						p_pc.status += " Silence"
+				#monster will apply a permanent buff
+				elif y == 9:
+					p_pc.health -= max((new_m_npc_atk - p_pc.defense - p_pc.defbonus), 1)
+					if m_npc.buff == None:
+						z = random.randint(0, 1)
+						if z == 0:
+							m_npc.buff = "DEFUP"
+							text = REG_FONT.render(m_npc.name+" seems to be hardening.", 1, P.RED)
+						elif z == 1:
+							m_npc.buff = "ATKUP"
+							text = REG_FONT.render(m_npc.name+" seems to be pulsing with energy.", 1, P.RED)
+				elif y == 10:
+					p_pc.health -= max((new_m_npc_atk - p_pc.defense - p_pc.defbonus), 1)
+					text = REG_FONT.render(m_npc.name+" knocks "+p_pc.name+" down!", 1, P.RED)
+					if p_pc.status == None:
+						p_pc.status = "Prone"
+					elif "Prone" not in p_pc.status:
+						p_pc.status += " Prone"
 			drawe_func.monster_attack(m_npc, p_pc, armor, text)

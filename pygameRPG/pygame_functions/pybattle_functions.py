@@ -114,12 +114,19 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 	      h_magic, h_wpn, h_amr):
 	x, y = WIN.get_size()
 	FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
-	WIN.blit(FOREST_IMG, P.ORIGIN)
-	draw_func.draw_heroes(h_p, h_ally)
-	draw_func.draw_monsters(m_p)
-	draw_func.draw_battle_menu(hero)
+	#check passive effects on the at the start of the turn
+	if hero.passive != None:
+		hskl_func.hero_passive(hero, h_p, m_p, h_ally)
+	if hero.buff != None:
+		hskl_func.hero_buff(hero, h_p, h_ally)
+	if hero.status != None:
+		hskl_func.hero_status(hero)
 	if "Totem" not in hero.name:
+		WIN.blit(FOREST_IMG, P.ORIGIN)
+		draw_func.draw_heroes(h_p, h_ally)
+		draw_func.draw_monsters(m_p)
 		draw_func.draw_hero_stats(hero)
+		draw_func.draw_battle_menu(hero)
 	pygame.display.update()
 	turn = True
 	while turn:
@@ -157,7 +164,7 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 					pygame.display.update()
 					break
 				if event.key == pygame.K_s:
-					if hero.status == "Curse":
+					if hero.status != None and "Curse" in hero.status:
 						turn = False
 						WIN.blit(FOREST_IMG, P.ORIGIN)
 						silence_text = REG_FONT.render("You can't use skills right now!", 1, P.RED)
@@ -172,7 +179,15 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 						hskl_func.hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic)
 						break
 				if event.key == pygame.K_m and len(h_magic) > 0:
-					if hero.status == "Silence" or hero.status == "Curse":
+					if hero.status != None and "Silence" in hero.status:
+						turn = False
+						WIN.blit(FOREST_IMG, P.ORIGIN)
+						silence_text = REG_FONT.render("You can't use magic right now!", 1, P.RED)
+						WIN.blit(silence_text, ((x - silence_text.get_width())//2, P.PADDING))
+						pygame.display.update()
+						pygame.time.delay(500)
+						break
+					if hero.status != None and "Curse" in hero.status:
 						turn = False
 						WIN.blit(FOREST_IMG, P.ORIGIN)
 						silence_text = REG_FONT.render("You can't use magic right now!", 1, P.RED)
@@ -191,7 +206,6 @@ def hero_turn(hero, h_p, m_p, h_ally, h_bag,
 					turn = False
 					use_item(hero, h_bag, h_p, h_ally, m_p)
 					break
-
 
 #function that will control the battle
 def battle(h_p, m_p, h_ally, h_bag,
@@ -233,10 +247,9 @@ def battle(h_p, m_p, h_ally, h_bag,
 		
 		for hero in new_h_p:
 			if hero.health > 0:
-				hskl_func.hero_buff(hero, new_h_p, new_h_ally)
 				#if the hero is stunned, then they lose their turn
-				if hero.status == "Stun":
-					hero.status = None
+				if hero.status != None and "Prone" in hero.status:
+					hero.status = hero.status.replace("Prone", "")
 				else:
 					hero_turn(hero, new_h_p, new_m_p, new_h_ally, h_bag,
 						  h_magic, new_h_wpn, new_h_amr)
@@ -247,12 +260,11 @@ def battle(h_p, m_p, h_ally, h_bag,
 		if len(new_m_p) > 0:
 			pet_func.ally_action(new_h_ally, new_h_p, new_m_p)
 		for mon in new_m_p:
-			monster_func.monster_aura(mon, new_m_p, new_h_p)
 			x, y = WIN.get_size()
 			FOREST_IMG = pygame.transform.scale(FOREST_RAW, (x, y))
 			WIN.blit(FOREST_IMG, P.ORIGIN)
-			if mon.status == "Stun":
-				mon.status = None
+			if mon.status != None and "Prone" in mon.status:
+				mon.status = mon.status.replace("Prone", "")
 			elif mon.health > 0:
 				hero = party_func.pick_random_healthy_hero(new_h_p)
 				monster_func.monster_attack(mon, hero, new_h_amr, new_h_p, new_m_p)
@@ -279,23 +291,14 @@ def battle(h_p, m_p, h_ally, h_bag,
 				if hero.name == heero.name:
 					check = heero
 			#if there is no matching hero then the hero's health goes to zero
-			if check == None and hero.name != "Knight":
+			if check == None:
 				hero.health = 0
 				hero.mana = 0
 			#if there is a matching hero then the hero's health becomes equal
 			elif check != None:
 				hero.health = min(check.health, hero.maxhealth)
 				hero.mana = min(check.mana, hero.maxmana)
-			elif check == None and hero.name == "Knight":
-				for heeero in new_h_p:
-					if heeero.name == "Defender":
-						check = heeero
-				if check == None:
-					hero.health = 0
-					hero.mana = 0
-				elif check != None:
-					hero.health = min(check.health, hero.maxhealth)
-					hero.mana = min(check.mana, hero.maxmana)
+
 		if len(new_h_p) > 0:
 			drop_step(h_p, m_p, h_bag)
 		while len(m_p) > 0:

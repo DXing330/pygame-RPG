@@ -163,10 +163,7 @@ def hero_air_attack(hero, m_p, spell):
 		WIN.blit(spell_img, (width * 0.125, -height//20))
 		WIN.blit(spell_img, (width * 0, -height//20))
 		pygame.display.update()
-		pygame.time.delay(10)
-		pygame.display.update()
-		pygame.time.delay(10)
-	for y in range(0, 10):
+	for y in range(0, 8):
 		for z in range(0, 7):
 			spell_img = spell_list[z + 12]
 			spell_img = pygame.transform.scale(spell_img, (width * (0.5 + (y/10)), height * 1.5))

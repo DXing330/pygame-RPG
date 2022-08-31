@@ -27,15 +27,15 @@ class List_Constants:
 								  "Slime", "Skeleton", "Beast",
 								  "Elemental", "Troll", "Goblin",
 								  "Bomb", "Trap", "Orc", "Giant"]
-		   self.MONSTER_BUFF_LIST = ["AA Fire", "AA Water", "AA Earth",
-							   "AA Air", "AA Dark", "AA Light",
-							    "Poison Heal", "Dmg Void A", "Dmg Void B",
-							    "Magic Resist A", "Magic Resist B"]
+		   self.MONSTER_BUFF_LIST = ["AA Fire", "AAWater", "AAEarth",
+							   "AAAir", "AADark", "AALight",
+							    "PoisonHeal", "DmgVoidA", "DmgVoidB",
+							    "MagicResistA", "MagicResistB"]
 		   #lists of weapon and armor effects
 		   self.BASIC_ARMOR_EFFECT_LIST = ["Block",
-									"Resist Fire", "Resist Water",
-									"Resist Earth", "Resist Air",
-									"Resist Dark"]
+						   "Resist Fire", "Resist Water",
+						   "Resist Earth", "Resist Air",
+						   "Resist Dark"]
 		   self.BASIC_WEAPON_EFFECT_LIST = ["Attack", 
 									 "Slay Fire", "Slay Water",
 									 "Slay Earth", "Slay Air",
@@ -53,6 +53,7 @@ class List_Constants:
 						  "Poison", "Ethereal", "Revive", "Lucky",
 						  "ManaDrain", "Lifesteal", "Explode",
 						  "SkillDrain"]
-		   self.STATUSES = ["Stun", "Silence", "Curse"]
+		   self.STATUSES = ["Stun", "Silence", "Curse", "Burn"]
+		   self.PASSIVES = ["HP+", "MP+", "ATK+", "DEF+", "SKL+"]
 
 L = List_Constants()

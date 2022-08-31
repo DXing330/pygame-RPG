@@ -176,10 +176,10 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 										h_bag, h_magic, h_wpn, h_amr)
 						turn = False
 				elif event.key == pygame.K_p and "Knight" in hero.name:
-					hero.name = "Defender"
-					for amr in h_amr:
-						if "Knight" in amr.user:
-							amr.user = "Defender"
+					if hero.buff == None:
+						hero.buff = "Taunt"
+					elif "Taunt" not in hero.buff:
+						hero.buff += " Taunt"
 					turn = False
 				elif event.key == pygame.K_t and "Summoner" in hero.name:
 					if hero.mana > len(h_p):
@@ -216,10 +216,18 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 					elif "Knight" in hero.name or "Defender" in hero.name:
 						mon.defense -= min(hero.skill, mon.defense)
 					elif "Cleric" in hero.name:
-						if hero.mana > 0 and hero.skill > 0:
+						if hero.mana > 0:
 							mon.atk -= min(hero.mana + hero.skill, mon.atk)
 							hero.mana -= 1
-							hero.skill -= 1
+						#cleric can dispel basic monster buffs
+						if mon.buff != None:
+							if hero.mana >= 5:
+								if "ATKUP" in m_npc.buff:
+									m_npc.buff = m_npc.buff.replace("ATKUP", "")
+									hero.mana -= 5
+								if "DEFUP" in m_npc.buff:
+									m_npc.buff = m_npc.buff.replace("DEFUP", "")
+									hero.mana -= 5
 					elif "Hunter" in hero.name:
 						mon.atk -= min(round(mon.poison ** C.DECREASE_EXPONENT), mon.atk)
 						mon.defense -= min(round(mon.poison ** C.DECREASE_EXPONENT), mon.defense)
@@ -237,11 +245,19 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 						else:
 							hero.skill += hero.level
 					elif "Knight" in hero.name or "Defender" in hero.name:
-						hero.defbonus += hero.level
+						hero.defbonus += hero.level//2
 						if hero.skill > 0 and armor != None:
 							armor.defense += 1
 							armor.strength += 1
 							hero.skill -= hero.defbonus//hero.level
+						else:
+							hero.skill += 1
+						if hero.buff == None:
+							hero.buff = "DEFUP"
+						elif "DEFUP" not in hero.buff:
+							hero.buff += " DEFUP"
+						else:
+							hero.defbonus += hero.level//2
 					elif "Cleric" in hero.name and hero.mana > 0:
 						buff = pick_func.pick_hero(h_p)
 						hero.skill -= buff.atkbonus//(hero.level + hero.skill)
@@ -259,7 +275,10 @@ def hero_skill(hero, h_p, m_p, h_ally, h_wpn, h_amr, h_bag, h_magic):
 					else:
 						if hero.skill > hero.atkbonus//hero.level:
 							hero.skill -= hero.atkbonus//hero.level
-							hero.atkbonus += hero.level
+							if hero.buff == None:
+								hero.buff = "ATKUP"
+							elif "ATKUP" not in hero.buff:
+								hero.buff += " ATKUP"
 						else:
 							hero.skill += 1
 				elif event.key == pygame.K_s and "Ninja" in hero.name:
@@ -334,14 +353,62 @@ def magical_attack(spell, hero, m_p):
 		new_m_p.append(copy)
 		drawe_func.magic_attack(hero, spell, new_m_p)
 
-#hero buffs
+#hero buffs, effects that are gained in battle and lost out of battle
 def hero_buff(hero, h_p, h_ally):
-	#if there is no buff then nothing happens
-	if hero.buff == None:
-		pass
-	else:
-		#this buff will boost the hero's stats at the cost of their health
-		if "Advance" in hero.buff:
-			hero.health -= hero.level
-			hero.atkbonus += hero.level//2
-			hero.defbonuse += hero.level//4
+	#this buff will boost the hero's stats at the cost of their health
+	if "Advance" in hero.buff:
+		hero.health -= hero.level
+		hero.atkbonus += hero.level//2
+		hero.defbonus += hero.level//4
+		hero.skill += hero.level//8
+	if "ATKUP" in hero.buff:
+		hero.atkbonus += hero.level
+		#the buff is consumed upon use
+		hero.buff = hero.buff.replace("ATKUP", "")
+	if "DEFUP" in hero.buff:
+		hero.defbonus += hero.level//4
+	if "MANAUP" in hero.buff:
+		hero.mana += hero.level//8
+	if "SKLUP" in hero.buff:
+		hero.skill += hero.level//8
+
+#hero passive effects, like permanent buffs
+def hero_passive(hero, h_p, m_p, h_ally):
+	#most basic passive is regen
+	if "HP+" in hero.passive:
+		if hero.health < hero.maxhealth:
+			hero.health += hero.level
+	if "MP+" in hero.passive:
+		if hero.mana < hero.maxmana:
+			hero.mana += hero.level//8
+	#other basic passives are stat increases
+	if "ATK+" in hero.passive:
+		hero.atkbonus += hero.level//2
+	if "DEF+" in hero.passive:
+		hero.defbonus += hero.level//4
+	if "SKL+" in hero.passive:
+		hero.skill += hero.level//8
+	#unique summoner passive
+	if "Angel+" in hero.passive:
+		for ally in h_ally:
+			if "Angel" in ally.name:
+				ally.atk += hero.level//8
+	#unique hero passive
+	if "Inspire" in hero.passive:
+		for h in h_p:
+			num = random.randint(0, len(h_p))
+			if num == 0:
+				h.atkbonus += hero.level//2
+				h.defbonus += hero.level//4
+				h.skill += hero.level//8
+#hero debuffs, gained in battle and lost out of battle
+def hero_status(hero):
+	if "Burn" in hero.status:
+		hero.atkbonus -= hero.atkbonus//hero.skill
+	if "Bleed" in hero.status:
+		hero.health -= hero.maxhealth//4
+	if "Silence" in hero.status:
+		hero.mana -= 1
+	if "Curse" in hero.status:
+		hero.skill -= 1
+		hero.mana -= 1

@@ -4,7 +4,7 @@ import sys
 import copy
 import random
 sys.path.append(".")
-sys.path.append("../../RPG2v3/RPG2v3_functions/RPG2v3_def")
+sys.path.append("./pycity")
 from pygconstants import PYGConstants
 P = PYGConstants()
 from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
@@ -12,8 +12,11 @@ from rpg2_classdefinitions import (Player_PC, Pet_NPC, ItemBag_PC,
 				   Armor_PC, QuestItems_NPC, Access_NPC)
 import pyparty_functions as party_func
 import draw_functions as draw_func
+import gambling_corner as gamble_func
 from rpg2_constants import Constants
 C = Constants()
+from pygconstants import PYGConstants
+P = PYGConstants()
 #always define the window you're drawing on
 WIN = pygame.display.set_mode((P.WIDTH, P.HEIGHT))
 pygame.display.set_caption("RPG")
@@ -43,7 +46,7 @@ knight = Player_PC("Knight", 1, 20, 20, 3, 4, 2, 0, 0)
 tactician = Player_PC("Tactician", 1, 10, 10, 1, 1, 5, 0, 0)
 #function that will let the heroes buy potions
 def potion_store(h_bag):
-	price = 1 + (h_bag.flow//100)
+	price = 2 + (h_bag.flow//100)
 	choose = True
 	while choose:
 		pygame.event.clear()
@@ -799,7 +802,7 @@ def inn(h_p, h_b, h_w, h_a):
 					for hero in h_p:
 						hero.health = hero.maxhealth
 						hero.mana = hero.maxmana
-					h_b.coins -= min(len(h_p), h_b.coins)
+					h_b.coins -= min(len(h_p)+h_b.flow//100, h_b.coins)
 					inn = False
 				if event.key == pygame.K_l:
 					inn = False
@@ -810,7 +813,7 @@ def inn(h_p, h_b, h_w, h_a):
 		
 	
 #function that will make the city
-def city(h_p, h_b, h_w, h_a):
+def city(h_p, h_b, h_w, h_a, a_i):
 	city = True
 	while city:
 		pygame.event.clear()
@@ -837,3 +840,5 @@ def city(h_p, h_b, h_w, h_a):
 					practice_arena(h_p, h_b)
 				if event.key == pygame.K_p:
 					potion_store(h_b)
+				if event.key == pygame.K_g:
+					gamble_func.gambling_corner(h_b, a_i)

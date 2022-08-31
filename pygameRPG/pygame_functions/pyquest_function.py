@@ -53,13 +53,13 @@ def quest_five(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 		new_h_p.append(copy_hero)
 	e_p = []
 	q_i.package -= 1
-	y = a_i.rank
+	y = round(a_i.rank ** 0.5)
 	for m in range(0, y):
 		for hero in h_p:
 			mon = mon_func.elemental_maker(h_bag)
 			e_p.append(mon)
 	battle_func.battle_phase(new_h_p, e_p, p_npc, h_bag,
-				 s_pc, h_w, h_a, q_i)
+				 s_pc, h_w, h_a, q_i, a_i)
 	if len(new_h_p) <= 0:
 		print ("You look like a mess. ")
 		print ("At least we managed to deal with most of the elementals. ")
@@ -169,7 +169,13 @@ def quest_one(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 	#after they find another rpackage then the quest is over
 	while q_i.rpackage == x and len(new_h_p) > 0:
 		for z in range(0, y):
-			mon = mon_func.super_goblin_maker(h_bag)
+			gobo = random.randint(0, a_i.rank)
+			if gobo < 3:
+				mon = mon_func.super_goblin_maker(h_bag)
+			elif gobo < 6:
+				mon = mon_func.random_goblin_maker(h_bag)
+			else:
+				mon = mon_func.random_effect_goblin_maker(h_bag)
 			g_p.append(mon)
 		battle_func.battle_phase(new_h_p, g_p, p_npc, h_bag, s_pc,
 					 h_w, h_a, q_i, a_i)
@@ -215,7 +221,7 @@ def quest(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 		x = random.randint(0, a_i.rank)
 		if x == 0:
 			quest_one(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
-		elif x == 5:
+		elif x == 10:
 			quest_five(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
 		else:
 			quest(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
@@ -223,7 +229,7 @@ def quest(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i):
 			quest_three(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
 		elif x == 8:
 			quest_five(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
-		elif x == 10:
+		elif x == 20:
 			quest_four(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)
 		else:
 			quest(h_p, h_bag, s_pc, p_npc, h_w, h_a, q_i, a_i)'''
