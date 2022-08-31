@@ -77,12 +77,10 @@ def slot_bet(h_bag):
 			slot_func.slots(h_bag, bet)
 #slot machine
 def slots(h_bag, a_i):
-        game = True
+	game = True
 	while game:
 		width, height = WIN.get_size()
 		WIN.fill(P.BLACK)
-		WIN.blit(TABLE_TOP, ((width - TABLE_TOP.get_width())//2,
-				     (height - TABLE_TOP.get_height())//2))
 		coins_text = REG_FONT.render("COINS: "+str(h_bag.coins), 1, P.RED)
 		WIN.blit(coins_text, ((width - coins_text.get_width())//2, P.PADDING * 2))
 		rules_text = REG_FONT.render("If its your first time here, someone else can explain the RULES.", 1, P.RED)

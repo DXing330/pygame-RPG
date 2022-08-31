@@ -42,7 +42,7 @@ def gambling_corner(h_bag, a_i):
 					game_func.dice(h_bag, a_i)
 				if event.key == pygame.K_c:
 					game_func.cards(h_bag, a_i)
-				'''if event.key == pygame.K_s:
-					game_func.slots(h_bag, a_i)'''
+				if event.key == pygame.K_s:
+					game_func.slots(h_bag, a_i)
 				if event.key == pygame.K_f:
 					game_func.coin_flip(h_bag, a_i)
