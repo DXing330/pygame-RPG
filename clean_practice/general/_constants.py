@@ -9,3 +9,6 @@ class Constants:
         self.monster_base_attack = 4
         self.monster_base_defense = 2
         self.monster_base_health = 15
+        self.SLOW_FPS = 10
+        self.FPS = 30
+        self.FAST_FPS = 60
