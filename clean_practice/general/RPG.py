@@ -10,6 +10,7 @@ from _basic_classes import *
 from ally_classes import *
 from general_class import *
 from save_class import *
+from battle_class import *
 clock = pygame.time.Clock()
 WIN = pygame.display.set_mode((C.WIDTH, C.HEIGHT), pygame.RESIZABLE)
 
@@ -79,6 +80,10 @@ class RPG_Game:
                     if event.key == pygame.K_r:
                         self.save_game()
                         print ("saved")
+                    if event.key == pygame.K_b:
+                        battle = Battle(self.party)
+                        battle.start_phase()
+                        battle.battle_phase()
 
 def Start_Game():
     start = True

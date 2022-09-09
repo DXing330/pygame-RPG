@@ -26,7 +26,6 @@ class Elements_NPC:
         self.effectiveness = 1
 
 
-
 # Stores things that the heroes can use
 class Item_Bag_PC:
     def __init__(self, coins, potions):
@@ -34,9 +33,9 @@ class Item_Bag_PC:
         self.potions = potions
 
 
-
 class Equipment_NPC:
-    def __init__(self, power, effect: Passive_Effect_NPC, element: Elements_NPC, variety):
+    def __init__(self, user, power, effect: Passive_Effect_NPC, element: Elements_NPC, variety):
+        self.user = user
         self.power = power
         # What kind of effect the equipment has
         self.effect = effect
@@ -46,23 +45,25 @@ class Equipment_NPC:
 
     def add_power(self):
         self.power += 1
+        
 
-
-# Spells are generally AOE effects that are cast by the player and cost mana.
-class Spell_PC:
-    def __init__(self, name, power, element: Elements_NPC, effect, effect_specifics, target, cost):
+# Skills are effects cast by the player, usually costing skill.
+class Skill_PC(object):
+    def __init__(self, name, power, effect, effect_specifics, target, cost):
         self.name = name
         self.power = power
-        self.element = element
         self.effect = effect
         self.effect_specifics = effect_specifics
         self.target = target
         self.cost = cost
-        
 
-# Skills are effects cast by the player, usually costing skill.
-class Skill_PC:
-    def __init__(self, name, effect, effect_specifics, target, cost):
+
+# Spells are generally AOE effects that are cast by the player and cost mana.
+class Spell_PC(Skill_PC):
+    def __init__(self, name, power, element: Elements_NPC, effect, effect_specifics, target, cost):
+        self.name = name
+        self.power = power
+        self.element = element
         self.effect = effect
         self.effect_specifics = effect_specifics
         self.target = target

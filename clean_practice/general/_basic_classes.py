@@ -21,6 +21,7 @@ class Character(object):
         self.weapon = None
         self.armor = None
         self.accessory = None
+        self.turn = True
         # Image used to display the character.
         self.sprite = None
         # Positive passive effects.
@@ -29,9 +30,13 @@ class Character(object):
         self.status = []
 
     def get_attack_element(self):
+        if self.weapon != None:
+            return self.weapon.element
         return None
 
     def get_defense_element(self):
+        if self.armor != None:
+            return self.armor.element
         return None
 
     def get_attack_effects(self):
@@ -68,19 +73,34 @@ class Character(object):
         self.health += value
     
     def buff_effect(self):
+        if self.accessory != None:
+            self.accessory : Equipment_NPC = self.accessory
+            self.health += D.BUFF_HEALTH.get(self.accessory.effect.effect_specifics) * self.accessory.power
+            self.attack += D.BUFF_ATTACK.get(self.accessory.effect.effect_specifics) * self.accessory.power
+            self.defense += D.BUFF_DEFENSE.get(self.accessory.effect.effect_specifics) * self.accessory.power
         for buff in self.buffs:
+            buff : Passive_Effect_NPC = buff
             if "every_turn" in buff.timing:
-                self.health -= D.BUFF_HEALTH.get(buff.effect_specifics) * buff.power
-                self.attack -= D.BUFF_ATTACK.get(buff.effect_specifics) * buff.power
-                self.defense -= D.BUFF_DEFENSE.get(buff.effect_specifics) * buff.power
+                if "Increase_Stats" in buff.effect:
+                    self.health += D.BUFF_HEALTH.get(buff.effect_specifics) * buff.power
+                    self.attack += D.BUFF_ATTACK.get(buff.effect_specifics) * buff.power
+                    self.defense += D.BUFF_DEFENSE.get(buff.effect_specifics) * buff.power
     
     def status_effect(self):
-        self.health -= max(0, self.poison)
+        if self.poison > 0:
+            self.health -= self.poison
+        # If there is no status that says otherwise, the character gets a turn
+        self.turn = True
         for status in self.status:
             if "every_turn" in status.timing:
                 self.health -= D.STATUS_HEALTH.get(status.effect_specifics) * status.power
-                self.attack -= D.STATUS_ATTACK.get(status.effect_specifics) * status.power
-                self.defense -= D.STATUS_DEFENSE.get(status.effect_specifics) * status.power
+                self.attack -= min(D.STATUS_ATTACK.get(status.effect_specifics) * status.power, self.attack)
+                self.defense -= min(D.STATUS_DEFENSE.get(status.effect_specifics) * status.power, self.defense)
+            if "Disable" in status.effect and "ALL" in status.effect_specifics and status.power > 0:
+                self.turn = False
+                status.power -= 1
+                if status.power <= 0:
+                    self.status.remove(status)
 
     def view_stats(self):
         print ("HEALTH: "+str(self.health)+" ATTACK: "+str(self.attack)+" DEFENSE: "+str(self.defense))
@@ -89,18 +109,8 @@ class Character(object):
 class Hero_PC(Character):
     def __init__(self, class_name, level, exp):
         self.class_name = class_name
-        self.level = 1
-        self.exp = 0
-
-    def get_attack_element(self):
-        if self.weapon != None:
-            return self.weapon.element
-        return None
-
-    def get_defense_element(self):
-        if self.armor != None:
-            return self.armor.element
-        return None
+        self.level = level
+        self.exp = exp
 
     # Update stats, depending on level and class, only used during battle
     def update_stats(self):
@@ -112,6 +122,23 @@ class Hero_PC(Character):
         self.health = self.max_health
         self.mana = self.max_mana
         self.skill = self.max_skill
+        self.poison = 0
+        self.status = []
+        self.buffs = []
+
+    def update_equipment(self, equipment_list: list):
+        self.weapon = None
+        self.armor = None
+        self.accessory = None
+        for equip in equipment_list:
+            equipment: Equipment_NPC = equip
+            if self.class_name in equipment.user:
+                if equipment.variety == "Weapon":
+                    self.weapon = equipment
+                elif equipment.variety == "Armor":
+                    self.armor = equipment
+                elif equipment.variety == "Accessory":
+                    self.accessory = equipment
     
     def update_skills(self):
         self.skill_list = []
@@ -119,22 +146,21 @@ class Hero_PC(Character):
         skill_dictionary = D.HERO_SKILL_LIST.get(self.class_name)
         # Then see what skills to add, depending on level.
         for number in range(0, self.level):
-            skill = skill_dictionary.get(number)
-            self.skill_list.append(skill)
+            skill : Skill_PC = skill_dictionary.get(number)
+            if skill != None:
+                self.skill_list.append(skill)
 
     def update_spells(self):
-        pass
+        self.spell_list = []
+        spell_dictionary = D.HERO_SPELL_LIST.get(self.class_name)
+        for number in range(0, self.level):
+            spell : Spell_PC = spell_dictionary.get(number)
+            if spell != None:
+                self.spell_list.append(spell)
     
     def level_up(self):
         if self.exp >= self.level ** C.INCREASE_EXPONENT:
             self.level += 1
-            self.update_stats()
-    
-    def add_skill(self, skill: Skill_PC):
-        self.skill_list.append(skill)
-    
-    def add_spell(self, spell: Spell_PC):
-        self.spell_list.append(spell)
 
     def equip(self, equipment: Equipment_NPC):
         if "Armor" in equipment.variety:
@@ -152,7 +178,7 @@ class Monster_NPC(Character):
     def __init__(self, level, race, element: Elements_NPC):
         self.level = level
         self.race = race
-        self.element = element
+        self.element : Elements_NPC = element
         self.sprite = None
 
     def update_stats(self):

@@ -1,8 +1,6 @@
 import pygame
 pygame.init()
-import math
 import random
-import sys
 import copy
 from _constants import Constants
 C = Constants
@@ -10,15 +8,16 @@ from _list_constants import LConstants
 L = LConstants
 from _basic_classes import *
 from ally_classes import *
-from _advanced_classes import *
+from advanced_monster_class import *
 from damage_class import *
+from skill_class import *
 from general_class import *
 clock = pygame.time.Clock()
 
 
 class Battle:
-    def __init__(self, game: RPG_Game):
-        self.game = game
+    def __init__(self, party: Party_PC):
+        self.party = party
         self.heroes = []
         self.allies = []
         self.monsters = []
@@ -26,21 +25,22 @@ class Battle:
         self.fight = True
     
     def make_monsters(self):
-        for hero in self.game.party.heroes:
-            monster = Monster_NPC(hero.level, L.monster_types[random.randint(0, len(L.monster_types)-1)],
-            L.elements[random.randint(0, len(L.elements)-1)])
-            monster.update_stats()
+        for hero in self.party.heroes:
+            monster = Advanced_Monster(L.monster_types[random.randint(0, len(L.monster_types) - 1)], hero.level,
+            L.elements[random.randint(0, len(L.elements) - 1)])
             self.monsters.append(monster)
             copy_monster = copy.deepcopy(monster)
-            self.monster_tracker.append(monster)
+            self.monster_tracker.append(copy_monster)
 
     def add_from_party(self):
-        for hero in self.game.party.heroes:
+        for hero in self.party.heroes:
             copy_hero : Hero_PC = copy.deepcopy(hero)
             copy_hero.update_stats()
             copy_hero.update_skills()
+            copy_hero.update_equipment(self.party.equipment)
+            copy_hero.update_spells()
             self.heroes.append(copy_hero)
-        for ally in self.game.party.allies:
+        for ally in self.party.allies:
             copy_ally : Ally_NPC = copy.deepcopy(ally)
             copy_ally.update_stats()
             self.allies.append(copy_ally)
@@ -49,45 +49,78 @@ class Battle:
         self.add_from_party()
         self.make_monsters()
         
-    def hero_attack(self, hero: Hero_PC):
+    def hero_attack(self, hero: Character):
         pick_from = Pick_Functions(self.monsters)
         monster = pick_from.pick()
-        damage = Damage_Functions(hero, monster)
+        damage = Attack_Functions(hero, monster)
         damage.calculate
+
+    def hero_magic(self, hero: Hero_PC):
+        magic = True
+        for status in hero.status:
+            if status.effect == "Disable" and status.effect_specifics == "Magic":
+                magic = False
+        if magic:
+            pick_from = Pick_Functions(hero.spell_list)
+            spell : Spell_PC = pick_from.pick()
+            cast_spell = Spell_Functions(hero, spell, self.monsters)
+            cast_spell.cast()
 
     def hero_skill(self, hero: Hero_PC):
-        pick_from = Pick_Functions(hero.skill_list)
-        used_skill : Skill_PC = pick_from.pick()
-        if hero.skill > used_skill.cost:
-            hero.skill -= used_skill.cost
+        print (hero.class_name+" uses a skill.")
+        skill = True
+        for status in hero.status:
+            if status.effect == "Disable" and status.effect_specifics == "Skills":
+                skill = False
+        if skill:
+            pick_from = Pick_Functions(hero.skill_list)
+            used_skill : Skill_PC = pick_from.pick()
+            print (used_skill.name)
+            use_skill = Skill_Functions(hero, used_skill, self.heroes, self.allies, self.monsters)
+            use_skill.use()
+            print (hero.class_name+" really uses a skill.")
 
-    def heroes_turn(self, hero: Hero_PC):
+    def heroes_turn(self, hero: Character):
         hero.status_effect()
         hero.buff_effect()
-        turn = True
-        while turn:
+        while hero.turn:
             pygame.event.clear()
             clock.tick(C.SLOW_FPS)
-            keys = pygame.key.get_pressed()
-            if keys.key == pygame.K_a:
-                pygame.event.clear()
-                turn = False
-                self.hero_attack(hero)
-                break
-            if keys.key == pygame.K_s:
-                if len(hero.skill_list) > 0:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.fight = False
+                    pygame.quit()
+                if event.type == pygame.KEYDOWN:
                     pygame.event.clear()
-                    turn = False
-                    self.hero_skill(hero)
-                    break
+                    if event.key == pygame.K_a:
+                        pygame.event.clear()
+                        hero.turn = False
+                        self.hero_attack(hero)
+                        break
+                    if event.key == pygame.K_s:
+                        if len(hero.skill_list) >= 1:
+                            pygame.event.clear()
+                            hero.turn = False
+                            self.hero_skill(hero)
+                            break
+                    if event.key == pygame.K_m:
+                        if len(hero.spell_list) >= 1:
+                            pygame.event.clear()
+                            hero.turn = False
+                            self.hero_magic(hero)
+                            break
 
-    def monsters_turn(self, monster: Monster_NPC):
+    def monsters_turn(self, monster: Advanced_Monster):
+        print (monster.race+"'s turn.")
+        print ("HEALTH: "+str(monster.health))
         monster.status_effect()
         monster.buff_effect()
-        pick_from = Pick_Functions(self.heroes)
-        hero = pick_from.pick_randomly()
-        damage = Damage_Functions(monster, hero)
-        damage.calculate
+        if monster.turn:
+            monster.choose_action(self.heroes)
+
+    def summoned_ally_turn(self, summon: Ally_NPC):
+        print (summon.race+"'s turn.")
+        summon.choose_action(self.heroes, self.monsters)
 
     def remove_dead_characters(self):
         for monster in self.monsters:
@@ -97,31 +130,30 @@ class Battle:
             if hero.health <= 0:
                 self.heroes.remove(hero)
 
-    def summoned_ally_turn(self, summon: Ally_NPC):
-        summon.choose_action(self.heroes, self.monsters)
-
     def battle_phase(self):
         while self.fight:
-            self.check_end_phase
             for hero in self.heroes:
                 self.heroes_turn(hero)
-            self.check_end_phase
+                self.remove_dead_characters()
             for ally in self.allies:
                 self.summoned_ally_turn(ally)
-            self.check_end_phase
+            self.remove_dead_characters()
             for monster in self.monsters:
                 self.monsters_turn(monster)
-            self.check_end_phase
+            self.check_end_phase()
     
     def check_end_phase(self):
-        self.remove_dead_characters
+        self.remove_dead_characters()
         if len(self.monsters) <= 0 or len(self.heroes) <= 0:
             self.fight = False
             self.end_phase()
     
     def end_phase(self):
         if len(self.monsters) <= 0 and len(self.heroes) > 0:
-            for hero in self.game.party.heroes:
-                hero.exp += random.randint(1, hero.level)
+            print ("The heroes win.")
+            for hero in self.party.heroes:
+                hero.exp += random.randint(0, hero.level)
                 hero.level_up()
-                self.game.party.items.coins += hero.level
+                self.party.items.coins += hero.level
+        else:
+            print ("The heroes lose.")

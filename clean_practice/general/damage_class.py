@@ -5,14 +5,14 @@ C = Constants()
 from _dictionaries import Dictionaries
 D = Dictionaries()
 
-class Damage_Functions():
+class Attack_Functions():
     def __init__(self, attacker: Character, defender: Character):
         self.attacker = attacker
         self.defender = defender
         self.attack = self.attacker.attack
         self.defense = self.defender.defense
-        self.attack_element = None
-        self.defense_element = None
+        self.attack_element : Elements_NPC = None
+        self.defense_element : Elements_NPC = None
         self.attack_effects = []
         self.defense_effects = []
 
@@ -26,11 +26,14 @@ class Damage_Functions():
 
     def check_attack_effects(self):
         for buff in self.attack_effects:
+            buff : Passive_Effect_NPC
             if "Inflict_Status" in buff.effect:
                 inflict = random.randint(0, self.defender.health)
                 status = D.STATUSES.get(buff.effect_specifics)
                 if inflict <= self.attack * buff.power:
                     self.defender.add_effect(status)
+            if "Inflict_Poison" in buff.effect:
+                self.defender.poison += buff.power
             if "Increase_FLAT" in buff.effect:
                 self.attack += buff.effect_specifics * buff.power
             if "Increase_SCALE" in buff.effect:
@@ -43,13 +46,14 @@ class Damage_Functions():
 
     def check_defense_effects(self):
         for buff in self.defense_effects:
+            buff : Passive_Effect_NPC
             if "Inflict_Status" in buff.effect:
                 status = D.STATUSES.get(buff.effect_specifics)
                 self.attacker.add_effect(status)
             if "Increase_FLAT" in buff.effect:
                 self.attack -= buff.effect_specifics * buff.power
             if "Increase_SCALE" in buff.effect:
-                self.attack = round(self.attack * (1 - ((buff.effect_specfics * buff.power) / 100)))
+                self.attack = round(self.attack * (1 - ((buff.effect_specifics * buff.power) / 100)))
             if "Change_Stats" in buff.effect:
                 self.attacker.health -= buff.power * D.BUFF_HEALTH.get(buff.effect_specifics)
                 self.attacker.attack -= buff.power * D.BUFF_ATTACK.get(buff.effect_specifics)

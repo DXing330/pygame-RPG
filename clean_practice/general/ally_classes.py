@@ -8,7 +8,9 @@ class Angel_NPC(Ally_NPC):
         self.level = level
 
     def update_stats(self):
+        self.health = 1
         self.attack = self.level * C.angel_base_attack
+        self.defense = 1
     
     def buff_action(self, hero: Hero_PC):
         hero.health += self.attack
@@ -40,16 +42,17 @@ class Angel_NPC(Ally_NPC):
             monster.defense -= self.attack//8
     
     def choose_action(self, heroes_list, monsters_list):
-        hero = heroes_list[random.randint(0, len(heroes_list) - 1)]
-        monster = monsters_list[random.randint(0, len(monsters_list) - 1)]
-        choice = random.randint(0, 2)
-        if choice == 0:
-            self.buff_action(hero)
-        elif choice == 1:
-            self.attack_action(monster)
-        elif choice == 2:
-            advanced_choice = random.randint(0, 2)
-            if advanced_choice == 0:
-                self.legendary_action(heroes_list, monsters_list)
-            else:
-                self.advanced_action(hero, monster)
+        if len(monsters_list) > 0 and len(heroes_list) > 0:
+            hero = heroes_list[random.randint(0, len(heroes_list) - 1)]
+            monster = monsters_list[random.randint(0, len(monsters_list) - 1)]
+            choice = random.randint(0, 2)
+            if choice == 0:
+                self.buff_action(hero)
+            elif choice == 1:
+                self.attack_action(monster)
+            elif choice == 2:
+                advanced_choice = random.randint(0, 2)
+                if advanced_choice == 0:
+                    self.legendary_action(heroes_list, monsters_list)
+                else:
+                    self.advanced_action(hero, monster)
