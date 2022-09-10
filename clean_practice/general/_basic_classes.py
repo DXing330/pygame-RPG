@@ -11,6 +11,7 @@ D = Dictionaries()
 class Character(object):
     def __init__(self):
         self.level = 1
+        self.class_name = None
         self.name = None
         self.health = 0
         self.attack = 0
@@ -102,8 +103,8 @@ class Character(object):
                 if status.power <= 0:
                     self.status.remove(status)
 
-    def view_stats(self):
-        print ("HEALTH: "+str(self.health)+" ATTACK: "+str(self.attack)+" DEFENSE: "+str(self.defense))
+    def view_battle_stats(self):
+        pass
 
 
 class Hero_PC(Character):
@@ -173,6 +174,13 @@ class Hero_PC(Character):
     def add_name(self, name):
         self.name = name
 
+    def view_stats(self):
+        return str("CLASS: "+self.class_name+" LEVEL: "+str(self.level))
+
+    def view_battle_stats(self):
+        return str(self.class_name+" HP: "+str(self.health)+
+        " ATK: "+str(self.attack)+" DEF: "+str(self.defense))
+
 
 class Monster_NPC(Character):
     def __init__(self, level, race, element: Elements_NPC):
@@ -195,12 +203,17 @@ class Monster_NPC(Character):
     def basic_attack(self, hero: Hero_PC):
         pass
 
+    def view_battle_stats(self):
+        return str(self.element.name+" "+self.race+" HP: "+str(self.health)+
+        " ATK: "+str(self.attack)+" DEF: "+str(self.defense))
+
 
 class Ally_NPC(object):
     def __init__(self):
         self.level = 1
         self.race = None
         self.attack = 0
+        self.sprite = None
     
     def level_up(self):
         self.level += 1

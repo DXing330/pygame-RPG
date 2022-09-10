@@ -13,30 +13,30 @@ class Angel_NPC(Ally_NPC):
         self.defense = 1
     
     def buff_action(self, hero: Hero_PC):
-        hero.health += self.attack
+        hero.health += self.attack//2
+        hero.attack += self.attack//4
 
     def attack_action(self, monster: Monster_NPC):
-        monster.health -= self.attack//2
-        monster.attack -= self.attack//4
-        monster.defense -= self.attack//8
+        monster.health -= self.attack//4
+        monster.attack -= self.attack//8
 
     def advanced_action(self, hero: Hero_PC, monster: Monster_NPC):
-        hero.health += self.attack
-        hero.attack += self.attack//2
-        hero.defense += self.defense//4
-        monster.health -= self.attack//2
-        monster.attack -= self.attack//4
-        monster.defense -= self.attack//8
+        hero.health += self.attack//2
+        hero.attack += self.attack//4
+        monster.health -= self.attack//4
+        monster.attack -= self.attack//8
 
     def legendary_action(self, heroes_list, monsters_list):
         self.attack += self.level
         for hero in heroes_list:
+            hero: Character
             hero.health += self.attack
             hero.attack += self.attack//2
             hero.defense += self.attack//4
             if len(hero.status) > 0:
                 hero.status.pop(0)
         for monster in monsters_list:
+            monster : Character
             monster.health -= self.attack//2
             monster.attack -= self.attack//4
             monster.defense -= self.attack//8

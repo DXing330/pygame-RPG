@@ -2,6 +2,7 @@ import math
 import json
 import random
 import copy
+from turtle import up
 import pygame
 pygame.init()
 from _constants import *
@@ -11,6 +12,8 @@ from ally_classes import *
 from general_class import *
 from save_class import *
 from battle_class import *
+from upgrade_class import *
+from _draw_classes import *
 clock = pygame.time.Clock()
 WIN = pygame.display.set_mode((C.WIDTH, C.HEIGHT), pygame.RESIZABLE)
 
@@ -19,7 +22,7 @@ class RPG_Game:
         self.party = None
 
     def add_party(self, party: Party_PC):
-        self.party = party
+        self.party: Party_PC = party
 
     def new_game(self):
         party = Party_PC()
@@ -55,17 +58,17 @@ class RPG_Game:
                     if event.key == pygame.K_n:
                         start = False
                         self.new_game()
-                        print ("new")
                         self.Game()
                     if event.key == pygame.K_l:
                         self.load_game()
-                        print ("loaded")
                         self.Game()
 
     def Game(self):
         game = True
         while game:
             WIN.fill((0, 0, 0))
+            home_screen = Draw_Home_Screen(self.party)
+            home_screen.draw_stats()
             pygame.display.update()
             pygame.event.clear()
             clock.tick(C.SLOW_FPS)
@@ -74,19 +77,24 @@ class RPG_Game:
                     game = False
                     pygame.quit()
                 if event.type == pygame.KEYDOWN:
+                    pygame.event.clear()
                     if event.key == pygame.K_s:
                         game = False
                         pygame.quit()
                     if event.key == pygame.K_r:
                         self.save_game()
-                        print ("saved")
+                        text = "SAVED"
+                        home_screen.draw_text(text)
                     if event.key == pygame.K_b:
+                        pygame.event.clear()
                         battle = Battle(self.party)
                         battle.start_phase()
                         battle.battle_phase()
+                    if event.key == pygame.K_u:
+                        upgrade = Upgrade(self.party)
+                        upgrade.upgrade_ally()
 
 def Start_Game():
-    start = True
     Game = RPG_Game()
     Game.Start()
 

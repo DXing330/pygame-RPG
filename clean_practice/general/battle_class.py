@@ -12,6 +12,7 @@ from advanced_monster_class import *
 from damage_class import *
 from skill_class import *
 from general_class import *
+from _draw_classes import *
 clock = pygame.time.Clock()
 
 
@@ -45,6 +46,15 @@ class Battle:
             copy_ally.update_stats()
             self.allies.append(copy_ally)
 
+    def update_and_draw(self):
+        WIN.fill(C.BLACK)
+        draw_party = Draw_Heroes(self.heroes)
+        draw_allies = Draw_Allies(self.allies)
+        draw_monsters = Draw_Monsters(self.monsters)
+        draw_allies.draw()
+        draw_party.draw()
+        draw_monsters.draw()
+
     def start_phase(self):
         self.add_from_party()
         self.make_monsters()
@@ -67,7 +77,6 @@ class Battle:
             cast_spell.cast()
 
     def hero_skill(self, hero: Hero_PC):
-        print (hero.class_name+" uses a skill.")
         skill = True
         for status in hero.status:
             if status.effect == "Disable" and status.effect_specifics == "Skills":
@@ -75,10 +84,8 @@ class Battle:
         if skill:
             pick_from = Pick_Functions(hero.skill_list)
             used_skill : Skill_PC = pick_from.pick()
-            print (used_skill.name)
             use_skill = Skill_Functions(hero, used_skill, self.heroes, self.allies, self.monsters)
             use_skill.use()
-            print (hero.class_name+" really uses a skill.")
 
     def heroes_turn(self, hero: Character):
         hero.status_effect()
@@ -111,15 +118,12 @@ class Battle:
                             break
 
     def monsters_turn(self, monster: Advanced_Monster):
-        print (monster.race+"'s turn.")
-        print ("HEALTH: "+str(monster.health))
         monster.status_effect()
         monster.buff_effect()
         if monster.turn:
             monster.choose_action(self.heroes)
 
     def summoned_ally_turn(self, summon: Ally_NPC):
-        print (summon.race+"'s turn.")
         summon.choose_action(self.heroes, self.monsters)
 
     def remove_dead_characters(self):
@@ -132,12 +136,13 @@ class Battle:
 
     def battle_phase(self):
         while self.fight:
+            self.standby_phase()
             for hero in self.heroes:
                 self.heroes_turn(hero)
-                self.remove_dead_characters()
+                self.standby_phase()
             for ally in self.allies:
                 self.summoned_ally_turn(ally)
-            self.remove_dead_characters()
+            self.standby_phase()
             for monster in self.monsters:
                 self.monsters_turn(monster)
             self.check_end_phase()
@@ -147,13 +152,14 @@ class Battle:
         if len(self.monsters) <= 0 or len(self.heroes) <= 0:
             self.fight = False
             self.end_phase()
+
+    def standby_phase(self):
+        self.remove_dead_characters()
+        self.update_and_draw()
     
     def end_phase(self):
         if len(self.monsters) <= 0 and len(self.heroes) > 0:
-            print ("The heroes win.")
             for hero in self.party.heroes:
                 hero.exp += random.randint(0, hero.level)
                 hero.level_up()
                 self.party.items.coins += hero.level
-        else:
-            print ("The heroes lose.")

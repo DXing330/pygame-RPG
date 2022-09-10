@@ -20,6 +20,10 @@ class Constants:
         self.WIDTH = 1400
         self.HEIGHT = 600
         self.PADDING = 25
+        self.PLAYER_SIZE = 50
+        self.MONSTER_SIZE = 60
+        self.BLACK = (0, 0, 0)
+        self.WHITE = (255, 255, 255)
         # General Gameplay Constants
         self.INCREASE_EXPONENT = 2
         self.DECREASE_EXPONENT = 0.5

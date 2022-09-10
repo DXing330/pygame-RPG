@@ -5,7 +5,7 @@ S = Summon_Dictionary()
 
 class Summon_PC(Character):
     def __init__(self, race, level):
-        self.race = race
+        self.class_name = race
         self.level = level
         self.health = self.level * S.SUMMON_BASE_HEALTH.get(self.race)
         self.attack = self.level * S.SUMMON_BASE_ATTACK.get(self.race)
