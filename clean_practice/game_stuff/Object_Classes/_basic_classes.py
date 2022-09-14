@@ -1,4 +1,5 @@
-import random
+import sys
+sys.path.append("./Constants_Dictionaries")
 from _simple_classes import *
 from _constants import *
 C = Constants()
@@ -36,13 +37,15 @@ class Character(object):
 
     def get_attack_element(self):
         if self.weapon != None:
-            return self.weapon.element
-        return None
+            self.weapon : Equipment_NPC
+            return self.weapon.element, self.weapon.effect
+        return None, None
 
     def get_defense_element(self):
         if self.armor != None:
-            return self.armor.element
-        return None
+            self.armor : Equipment_NPC
+            return self.armor.element, self.armor.effect
+        return None, None
 
     def get_attack_effects(self):
         effects = []
@@ -65,6 +68,13 @@ class Character(object):
     def update_stats(self):
         pass
 
+    def update_skills(self):
+        pass
+
+    def update_for_battle(self):
+        self.update_stats()
+        self.update_skills()
+
     def add_effect(self, effect: Passive_Effect_NPC):
         if "Buff" in effect.variety:
             self.buffs.append(effect)
@@ -73,17 +83,16 @@ class Character(object):
     
     def buff_effect(self):
         if self.accessory != None:
-            self.accessory : Equipment_NPC = self.accessory
+            self.accessory : Equipment_NPC
             self.health += D.BUFF_HEALTH.get(self.accessory.effect.effect_specifics) * self.accessory.power
             self.attack += D.BUFF_ATTACK.get(self.accessory.effect.effect_specifics) * self.accessory.power
             self.defense += D.BUFF_DEFENSE.get(self.accessory.effect.effect_specifics) * self.accessory.power
         for buff in self.buffs:
-            buff : Passive_Effect_NPC = buff
+            buff : Passive_Effect_NPC
             if "every_turn" in buff.timing:
-                if "Increase_Stats" in buff.effect:
-                    self.health += D.BUFF_HEALTH.get(buff.effect_specifics) * buff.power
-                    self.attack += D.BUFF_ATTACK.get(buff.effect_specifics) * buff.power
-                    self.defense += D.BUFF_DEFENSE.get(buff.effect_specifics) * buff.power
+                self.health += D.BUFF_HEALTH.get(buff.effect_specifics) * buff.power
+                self.attack += D.BUFF_ATTACK.get(buff.effect_specifics) * buff.power
+                self.defense += D.BUFF_DEFENSE.get(buff.effect_specifics) * buff.power
     
     def status_effect(self):
         if self.poison > 0:
@@ -93,9 +102,11 @@ class Character(object):
         for status in self.status:
             status : Passive_Effect_NPC
             if "every_turn" in status.timing:
-                self.health -= D.STATUS_HEALTH.get(status.effect_specifics) * status.power
-                self.attack -= min(D.STATUS_ATTACK.get(status.effect_specifics) * status.power, self.attack)
-                self.defense -= min(D.STATUS_DEFENSE.get(status.effect_specifics) * status.power, self.defense)
+                self.health += D.STATUS_HEALTH.get(status.effect_specifics) * status.power
+                self.attack += (D.STATUS_ATTACK.get(status.effect_specifics) * 
+                status.power)
+                self.defense += (D.STATUS_DEFENSE.get(status.effect_specifics) * 
+                status.power)
             if "Disable" in status.effect and status.power > 0:
                 if "ALL" in status.effect_specifics:
                     self.turn = False
@@ -122,10 +133,10 @@ class Monster_NPC(Character):
         self.sprite = None
 
     def get_attack_element(self):
-        return self.element
+        return self.element, None
 
     def get_defense_element(self):
-        return self.element
+        return self.element, None
 
     def basic_attack(self):
         pass
@@ -149,6 +160,9 @@ class Ally_NPC(object):
         self.level += 1
 
     def update_stats(self):
+        pass
+
+    def update_level(self, party):
         pass
 
     def buff_action(self):
@@ -189,6 +203,9 @@ class Hero_PC(Character):
         self.poison = 0
         self.status = []
         self.buffs = []
+        self.skills = True
+        self.turn = True
+        self.magic = True
 
     def update_equipment(self, equipment_list: list):
         self.weapon = None
@@ -215,12 +232,18 @@ class Hero_PC(Character):
                 self.skill_list.append(skill)
 
     def update_spells(self):
-        self.spell_list = []
-        spell_dictionary = D.HERO_SPELL_LIST.get(self.name)
-        for number in range(0, self.level):
-            spell : Spell_PC = spell_dictionary.get(number)
-            if spell != None:
-                self.spell_list.append(spell)
+        if self.mana > 0:
+            self.spell_list = []
+            spell_dictionary = D.HERO_SPELL_LIST.get(self.name)
+            for number in range(0, self.level):
+                spell : Spell_PC = spell_dictionary.get(number)
+                if spell != None:
+                    self.spell_list.append(spell)
+
+    def update_for_battle(self):
+        self.update_stats()
+        self.update_skills()
+        self.update_spells()
     
     def level_up(self):
         if self.exp >= self.level ** C.INCREASE_EXPONENT:

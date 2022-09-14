@@ -1,3 +1,8 @@
+import sys
+sys.path.append("./Constants_Dictionaries")
+sys.path.append("./Object_Classes")
+sys.path.append("./General_Functions")
+sys.path.append("./Battle_Functions")
 import pygame
 pygame.init()
 import random
@@ -29,6 +34,7 @@ class Battle:
         for hero in self.party.heroes:
             monster = Advanced_Monster(L.monster_types[random.randint(0, len(L.monster_types) - 1)], hero.level,
             L.elements[random.randint(0, len(L.elements) - 1)])
+            monster.update_for_battle()
             self.monsters.append(monster)
             copy_monster = copy.deepcopy(monster)
             self.monster_tracker.append(copy_monster)
@@ -36,10 +42,8 @@ class Battle:
     def add_from_party(self):
         for hero in self.party.heroes:
             copy_hero : Hero_PC = copy.deepcopy(hero)
-            copy_hero.update_stats()
-            copy_hero.update_skills()
+            copy_hero.update_for_battle()
             copy_hero.update_equipment(self.party.equipment)
-            copy_hero.update_spells()
             self.heroes.append(copy_hero)
         for ally in self.party.allies:
             copy_ally : Ally_NPC = copy.deepcopy(ally)
@@ -48,12 +52,12 @@ class Battle:
 
     def update_and_draw(self):
         WIN.fill(C.BLACK)
-        draw_party = Draw_Heroes(self.heroes)
-        draw_allies = Draw_Allies(self.allies)
-        draw_monsters = Draw_Monsters(self.monsters)
-        draw_allies.draw()
-        draw_party.draw()
-        draw_monsters.draw()
+        self.draw_party = Draw_Heroes(self.heroes)
+        self.draw_allies = Draw_Allies(self.allies)
+        self.draw_monsters = Draw_Monsters(self.monsters)
+        self.draw_allies.draw()
+        self.draw_party.draw()
+        self.draw_monsters.draw()
 
     def start_phase(self):
         self.add_from_party()
@@ -82,6 +86,9 @@ class Battle:
     def heroes_turn(self, hero: Character):
         hero.status_effect()
         hero.buff_effect()
+        WIN.fill(C.BLACK)
+        self.draw_monsters.draw()
+        self.draw_party.draw_hero_turn(hero)
         while hero.turn:
             pygame.event.clear()
             clock.tick(C.SLOW_FPS)
@@ -113,7 +120,7 @@ class Battle:
         monster.status_effect()
         monster.buff_effect()
         if monster.turn:
-            monster.choose_action(self.heroes)
+            monster.choose_action(self.heroes, self.monsters)
 
     def summoned_ally_turn(self, summon: Ally_NPC):
         summon.choose_action(self.heroes, self.monsters)
@@ -157,3 +164,6 @@ class Battle:
                 hero.exp += random.randint(0, hero.level)
                 hero.level_up()
                 self.party.items.coins += hero.level
+            for ally in self.party.allies:
+                ally: Ally_NPC
+                ally.update_level(self.party)

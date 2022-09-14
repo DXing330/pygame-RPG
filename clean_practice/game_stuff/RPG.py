@@ -67,7 +67,8 @@ class RPG_Game:
         game = True
         while game:
             WIN.fill((0, 0, 0))
-            home_screen = Draw_Home_Screen(self.party)
+            home_screen = Draw_Screen()
+            home_screen.add_party(self.party)
             home_screen.draw_stats()
             pygame.display.update()
             pygame.event.clear()
@@ -83,8 +84,7 @@ class RPG_Game:
                         pygame.quit()
                     if event.key == pygame.K_r:
                         self.save_game()
-                        text = "SAVED"
-                        home_screen.draw_text(text)
+                        home_screen.draw_text("SAVED")
                     if event.key == pygame.K_b:
                         pygame.event.clear()
                         battle = Battle(self.party)

@@ -2,7 +2,8 @@
 
 # Effects that do something without the player's input.
 class Passive_Effect_NPC:
-    def __init__(self, effect, effect_specifics, power, timing, variety):
+    def __init__(self, name, effect, effect_specifics, power, timing, variety):
+        self.name = name
         # What the effect does.
         self.effect = effect
         self.effect_specifics = effect_specifics
@@ -13,17 +14,12 @@ class Passive_Effect_NPC:
         # What kind of passive it is, ex. buff, or status.
         self.variety = variety
 
-    def add_power(self):
-        self.power += 1
-
 
 class Elements_NPC:
     def __init__(self, name, strength, weakness):
         self.name = name
         self.strength = strength
         self.weakness = weakness
-        # Base effectiveness is 1, can go higher or lower depending on elemental advantage.
-        self.effectiveness = 1
 
 
 # Stores things that the heroes can use
@@ -34,7 +30,8 @@ class Item_Bag_PC:
 
 
 class Equipment_NPC:
-    def __init__(self, user, power, effect: Passive_Effect_NPC, element: Elements_NPC, variety):
+    def __init__(self, name, user, power, effect: Passive_Effect_NPC, element: Elements_NPC, variety):
+        self.name = name
         self.user = user
         self.power = power
         # What kind of effect the equipment has
