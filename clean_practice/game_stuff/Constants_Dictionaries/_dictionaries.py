@@ -1,7 +1,32 @@
+import sys
+sys.path.append("./Object_Classes")
 from _simple_classes import *
 
 class Dictionaries:
     def __init__(self):
+        self.ELEMENTS = {
+        "Fire" : Elements_NPC("Fire", "Air", "Water"),
+        "Water" : Elements_NPC("Water", "Fire", "Earth"),
+        "Earth" : Elements_NPC("Earth", "Water", "Air"),
+        "Air" : Elements_NPC("Air", "Earth", "Fire"),
+        "Dark" : Elements_NPC("Dark", "None", "Light"),
+        "Light" : Elements_NPC("Light", "Dark", "None")
+        }
+        self.WEAPON_EFFECTS = {
+        "Slay_Fire" : Passive_Effect_NPC("Slay_Fire", "Slay", "Fire",
+        2, "Attack", "Buff")
+        }
+        self.ARMOR_EFFECTS = {
+        "Absorb_Fire" : Passive_Effect_NPC("Absorb_Fire", "Absorb", "Fire",
+        1, "Defense", "Buff")
+        }
+        self.ACCESSORY_EFFECTS = {
+        
+        }
+        self.EQUIPMENT_EFFECTS = {
+        "Weapon" : self.WEAPON_EFFECTS,
+        "Armor" : self.ARMOR_EFFECTS
+        }
         self.STATUSES = {
         "Burn" : Passive_Effect_NPC("Burn", "Change_Stats", "Attack", -1, "Every_Turn", "Status"),
         "Bleed" : Passive_Effect_NPC("Bleed", "Change_Stats", "Health", -5, "Every_Turn", "Status"),
@@ -45,12 +70,12 @@ class Dictionaries:
         "Knight" : 20, "Ninja" : 10, "Tactician" : 10, "Hunter" : 15, "Hero" : 15
         }
         self.HERO_BASE_ATTACK = {
-        "Summoner" : 3, "Warrior" : 5, "Mage" : 3, "Cleric" : 4,
-        "Knight" : 4, "Ninja" : 3, "Tactician" : 3, "Hunter" : 4, "Hero" : 5
+        "Summoner" : 2, "Warrior" : 4, "Mage" : 2, "Cleric" : 3,
+        "Knight" : 3, "Ninja" : 2, "Tactician" : 2, "Hunter" : 3, "Hero" : 4
         }
         self.HERO_BASE_DEFENSE = {
-        "Summoner" : 2, "Warrior" : 3, "Mage" : 2, "Cleric" : 3,
-        "Knight" : 4, "Ninja" : 2, "Tactician" : 2, "Hunter" : 3, "Hero" : 3
+        "Summoner" : 1, "Warrior" : 2, "Mage" : 1, "Cleric" : 2,
+        "Knight" : 3, "Ninja" : 1, "Tactician" : 1, "Hunter" : 2, "Hero" : 2
         }
         self.HERO_BASE_MANA = {
         "Summoner" : 3, "Warrior" : 0, "Mage" : 5, "Cleric" : 3,
@@ -61,8 +86,8 @@ class Dictionaries:
         "Knight" : 3, "Ninja" : 5, "Tactician" : 5, "Hunter" : 5, "Hero" : 3
         }
         self.SUMMONER_SKILLS = {
-        0 : Skill_PC("Command Ally", 1, "Command", "Command", "Summoned_Ally", -1),
-        2 : Skill_PC("Enchance Ally", 1, "Change_Stats", "Attack", "Summoned_Ally", 3),
+        0 : Skill_PC("Command Ally", 1, "Command", "Command", "Summon", -1),
+        2 : Skill_PC("Enchance Ally", 1, "Change_Stats", "Attack", "Summon", 3),
         4 : Skill_PC("Summon Golem", 1, "Summon", "Golem", "None", 10)
         }
         self.CLERIC_SKILLS = {
@@ -94,13 +119,13 @@ class Summon_Dictionary:
         self.SUMMON_TYPE = {
         }
         self.SUMMON_BASE_HEALTH = {
-        "Golem" : 10, "Wolf" : 5
+        "Golem" : 5, "Wolf" : 5
         }
         self.SUMMON_BASE_ATTACK = {
-        "Golem" : 4, "Wolf" : 4
+        "Golem" : 3, "Wolf" : 4
         }
         self.SUMMON_BASE_DEFENSE = {
-        "Golem" : 4, "Wolf" : 3
+        "Golem" : 3, "Wolf" : 3
         }
         self.SUMMON_BASE_SKILL = {
         "Golem" : 0, "Wolf" : 2
@@ -113,10 +138,10 @@ class Monster_Dictionary:
         "Werewolf" : 10, "Goblin" : 5
         }
         self.MONSTER_ATTACK = {
-        "Werewolf" : 6, "Goblin" : 3
+        "Werewolf" : 5, "Goblin" : 2
         }
         self.MONSTER_DEFENSE = {
-        "Werewolf" : 2, "Goblin" : 2
+        "Werewolf" : 1, "Goblin" : 1
         }
         self.MONSTER_SKILL_POINTS = {
         "Werewolf" : 2, "Goblin" : 2
@@ -134,5 +159,5 @@ class Monster_Dictionary:
         "Double_Pierce" : Skill_PC("Double_Pierce", 2, "Attack", "Ignore_Defense", "Enemy", 20),
         "Spinning_Slash" : Skill_PC("Spinning_Slash", 1, "Attack", "Basic", "All_Enemy", 10),
         "Howl" : Skill_PC("Howl", 1, "Add_Buff", "ATK+", "All_Ally", 10),
-        "Howl_for_Help" : Skill_PC("Howlp", 1, "Summon", "Wolf", "None", 10)
+        "Howl_for_Help" : Skill_PC("Howl", 1, "Summon", "Wolf", "None", 10)
         }

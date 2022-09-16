@@ -12,12 +12,16 @@ class Constants:
         self.FAST_FPS = 60
         self.WIDTH = 1400
         self.HEIGHT = 600
-        self.PADDING = 25
+        self.PADDING = 30
+        self.BIG_FONT = 30
+        self.REG_FONT = 25
+        self.SML_FONT = 20
         self.PLAYER_SIZE = 50
         self.MONSTER_SIZE = 60
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
         # General Gameplay Constants
+        self.LEVEL_CAP = 20
         self.INCREASE_EXPONENT = 2
         self.DECREASE_EXPONENT = 0.5
         self.LARGE_DECREASE_EXPONENT = 0.25

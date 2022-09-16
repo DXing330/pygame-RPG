@@ -64,6 +64,7 @@ class RPG_Game:
                         self.Game()
 
     def Game(self):
+        self.party.update_battle_party()
         game = True
         while game:
             WIN.fill((0, 0, 0))

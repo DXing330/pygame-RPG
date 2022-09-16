@@ -9,7 +9,9 @@ from _image_dictionary import Image_Dictionary
 I = Image_Dictionary()
 C = Constants()
 WIN = pygame.display.set_mode((C.WIDTH, C.HEIGHT), pygame.RESIZABLE)
-FONT = pygame.font.SysFont("comicsans", 25)
+BIG_FONT = pygame.font.SysFont("comicsans", C.BIG_FONT)
+FONT = pygame.font.SysFont("comicsans", C.REG_FONT)
+SMALL_FONT = pygame.font.SysFont("comicsans", C.SML_FONT)
 
 
 class Draw_Screen:
@@ -94,7 +96,7 @@ class Draw_Heroes:
 
     def hero_stat_text(self):
         hero_stats = self.hero.view_battle_stats()
-        stat_text = FONT.render(hero_stats, 1, C.WHITE)
+        stat_text = SMALL_FONT.render(hero_stats, 1, C.WHITE)
         return stat_text
 
     def draw_heroes_stats(self):
@@ -162,12 +164,16 @@ class Draw_Monsters:
                 self.monster_counter = 4
                 self.height_checker = 2
 
+    def draw_monster_stat(self):
+            monster_stats = self.monster.view_battle_stats()
+            stat_text = SMALL_FONT.render(monster_stats, 1, C.WHITE)
+            return stat_text
+
     def draw_monster_stats(self):
         self.monster_counter = 2
         for monster in self.monsters:
-            monster: Monster_NPC
-            monster_stats = monster.view_battle_stats()
-            stat_text = FONT.render(monster_stats, 1, C.WHITE)
+            self.monster: Monster_NPC = monster
+            stat_text = self.draw_monster_stat()
             WIN.blit(stat_text, (C.PADDING, C.PADDING * self.monster_counter))
             self.monster_counter += 1
 

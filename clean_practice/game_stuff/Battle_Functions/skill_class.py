@@ -24,7 +24,6 @@ class Skill_Functions:
         self.enemies = enemies
 
     def apply_cost(self):
-        print (self.user.skill)
         self.user.skill -= self.skill.cost
 
     def attack_skill(self, target : Character):
@@ -61,11 +60,11 @@ class Skill_Functions:
             self.targets.append(enemy)
         elif "All_Enemy" in self.skill.target:
             self.targets = self.enemies
-        elif "Summoned_Ally" in self.skill.target:
+        elif "Summon" in self.skill.target:
             pick_from = Pick_Functions(self.summons)
             summon = pick_from.pick(pick_randomly)
             self.targets.append(summon)
-        elif "All_Summoned_Ally" in self.skill.target:
+        elif "All_Summon" in self.skill.target:
             self.targets = self.summons
 
     def apply_effect(self):

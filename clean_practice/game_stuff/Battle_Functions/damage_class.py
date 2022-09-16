@@ -12,7 +12,7 @@ class Attack_Functions():
     def __init__(self, attacker: Character, defender: Character):
         self.attacker = attacker
         self.defender = defender
-        self.attack = self.attacker.attack
+        self.attack = int(self.attacker.attack)
         self.defense = self.defender.defense
         self.attack_element : Elements_NPC = None
         self.defense_element : Elements_NPC = None
@@ -27,7 +27,6 @@ class Attack_Functions():
                 self.attack = self.attack * C.ELEMENTAL_ADVANTAGE
             elif self.attack_element.name in self.defense_element.strength:
                 self.attack = self.attack // C.ELEMENTAL_ADVANTAGE
-        return self.attack
 
     def check_attack_element_effect(self):
         if self.attack_element_effect != None and self.defense_element != None:
@@ -36,7 +35,6 @@ class Attack_Functions():
                     self.attack = self.attack * self.attack_element_effect.power
                 if "Absorb" in self.attack_element_effect.effect:
                     self.attacker.health += self.attack * self.attack_element_effect.power
-        return self.attack
 
     def check_defense_element_effect(self):
         if self.defense_element_effect != None and self.attack_element != None:
@@ -48,13 +46,11 @@ class Attack_Functions():
                     self.attack = self.attack // self.defense_element_effect.power
                 elif "Negate" in self.defense_element_effect.effect:
                     self.attack = round(self.attack * (1 - (self.defense_element_effect.power / 100)))
-        return self.attack
     
     def check_element_effects(self):
-        self.attack = self.check_elements()
-        self.attack = self.check_attack_element_effect()
-        self.attack = self.check_defense_element_effect()
-        return self.attack
+        self.check_elements()
+        self.check_attack_element_effect()
+        self.check_defense_element_effect()
 
     def change_stats(self, effect_list: list):
         for buff in effect_list:
@@ -83,7 +79,6 @@ class Attack_Functions():
                 elif "Percentage" in buff.effect_specifics:
                     self.attack = round(self.attack * (1 + ((buff.power) / 100)))
         self.change_stats(self.attack_effects)
-        return self.attack
 
     def check_defense_effects(self):
         for buff in self.defense_effects:
@@ -98,14 +93,13 @@ class Attack_Functions():
                     self.attack = round(self.attack * (1 - ((buff.power) / 100)))
         self.change_stats(self.defense_effects)
         self.attack -= self.defense
-        return self.attack
 
     def calculate_ignore_defense(self):
         self.attack_element, self.attack_element_effect = self.attacker.get_attack_element()
         self.defense_element, self.defense_element_effect = self.defender.get_defense_element()
         self.attack_effects = self.attacker.get_attack_effects()
-        self.attack = self.check_element_effects()
-        self.attack = self.check_attack_effects()
+        self.check_element_effects()
+        self.check_attack_effects()
         self.defender.health -= max(self.attack, 1)
 
     def calculate(self):
@@ -113,7 +107,7 @@ class Attack_Functions():
         self.defense_element, self.defense_element_effect = self.defender.get_defense_element()
         self.attack_effects = self.attacker.get_attack_effects()
         self.defense_effects = self.defender.get_defense_effects()
-        self.attack = self.check_element_effects()
-        self.attack = self.check_attack_effects()
-        self.attack = self.check_defense_effects()
+        self.check_element_effects()
+        self.check_attack_effects()
+        self.check_defense_effects()
         self.defender.health -= max(self.attack, 1)

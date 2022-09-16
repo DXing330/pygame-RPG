@@ -27,21 +27,6 @@ class Item_Bag_PC:
     def __init__(self, coins, potions):
         self.coins = coins
         self.potions = potions
-
-
-class Equipment_NPC:
-    def __init__(self, name, user, power, effect: Passive_Effect_NPC, element: Elements_NPC, variety):
-        self.name = name
-        self.user = user
-        self.power = power
-        # What kind of effect the equipment has
-        self.effect = effect
-        self.element = element
-        # What kind of equipment it is, ex. weapon, armor, acc.
-        self.variety = variety
-
-    def add_power(self):
-        self.power += 1
         
 
 # Skills are effects cast by the player, usually costing skill.

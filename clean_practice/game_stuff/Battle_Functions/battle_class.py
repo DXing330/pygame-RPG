@@ -40,10 +40,8 @@ class Battle:
             self.monster_tracker.append(copy_monster)
 
     def add_from_party(self):
-        for hero in self.party.heroes:
+        for hero in self.party.battle_party:
             copy_hero : Hero_PC = copy.deepcopy(hero)
-            copy_hero.update_for_battle()
-            copy_hero.update_equipment(self.party.equipment)
             self.heroes.append(copy_hero)
         for ally in self.party.allies:
             copy_ally : Ally_NPC = copy.deepcopy(ally)
@@ -137,8 +135,9 @@ class Battle:
         while self.fight:
             self.standby_phase()
             for hero in self.heroes:
-                self.heroes_turn(hero)
-                self.standby_phase()
+                if len(self.monsters) > 0:
+                    self.heroes_turn(hero)
+                    self.standby_phase()
             for ally in self.allies:
                 self.summoned_ally_turn(ally)
             self.standby_phase()
@@ -158,6 +157,9 @@ class Battle:
         self.update_and_draw()
     
     def end_phase(self):
+        for hero in self.party.battle_party:
+            hero : Hero_PC
+            hero.update_after_battle(self.heroes)
         if len(self.monsters) <= 0 and len(self.heroes) > 0:
             for hero in self.party.heroes:
                 hero: Hero_PC

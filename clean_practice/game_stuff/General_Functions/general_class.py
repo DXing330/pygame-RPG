@@ -10,7 +10,7 @@ class Pick_Functions:
         self.list = list
 
     def pick_randomly(self):
-        thing = random.randint(0, len(self.list)-1)
+        thing = self.list[random.randint(0, len(self.list) - 1)]
         return thing
     
     def pick(self, pick_randomly = False):

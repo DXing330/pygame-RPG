@@ -34,10 +34,12 @@ class Advanced_Monster(Monster_NPC):
                 self.skill_list.append(new_skill)
 
     def update_stats(self):
-        self.health = self.level * M.MONSTER_HEALTH.get(self.name)
+        self.max_health = self.level * M.MONSTER_HEALTH.get(self.name)
+        self.health = self.max_health
         self.attack = self.level * M.MONSTER_ATTACK.get(self.name)   
         self.defense = self.level * M.MONSTER_DEFENSE.get(self.name)
-        self.skill = self.level * M.MONSTER_SKILL_POINTS.get(self.name)
+        self.max_skill = self.level * M.MONSTER_SKILL_POINTS.get(self.name)
+        self.skill = self.max_skill
     
     def update_for_battle(self):
         self.update_stats()

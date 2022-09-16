@@ -55,13 +55,14 @@ class Angel_NPC(Ally_NPC):
     def legendary_action(self):
         self.attack += self.level
         for hero in self.heroes_list:
-            self.heal_action(hero)
-            self.cleanse_action(hero)
-            self.buff_action(hero)
+            self.hero = hero
+            self.heal_action()
+            self.cleanse_action()
+            self.buff_action()
         for monster in self.monsters_list:
-            monster : Character
-            self.attack_action(monster)
-            self.debuff_action(monster)
+            self.monster = monster
+            self.attack_action()
+            self.debuff_action()
     
     def choose_action(self, heroes_list, monsters_list):
         self.heroes_list = heroes_list

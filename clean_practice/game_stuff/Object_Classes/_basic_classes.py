@@ -1,5 +1,6 @@
 import sys
 sys.path.append("./Constants_Dictionaries")
+import copy
 from _simple_classes import *
 from _constants import *
 C = Constants()
@@ -9,15 +10,39 @@ from _dictionaries import *
 D = Dictionaries()
 
 
+class Equipment_NPC:
+    def __init__(self, name, user, power, effect, element, variety):
+        self.name = name
+        self.user = user
+        self.power = power
+        # What kind of effect the equipment has
+        self.effect = effect
+        self.element = element
+        # What kind of equipment it is, ex. weapon, armor, acc.
+        self.variety = variety
+
+    def get_element(self):
+        element = D.ELEMENTS.get(self.element)
+        return element
+
+    def get_effect(self):
+        effect_dictionary = D.EQUIPMENT_EFFECTS.get(self.variety)
+        effect = effect_dictionary.get(self.effect)
+        return effect
+
+
 class Character(object):
     def __init__(self):
         self.level = 1
         self.class_name = None
         self.name = None
+        self.max_health = 0
         self.health = 0
         self.attack = 0
         self.defense = 0
+        self.max_mana = 0
         self.mana = 0
+        self.max_skill = 0
         self.skill = 0
         self.poison = 0
         self.weapon = None
@@ -38,19 +63,21 @@ class Character(object):
     def get_attack_element(self):
         if self.weapon != None:
             self.weapon : Equipment_NPC
-            return self.weapon.element, self.weapon.effect
+            element = self.weapon.get_element()
+            effect = self.weapon.get_effect()
+            return element, effect
         return None, None
 
     def get_defense_element(self):
         if self.armor != None:
             self.armor : Equipment_NPC
-            return self.armor.element, self.armor.effect
+            element = self.armor.get_element()
+            effect = self.armor.get_effect()
+            return element, effect
         return None, None
 
     def get_attack_effects(self):
         effects = []
-        if self.weapon != None:
-            effects.append(self.weapon.effect)
         for buff in self.buffs:
             if "Attack" in buff.timing:
                 effects.append(buff)
@@ -58,8 +85,6 @@ class Character(object):
 
     def get_defense_effects(self):
         effects = []
-        if self.armor != None:
-            effects.append(self.weapon.effect)
         for buff in self.buffs:
             if "Defense" in buff.timing:
                 effects.append(buff)
@@ -84,9 +109,9 @@ class Character(object):
     def buff_effect(self):
         if self.accessory != None:
             self.accessory : Equipment_NPC
-            self.health += D.BUFF_HEALTH.get(self.accessory.effect.effect_specifics) * self.accessory.power
-            self.attack += D.BUFF_ATTACK.get(self.accessory.effect.effect_specifics) * self.accessory.power
-            self.defense += D.BUFF_DEFENSE.get(self.accessory.effect.effect_specifics) * self.accessory.power
+            accessory_buff = D.BUFFS.get(self.accessory.effect)
+            self.buffs.append(accessory_buff)
+            self.accessory = None
         for buff in self.buffs:
             buff : Passive_Effect_NPC
             if "every_turn" in buff.timing:
@@ -227,7 +252,7 @@ class Hero_PC(Character):
         skill_dictionary = D.HERO_SKILL_LIST.get(self.name)
         # Then see what skills to add, depending on level.
         for number in range(0, self.level):
-            skill : Skill_PC = skill_dictionary.get(number)
+            skill = skill_dictionary.get(number)
             if skill != None:
                 self.skill_list.append(skill)
 
@@ -236,7 +261,7 @@ class Hero_PC(Character):
             self.spell_list = []
             spell_dictionary = D.HERO_SPELL_LIST.get(self.name)
             for number in range(0, self.level):
-                spell : Spell_PC = spell_dictionary.get(number)
+                spell = spell_dictionary.get(number)
                 if spell != None:
                     self.spell_list.append(spell)
 
@@ -244,10 +269,24 @@ class Hero_PC(Character):
         self.update_stats()
         self.update_skills()
         self.update_spells()
+
+    def update_after_battle(self, battlers: list):
+        check_hero = None
+        for battler in battlers:
+            battler: Character
+            check_hero = battler
+            if battler.name == self.name:
+                self.health = min(battler.health, self.max_health)
+                self.skill = min(battler.skill, self.max_skill)
+                self.mana = min(battler.mana, self.max_mana)
+        if check_hero == None:
+            self.health = 0
     
     def level_up(self):
-        if self.exp >= self.level ** C.INCREASE_EXPONENT:
+        if self.level < C.LEVEL_CAP and self.exp >= self.level ** C.INCREASE_EXPONENT:
             self.level += 1
+        elif self.level >= C.LEVEL_CAP and self.exp >= self.level ** C.INCREASE_EXPONENT:
+            pass
 
     def equip(self, equipment: Equipment_NPC):
         if "Armor" in equipment.variety:
@@ -261,8 +300,13 @@ class Hero_PC(Character):
         return str("CLASS: "+self.name+" LEVEL: "+str(self.level))
 
     def view_battle_stats(self):
-        return str(self.name+" HP: "+str(self.health)+
+        stat_text = str(self.name+" HP: "+str(self.health)+
         " ATK: "+str(self.attack)+" DEF: "+str(self.defense))
+        if len(self.skill_list) > 0:
+            stat_text += (" SKL: "+str(self.skill))
+        if len(self.spell_list) > 0:
+            stat_text += (" MANA: "+str(self.mana))
+        return stat_text
 
     def choose_action(self):
         pass
@@ -271,6 +315,7 @@ class Hero_PC(Character):
 class Party_PC:
     def __init__(self):
         self.heroes = []
+        self.battle_party = []
         self.allies = []
         self.equipment = []
         self.items = Item_Bag_PC(0, 0)
@@ -283,3 +328,11 @@ class Party_PC:
 
     def add_equipment(self, equipment: Equipment_NPC):
         self.equipment.append(equipment)
+
+    def update_battle_party(self):
+        self.battle_party = []
+        for hero in self.heroes:
+            copy_hero : Hero_PC = copy.deepcopy(hero)
+            copy_hero.update_for_battle()
+            copy_hero.update_equipment(self.equipment)
+            self.battle_party.append(copy_hero)
