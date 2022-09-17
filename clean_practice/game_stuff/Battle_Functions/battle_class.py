@@ -14,6 +14,7 @@ L = LConstants
 from _basic_classes import *
 from ally_classes import *
 from advanced_monster_class import *
+M = Monster_Groups()
 from damage_class import *
 from skill_class import *
 from general_class import *
@@ -31,13 +32,25 @@ class Battle:
         self.fight = True
     
     def make_monsters(self):
-        for hero in self.party.heroes:
-            monster = Advanced_Monster(L.monster_types[random.randint(0, len(L.monster_types) - 1)], hero.level,
-            L.elements[random.randint(0, len(L.elements) - 1)])
+        self.level_tracker = 0
+        for hero in self.party.battle_party:
+            # Check the difficulty of the battle by seeing the heroes levels
+            self.level_tracker += hero.level
+        # Randomize the difficulty.
+        self.difficulty = random.randint(self.level_tracker//2, self.level_tracker)
+        # Then generate the monster party based on the difficulty.
+        self.monsters = None
+        while self.monsters == None:
+            self.monsters = M.MONSTER_GROUPS.get(self.difficulty)
+            self.difficulty -= 1
+        for monster in self.monsters:
             monster.update_for_battle()
-            self.monsters.append(monster)
             copy_monster = copy.deepcopy(monster)
             self.monster_tracker.append(copy_monster)
+
+
+    def add_monsters(self, monsters: list):
+        self.monsters = monsters
 
     def add_from_party(self):
         for hero in self.party.battle_party:
@@ -50,16 +63,18 @@ class Battle:
 
     def update_and_draw(self):
         WIN.fill(C.BLACK)
-        self.draw_party = Draw_Heroes(self.heroes)
-        self.draw_allies = Draw_Allies(self.allies)
-        self.draw_monsters = Draw_Monsters(self.monsters)
-        self.draw_allies.draw()
-        self.draw_party.draw()
-        self.draw_monsters.draw()
+        self.draw_battle = Draw_Battle()
+        self.draw_battle.add_heroes(self.heroes)
+        self.draw_battle.add_monsters(self.monsters)
+        self.draw_battle.add_allies(self.allies)
+        self.draw_battle.draw_allies.draw()
+        self.draw_battle.draw_heroes.draw()
+        self.draw_battle.draw_monsters.draw()
 
     def start_phase(self):
         self.add_from_party()
         self.make_monsters()
+        self.battle_phase()
         
     def hero_attack(self, hero: Character):
         pick_from = Pick_Functions(self.monsters)
@@ -77,7 +92,7 @@ class Battle:
     def hero_skill(self, hero: Hero_PC):
         if hero.skills:
             pick_from = Pick_Functions(hero.skill_list)
-            used_skill : Skill_PC = pick_from.pick()
+            used_skill : Skill_PC = pick_from.pick_skill()
             use_skill = Skill_Functions(hero, used_skill, self.heroes, self.allies, self.monsters)
             use_skill.use()
 
@@ -85,8 +100,8 @@ class Battle:
         hero.status_effect()
         hero.buff_effect()
         WIN.fill(C.BLACK)
-        self.draw_monsters.draw()
-        self.draw_party.draw_hero_turn(hero)
+        self.draw_battle.draw_monsters.draw()
+        self.draw_battle.draw_heroes.draw_hero_turn(hero)
         while hero.turn:
             pygame.event.clear()
             clock.tick(C.SLOW_FPS)
@@ -163,9 +178,9 @@ class Battle:
         if len(self.monsters) <= 0 and len(self.heroes) > 0:
             for hero in self.party.heroes:
                 hero: Hero_PC
-                hero.exp += random.randint(0, hero.level)
+                hero.exp += random.randint(0, hero.level//2)
                 hero.level_up()
-                self.party.items.coins += hero.level
+                self.party.items.coins += random.randint(0, hero.level)
             for ally in self.party.allies:
                 ally: Ally_NPC
                 ally.update_level(self.party)

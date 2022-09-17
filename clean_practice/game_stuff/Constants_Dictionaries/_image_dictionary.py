@@ -14,12 +14,14 @@ BEAST = pygame.image.load(os.path.join("Assets", "beast.png"))
 BEAST = pygame.transform.scale(BEAST, (C.MONSTER_SIZE, C.MONSTER_SIZE))
 GOLEM = pygame.image.load(os.path.join("Assets", "golem.png"))
 GOLEM = pygame.transform.scale(GOLEM, (C.MONSTER_SIZE, C.MONSTER_SIZE))
+BIG_GOLEM = pygame.transform.scale(GOLEM, (C.MONSTER_SIZE * 2, C.MONSTER_SIZE * 2))
 
 class Image_Dictionary:
     def __init__(self):
         self.hero_images = {
         "Summoner" : SUMMONER,
-        "Golem" : GOLEM
+        "Golem" : GOLEM,
+        "Golem_Lord" : BIG_GOLEM
         }
         self.monster_images = {
         "Goblin" : GOBLIN,

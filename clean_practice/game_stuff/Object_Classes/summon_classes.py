@@ -1,5 +1,6 @@
 from _basic_classes import Character
-from _dictionaries import Summon_Dictionary
+from _dictionaries import *
+H = Hero_Dictionary()
 S = Summon_Dictionary()
 
 
@@ -16,6 +17,7 @@ class Summon_PC(Character):
         self.buffs = []
         self.status = []
         self.skill_list = []
+        self.skills = True
         self.weapon = None
         self.armor = None
         self.accessory = None
@@ -28,7 +30,11 @@ class Summon_PC(Character):
         self.mana = 0
 
     def update_skills(self):
-        pass
+        if self.skill > 0:
+            word_list = S.SUMMON_SKILLS.get(self.name)
+            for word in word_list:
+                skill = H.ALL_SKILLS.get(word)
+                self.skill_list.append(skill)
 
     def view_battle_stats(self):
         return (self.name+" HP: "+str(self.health)+

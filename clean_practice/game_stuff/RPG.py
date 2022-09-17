@@ -90,7 +90,6 @@ class RPG_Game:
                         pygame.event.clear()
                         battle = Battle(self.party)
                         battle.start_phase()
-                        battle.battle_phase()
                     if event.key == pygame.K_u:
                         upgrade = Upgrade(self.party)
                         upgrade.upgrade_ally()

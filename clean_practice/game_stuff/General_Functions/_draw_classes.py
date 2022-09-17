@@ -39,6 +39,11 @@ class Draw_Screen:
             C.PADDING * self.party_counter))
             self.party_counter += 1
 
+    def prepare_to_draw_list(self, list: list):
+        self.list = list
+        self.object_counter = 1
+        WIN.fill(C.BLACK)
+
     def draw_text(self, text: str):
         self.text = FONT.render(text, 1, C.WHITE)
         WIN.fill(C.BLACK)
@@ -47,15 +52,27 @@ class Draw_Screen:
         pygame.time.delay(500)
 
     def draw_list(self, list: list):
-        self.list = list
-        self.object_counter = 1
-        WIN.fill(C.BLACK)
+        self.prepare_to_draw_list(list)
         for object in self.list:
             self.text = FONT.render(object.name, 1, C.WHITE)
             WIN.blit(self.text, ((self.width - self.text.get_width())//2,
             C.PADDING * self.object_counter))
             self.object_counter += 1
         pygame.display.update()
+
+    def draw_skill_list(self, list: list):
+        self.prepare_to_draw_list(list)
+        for object in self.list:
+            object: Skill_PC
+            text = str(object.name+" COST: "+str(object.cost))
+            if object.cooldown > 0:
+                text += str(" CD: "+str(object.cooldown))
+            self.text = FONT.render(text, 1, C.WHITE)
+            WIN.blit(self.text, ((self.width - self.text.get_width())//2,
+            C.PADDING * self.object_counter))
+            self.object_counter += 1
+        pygame.display.update()
+
 
 
 class Draw_Allies:
@@ -181,3 +198,19 @@ class Draw_Monsters:
         self.draw_monsters()
         self.draw_monster_stats()
         pygame.display.update()
+
+
+class Draw_Battle:
+    def __init__(self):
+        self.width = WIN.get_width()
+        self.height = WIN.get_height()
+        self.screen = Draw_Screen()
+
+    def add_heroes(self, heroes: list):
+        self.draw_heroes = Draw_Heroes(heroes)
+
+    def add_monsters(self, monsters: list):
+        self.draw_monsters = Draw_Monsters(monsters)
+
+    def add_allies(self, allies: list):
+        self.draw_allies = Draw_Allies(allies)

@@ -8,7 +8,7 @@ from _list_constants import *
 L = LConstants()
 from _dictionaries import *
 D = Dictionaries()
-
+H = Hero_Dictionary()
 
 class Equipment_NPC:
     def __init__(self, name, user, power, effect, element, variety):
@@ -100,13 +100,21 @@ class Character(object):
         self.update_stats()
         self.update_skills()
 
+    def decrease_cooldowns(self):
+        for skill in self.skill_list:
+            skill: Skill_PC
+            if skill.cooldown > 0:
+                skill.cooldown -= 1
+
     def add_effect(self, effect: Passive_Effect_NPC):
         if "Buff" in effect.variety:
             self.buffs.append(effect)
         elif "Status" in effect.variety:
             self.status.append(effect)
     
+    # Various beneficial effects.
     def buff_effect(self):
+        self.decrease_cooldowns()
         if self.accessory != None:
             self.accessory : Equipment_NPC
             accessory_buff = D.BUFFS.get(self.accessory.effect)
@@ -217,11 +225,11 @@ class Hero_PC(Character):
 
     # Update stats, depending on level and class, only used during battle
     def update_stats(self):
-        self.max_health = self.level * D.HERO_BASE_HEALTH.get(self.name)
-        self.attack = self.level * D.HERO_BASE_ATTACK.get(self.name)
-        self.defense = self.level * D.HERO_BASE_DEFENSE.get(self.name)
-        self.max_mana = self.level * D.HERO_BASE_MANA.get(self.name)
-        self.max_skill = self.level * D.HERO_BASE_SKILL.get(self.name)
+        self.max_health = self.level * H.HERO_BASE_HEALTH.get(self.name)
+        self.attack = self.level * H.HERO_BASE_ATTACK.get(self.name)
+        self.defense = self.level * H.HERO_BASE_DEFENSE.get(self.name)
+        self.max_mana = self.level * H.HERO_BASE_MANA.get(self.name)
+        self.max_skill = self.level * H.HERO_BASE_SKILL.get(self.name)
         self.health = self.max_health
         self.mana = self.max_mana
         self.skill = self.max_skill
@@ -248,18 +256,19 @@ class Hero_PC(Character):
     
     def update_skills(self):
         self.skill_list = []
-        # First see which skill list to pull from, depending on class.
-        skill_dictionary = D.HERO_SKILL_LIST.get(self.name)
-        # Then see what skills to add, depending on level.
+        # First see what kind of skills to get, depending on name.
+        skill_words = H.HERO_SKILL_LIST.get(self.name)
+        # Then see what skills to actually add, depending on level.
         for number in range(0, self.level):
-            skill = skill_dictionary.get(number)
-            if skill != None:
+            word = skill_words.get(number)
+            if word != None:
+                skill = H.ALL_SKILLS.get(word)
                 self.skill_list.append(skill)
 
     def update_spells(self):
+        self.spell_list = []
         if self.mana > 0:
-            self.spell_list = []
-            spell_dictionary = D.HERO_SPELL_LIST.get(self.name)
+            spell_dictionary = H.HERO_SPELL_LIST.get(self.name)
             for number in range(0, self.level):
                 spell = spell_dictionary.get(number)
                 if spell != None:

@@ -5,17 +5,20 @@ sys.path.append("./General_Functions")
 sys.path.append("./Battle_Functions")
 import random
 from _basic_classes import *
+from _list_constants import LConstants
+L = LConstants
 from _dictionaries import *
 M = Monster_Dictionary()
 from damage_class import *
 from skill_class import *
+from _draw_classes import *
 
 
 class Advanced_Monster(Monster_NPC):
-    def __init__(self, name, level, element: Elements_NPC):
+    def __init__(self, name, level):
         self.name = name
         self.level = level
-        self.element : Elements_NPC = element
+        self.element = None
         self.poison = 0
         self.buffs = []
         self.status = []
@@ -40,6 +43,7 @@ class Advanced_Monster(Monster_NPC):
         self.defense = self.level * M.MONSTER_DEFENSE.get(self.name)
         self.max_skill = self.level * M.MONSTER_SKILL_POINTS.get(self.name)
         self.skill = self.max_skill
+        self.element : Elements_NPC = L.ELEMENTS[random.randint(0, len(L.ELEMENTS) - 1)]
     
     def update_for_battle(self):
         self.update_stats()
@@ -71,3 +75,12 @@ class Advanced_Monster(Monster_NPC):
                 self.choose_skill()
             else:
                 self.basic_attack()
+
+
+class Monster_Groups:
+    def __init__(self):
+        self.MONSTER_GROUPS = {
+        0 : [Monster_NPC(1, "Goblin")],
+        1 : [Monster_NPC(2, "Goblin")],
+        2 : [Monster_NPC(2, "Goblin"), Monster_NPC(2, "Goblin")]
+        }

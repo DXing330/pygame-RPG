@@ -31,18 +31,22 @@ class Item_Bag_PC:
 
 # Skills are effects cast by the player, usually costing skill.
 class Skill_PC(object):
-    def __init__(self, name, power, effect, effect_specifics, target, cost):
+    def __init__(self, name, power, effect, effect_specifics,
+    target, cost, cooldown = 0, cooldown_counter = 0):
         self.name = name
         self.power = power
         self.effect = effect
         self.effect_specifics = effect_specifics
         self.target = target
         self.cost = cost
+        self.cooldown = cooldown
+        self.cooldown_counter = cooldown_counter
 
 
 # Spells are generally AOE effects that are cast by the player and cost mana.
 class Spell_PC(Skill_PC):
-    def __init__(self, name, power, element: Elements_NPC, effect, effect_specifics, target, cost):
+    def __init__(self, name, power, element: Elements_NPC,
+    effect, effect_specifics, target, cost, cooldown = 0, cooldown_counter = 0):
         self.name = name
         self.power = power
         self.element = element
@@ -50,3 +54,5 @@ class Spell_PC(Skill_PC):
         self.effect_specifics = effect_specifics
         self.target = target
         self.cost = cost
+        self.cooldown = cooldown
+        self.cooldown_counter = cooldown_counter

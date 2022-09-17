@@ -12,11 +12,12 @@ from _constants import Constants
 C = Constants()
 from _dictionaries import Dictionaries
 D = Dictionaries()
+H = Hero_Dictionary()
 from summon_classes import *
 S = Summon_Dictionary()
 
 class Skill_Functions:
-    def __init__(self, user: Character, skill: Skill_PC, allies: list, summons: list, enemies: list):
+    def __init__(self, user, skill: Skill_PC, allies: list, summons: list, enemies: list):
         self.user = user
         self.skill = skill
         self.allies = allies
@@ -25,6 +26,15 @@ class Skill_Functions:
 
     def apply_cost(self):
         self.user.skill -= self.skill.cost
+        self.skill.cooldown += self.skill.cooldown_counter
+
+    def compound_skill(self):
+        self.skill_list = H.COMPOUND_SKILLS.get(self.skill.effect_specifics)
+        for word in self.skill_list:
+            skill = H.ALL_SKILLS.get(word)
+            use_skill = Skill_Functions(self.user, skill, self.allies,
+            self.summons, self.enemies)
+            use_skill.compound_use()
 
     def attack_skill(self, target : Character):
         attack = Attack_Functions(self.user, target)
@@ -73,15 +83,18 @@ class Skill_Functions:
                 self.change_stats(target)
             elif "Add_Buff" in self.skill.effect:
                 buff = D.BUFFS.get(self.skill.effect_specifics)
-                target.add_effect(buff)
+                for num in range(0, self.skill.power):
+                    target.add_effect(buff)
             elif "Inflict_Status" in self.skill.effect:
                 status = D.STATUSES.get(self.skill.effect_specifics)
-                target.add_effect(status)
+                for num in range(0, self.skill.power):
+                    target.add_effect(status)
             elif "Cure_Status" in self.skill.effect:
                 for num in range(0, min(self.skill.power, len(target.status))):
                     target.status.pop(0)
             elif "Command" in self.skill.effect:
-                target.choose_action(self.allies, self.enemies)
+                for num in range(0, self.skill.power):
+                    target.choose_action(self.allies, self.enemies)
             elif "Attack" in self.skill.effect:
                 self.attack_skill(target)
         if "Summon" in self.skill.effect:
@@ -90,15 +103,26 @@ class Skill_Functions:
             for num in range(0, self.skill.power):
                 copy_summon = copy.deepcopy(summon)
                 self.allies.append(copy_summon)
+        if "Skill" in self.skill.effect:
+            self.compound_skill()
 
     def use(self):
-        self.apply_cost
-        if self.user.skill >= 0:
-            self.pick_targets(pick_randomly=False)
-            self.apply_effect()
+        if self.skill.cooldown <= 0:
+            self.apply_cost()
+            if self.user.skill >= 0:
+                self.pick_targets(pick_randomly=False)
+                self.apply_effect()
+
+    def compound_use(self):
+        self.pick_targets(pick_randomly=False)
+        self.apply_effect()
 
     def monster_use(self):
-        self.apply_cost
+        self.apply_cost()
+        self.pick_targets(pick_randomly=True)
+        self.apply_effect()
+
+    def summon_use(self):
         self.pick_targets(pick_randomly=True)
         self.apply_effect()
 
