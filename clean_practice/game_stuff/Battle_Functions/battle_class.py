@@ -39,9 +39,13 @@ class Battle:
         # Randomize the difficulty.
         self.difficulty = random.randint(self.level_tracker//2, self.level_tracker)
         # Then generate the monster party based on the difficulty.
-        self.monsters = None
-        while self.monsters == None:
-            self.monsters = M.MONSTER_GROUPS.get(self.difficulty)
+        self.monsters = []
+        while len(self.monsters) <= 0:
+            monster_list = M.MONSTER_GROUPS.get(self.difficulty)
+            if monster_list != None:
+                for monster in monster_list:
+                    copy_monster = copy.copy(monster)
+                    self.monsters.append(copy_monster)
             self.difficulty -= 1
         for monster in self.monsters:
             monster.update_for_battle()
@@ -51,6 +55,9 @@ class Battle:
 
     def add_monsters(self, monsters: list):
         self.monsters = monsters
+        self.monster_tracker = copy.deepcopy(monsters)
+        self.add_from_party()
+        self.battle_phase()
 
     def add_from_party(self):
         for hero in self.party.battle_party:
@@ -93,7 +100,8 @@ class Battle:
         if hero.skills:
             pick_from = Pick_Functions(hero.skill_list)
             used_skill : Skill_PC = pick_from.pick_skill()
-            use_skill = Skill_Functions(hero, used_skill, self.heroes, self.allies, self.monsters)
+            use_skill = Skill_Functions(hero, used_skill, self.heroes,
+            self.allies, self.monsters, pick_randomly = False)
             use_skill.use()
 
     def heroes_turn(self, hero: Character):
@@ -132,6 +140,7 @@ class Battle:
     def monsters_turn(self, monster: Advanced_Monster):
         monster.status_effect()
         monster.buff_effect()
+        monster.passive_skill_effect(self.heroes, self.monsters)
         if monster.turn:
             monster.choose_action(self.heroes, self.monsters)
 
@@ -141,6 +150,7 @@ class Battle:
     def remove_dead_characters(self):
         for monster in self.monsters:
             if monster.health <= 0:
+                monster.death_action(self.heroes, self.monsters)
                 self.monsters.remove(monster)
         for hero in self.heroes:
             if hero.health <= 0:
@@ -157,7 +167,8 @@ class Battle:
                 self.summoned_ally_turn(ally)
             self.standby_phase()
             for monster in self.monsters:
-                self.monsters_turn(monster)
+                if len(self.heroes) > 0:
+                    self.monsters_turn(monster)
             self.check_end_phase()
     
     def check_end_phase(self):

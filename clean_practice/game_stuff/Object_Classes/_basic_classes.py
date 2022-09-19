@@ -1,5 +1,6 @@
 import sys
 sys.path.append("./Constants_Dictionaries")
+sys.path.append("./Battle_Functions")
 import copy
 from _simple_classes import *
 from _constants import *
@@ -96,6 +97,9 @@ class Character(object):
     def update_skills(self):
         pass
 
+    def update_buffs(self):
+        pass
+
     def update_for_battle(self):
         self.update_stats()
         self.update_skills()
@@ -122,11 +126,12 @@ class Character(object):
             self.accessory = None
         for buff in self.buffs:
             buff : Passive_Effect_NPC
-            if "every_turn" in buff.timing:
+            if "Every_Turn" in buff.timing and "Change_Stats" in buff.effect:
                 self.health += D.BUFF_HEALTH.get(buff.effect_specifics) * buff.power
                 self.attack += D.BUFF_ATTACK.get(buff.effect_specifics) * buff.power
                 self.defense += D.BUFF_DEFENSE.get(buff.effect_specifics) * buff.power
     
+    # Various negative effects.
     def status_effect(self):
         if self.poison > 0:
             self.health -= self.poison
@@ -134,7 +139,7 @@ class Character(object):
         self.turn = True
         for status in self.status:
             status : Passive_Effect_NPC
-            if "every_turn" in status.timing:
+            if "Every_Turn" in status.timing and "Change_Stats" in status.effect:
                 self.health += D.STATUS_HEALTH.get(status.effect_specifics) * status.power
                 self.attack += (D.STATUS_ATTACK.get(status.effect_specifics) * 
                 status.power)
@@ -150,6 +155,10 @@ class Character(object):
                 status.power -= 1
                 if status.power <= 0:
                     self.status.remove(status)
+
+    # Passive skills
+    def passive_skill_effect(self):
+        pass
 
     def view_battle_stats(self):
         pass
@@ -262,7 +271,7 @@ class Hero_PC(Character):
         for number in range(0, self.level):
             word = skill_words.get(number)
             if word != None:
-                skill = H.ALL_SKILLS.get(word)
+                skill = D.ALL_SKILLS.get(word)
                 self.skill_list.append(skill)
 
     def update_spells(self):

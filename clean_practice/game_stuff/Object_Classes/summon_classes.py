@@ -1,11 +1,12 @@
+import random
 from _basic_classes import Character
 from _dictionaries import *
-H = Hero_Dictionary()
+D = Dictionaries()
 S = Summon_Dictionary()
 
 
 class Summon_PC(Character):
-    def __init__(self, name, level):
+    def __init__(self, name, level = 0):
         self.name = name
         self.level = level
         self.health = 0
@@ -23,6 +24,9 @@ class Summon_PC(Character):
         self.accessory = None
 
     def update_stats(self):
+        while self.level == 0:
+            self.level = round(random.gauss(S.SUMMON_MEAN_LEVEL.get(self.name),
+            S.SUMMON_LEVEL_VAR.get(self.name)))
         self.health = self.level * S.SUMMON_BASE_HEALTH.get(self.name)
         self.attack = self.level * S.SUMMON_BASE_ATTACK.get(self.name)
         self.defense = self.level * S.SUMMON_BASE_DEFENSE.get(self.name)
@@ -33,7 +37,7 @@ class Summon_PC(Character):
         if self.skill > 0:
             word_list = S.SUMMON_SKILLS.get(self.name)
             for word in word_list:
-                skill = H.ALL_SKILLS.get(word)
+                skill = D.ALL_SKILLS.get(word)
                 self.skill_list.append(skill)
 
     def view_battle_stats(self):

@@ -1,10 +1,8 @@
-from re import A
 import sys
 sys.path.append("./Constants_Dictionaries")
 sys.path.append("./Object_Classes")
 sys.path.append("./General_Functions")
 import copy
-from _basic_classes import *
 from _simple_classes import *
 from general_class import *
 from damage_class import *
@@ -17,23 +15,26 @@ from summon_classes import *
 S = Summon_Dictionary()
 
 class Skill_Functions:
-    def __init__(self, user, skill: Skill_PC, allies: list, summons: list, enemies: list):
+    def __init__(self, user, skill: Skill_PC,
+    allies: list, summons: list, enemies: list,
+    pick_randomly = True):
         self.user = user
         self.skill = skill
         self.allies = allies
         self.summons = summons
         self.enemies = enemies
+        self.pick_randomly = pick_randomly
 
     def apply_cost(self):
         self.user.skill -= self.skill.cost
         self.skill.cooldown += self.skill.cooldown_counter
 
     def compound_skill(self):
-        self.skill_list = H.COMPOUND_SKILLS.get(self.skill.effect_specifics)
+        self.skill_list = D.COMPOUND_SKILLS.get(self.skill.effect_specifics)
         for word in self.skill_list:
-            skill = H.ALL_SKILLS.get(word)
+            skill = D.ALL_SKILLS.get(word)
             use_skill = Skill_Functions(self.user, skill, self.allies,
-            self.summons, self.enemies)
+            self.summons, self.enemies, self.pick_randomly)
             use_skill.compound_use()
 
     def attack_skill(self, target : Character):
@@ -98,7 +99,7 @@ class Skill_Functions:
             elif "Attack" in self.skill.effect:
                 self.attack_skill(target)
         if "Summon" in self.skill.effect:
-            summon = Summon_PC(self.skill.effect_specifics, self.user.level)
+            summon = Summon_PC(self.skill.effect_specifics)
             summon.update_for_battle()
             for num in range(0, self.skill.power):
                 copy_summon = copy.deepcopy(summon)
@@ -114,7 +115,7 @@ class Skill_Functions:
                 self.apply_effect()
 
     def compound_use(self):
-        self.pick_targets(pick_randomly=False)
+        self.pick_targets()
         self.apply_effect()
 
     def monster_use(self):

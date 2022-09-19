@@ -45,7 +45,39 @@ class Dictionaries:
         "DEF+" : Passive_Effect_NPC("DEF+", "Change_Stats", "Defense", 1, "Every_Turn", "Buff"),
         "Bless" : Passive_Effect_NPC("Bless", "Change_Stats", "ALL", 1, "Every_Turn", "Buff"),
         "Block" : Passive_Effect_NPC("Block", "Decrease_Attack", "Flat", 1, "Defense", "Buff"),
-        "Thorns" : Passive_Effect_NPC("Thorns", "Change_Stats", "Health", -1, "Defense", "Buff")
+        "Thorns" : Passive_Effect_NPC("Thorns", "Change_Stats", "Health", -1, "Defense", "Buff"),
+        "Rage" : Passive_Effect_NPC("Rage", "Skill", "Rage", 1, "Every_Turn", "Buff"),
+        "Slime Split" : Passive_Effect_NPC("Split", "Skill", "Make Slime", 1, "Death", "Buff")
+        }
+        self.ALL_SKILLS = {
+        "Recharge" : Skill_PC("Recharge", 1, "None", "None", "None", -5),
+        "Heal Self" : Skill_PC("Heal", 1, "Change_Stats", "Health", "Self", 0),
+        "Basic Attack" : Skill_PC("Attack", 1, "Attack", "Basic", "Enemy", -1),
+        "Attack" : Skill_PC("Attack", 1, "Attack", "Basic", "Enemy", 0),
+        "Command" : Skill_PC("Command Ally", 1, "Command", "Command", "Summon", -1),
+        "Command+Attack" : Skill_PC("Command+Attack", 1, "Skill", "Command_Attack", "None", 2),
+        "Regenerate" : Skill_PC("Regenerate", 1, "Add_Buff", "HP+", "Ally", 0),
+        "Burn" : Skill_PC("Burn", 1, "Inflict_Status", "Burn", "Enemy", 0),
+        "Cleanse" : Skill_PC("Cleanse", 1, "Cure_Status", "Cure_Status", "Ally", 0),
+        "Golem" : Skill_PC("Summon Golem", 1, "Summon", "Golem", "None", 10, 0, 2),
+        "Command+Golem" : Skill_PC("Command+Golem", 1, "Skill", "Command_Golem", "None", 15, 0, 2),
+        "Double Command" : Skill_PC("Double Command", 2, "Command", "Command", "Summon", 5),
+        "Double Golems" : Skill_PC("Double Golems", 2, "Summon", "Golem", "None", 20, 0, 3),
+        "Golem Lord" : Skill_PC("Golem Lord", 1, "Summon", "Golem_Lord", "None", 30, 2, 2),
+        "Heal Ally" : Skill_PC("Heal", 1, "Change_Stats", "Health", "Ally", -1),
+        "Mass Heal" : Skill_PC("Mass Heal", 1, "Change_Stats", "Health", "All_Ally", 2),
+        "Cure" : Skill_PC("Cure", 1, "Cure_Status", "Cure_Status", "Ally", 2),
+        "Bless" : Skill_PC("Bless", 1, "Add_Buff", "Bless", "Ally", 5, 0, 2),
+        "Weaken" : Skill_PC("Weaken", -1, "Change_Stats", "Attack", "Enemy", 5, 0, 2),
+        "Make Slime" : Skill_PC("Slime", 1, "Summon", "Slime", "None", 2),
+        "Rage" : Skill_PC("Rage", 1, "Skill", "Rage", "None", 0),
+        "Attack Ally" : Skill_PC("Attack", 1, "Attack", "Basic", "Ally", 0)
+        }
+        self.COMPOUND_SKILLS = {
+        "Command_Attack" : ["Command", "Attack"],
+        "Healing_Strike" : ["Heal", "Attack"],
+        "Command_Golem" : ["Command", "Golem"],
+        "Rage" : ["Attack", "Attack Ally"]
         }
         self.STATUS_HEALTH = {
         "Health" : 1, "Attack" : 0, "Defense" : 0, "ALL" : 1
@@ -89,25 +121,6 @@ class Hero_Dictionary:
         "Summoner" : 3, "Warrior" : 3, "Mage" : 3, "Cleric" : 3,
         "Knight" : 3, "Ninja" : 5, "Tactician" : 5, "Hunter" : 5, "Hero" : 3
         }
-        self.ALL_SKILLS = {
-        "Heal Self" : Skill_PC("Heal", 1, "Change_Stats", "Health", "Self", 0),
-        "Basic Attack" : Skill_PC("Attack", 1, "Attack", "Basic", "Enemy", -1),
-        "Command" : Skill_PC("Command Ally", 1, "Command", "Command", "Summon", -1),
-        "Command+Attack" : Skill_PC("Command+Attack", 1, "Skill", "Command_Attack", "None", 2),
-        "Regenerate" : Skill_PC("Regenerate", 1, "Add_Buff", "HP+", "Ally", 0),
-        "Burn" : Skill_PC("Burn", 1, "Inflict_Status", "Burn", "Enemy", 0),
-        "Cleanse" : Skill_PC("Cleanse", 1, "Cure_Status", "Cure_Status", "Ally", 0),
-        "Golem" : Skill_PC("Summon Golem", 1, "Summon", "Golem", "None", 10, 0, 2),
-        "Command+Golem" : Skill_PC("Command+Golem", 1, "Skill", "Command_Golem", "None", 15, 0, 2),
-        "Double Command" : Skill_PC("Double Command", 2, "Command", "Command", "Summon", 5),
-        "Double Golems" : Skill_PC("Double Golems", 2, "Summon", "Golem", "None", 20, 0, 3),
-        "Golem Lord" : Skill_PC("Golem Lord", 1, "Summon", "Golem_Lord", "None", 30, 2, 2),
-        "Heal Ally" : Skill_PC("Heal", 1, "Change_Stats", "Health", "Ally", -1),
-        "Mass Heal" : Skill_PC("Mass Heal", 1, "Change_Stats", "Health", "All_Ally", 2),
-        "Cure" : Skill_PC("Cure", 1, "Cure_Status", "Cure_Status", "Ally", 2),
-        "Bless" : Skill_PC("Bless", 1, "Add_Buff", "Bless", "Ally", 5, 0, 2),
-        "Weaken" : Skill_PC("Weaken", -1, "Change_Stats", "Attack", "Enemy", 5, 0, 2)
-        }
         self.SUMMONER_SKILLS = {
         0 : "Command", 2 : "Command+Attack", 4 : "Golem", 6 : "Double Command",
         8 : "Command+Golem", 10 : "Double Golems", 12 : "Golem Lord"
@@ -140,11 +153,6 @@ class Hero_Dictionary:
         self.HERO_SPELL_LIST = {
         "Summoner" : self.SUMMONER_SPELLS,
         "Cleric" : self.CLERIC_SPELLS
-        }
-        self.COMPOUND_SKILLS = {
-        "Command_Attack" : ["Command", "Attack"],
-        "Healing_Strike" : ["Heal", "Attack"],
-        "Command_Golem" : ["Command", "Golem"]
         }
 
 
@@ -181,24 +189,40 @@ class Summon_Dictionary:
         self.SUMMON_TYPE = {
         }
         self.SUMMON_SKILLS = {
-        "Golem_Lord" : ["Golem"]
+        "Golem_Lord" : ["Golem", "Recharge"]
+        }
+        self.SUMMON_MEAN_LEVEL = {
+        "Golem" : 5, "Wolf" : 5, "Golem_Lord" : 10, "Slime" : 3
+        }
+        self.SUMMON_LEVEL_VAR = {
+        "Golem" : 0, "Wolf" : 1, "Golem_Lord" : 0, "Slime" : 1
         }
         self.SUMMON_BASE_HEALTH = {
-        "Golem" : 5, "Wolf" : 5, "Golem_Lord" : 10
+        "Golem" : 5, "Wolf" : 5, "Golem_Lord" : 10, "Slime" : 10
         }
         self.SUMMON_BASE_ATTACK = {
-        "Golem" : 3, "Wolf" : 4, "Golem_Lord" : 5
+        "Golem" : 3, "Wolf" : 4, "Golem_Lord" : 5, "Slime" : 2
         }
         self.SUMMON_BASE_DEFENSE = {
-        "Golem" : 3, "Wolf" : 3, "Golem_Lord" : 5
+        "Golem" : 3, "Wolf" : 3, "Golem_Lord" : 5, "Slime" : 1
         }
         self.SUMMON_BASE_SKILL = {
-        "Golem" : 0, "Wolf" : 2, "Golem_Lord" : 3
+        "Golem" : 0, "Wolf" : 2, "Golem_Lord" : 3, "Slime" : 0
         }
 
 
 class Monster_Dictionary:
     def __init__(self):
+        self.MONSTER_MEAN_LEVEL = {
+        "Goblin" : 3, "Werewolf" : 2
+        }
+        self.MONSTER_LEVEL_VAR = {
+        "Goblin" : 1, "Werewolf" : 10
+        }
+        self.MONSTER_ELEMENTS = {
+        "Goblin" : ["Earth"],
+        "Werewolf" : ["Earth", "Dark"]
+        }
         self.MONSTER_HEALTH = {
         "Werewolf" : 10, "Goblin" : 5
         }
@@ -213,6 +237,9 @@ class Monster_Dictionary:
         }
         self.MONSTER_SKILL_LISTS = {
         "Werewolf" : ["Attack", "Double_Hit", "Pierce_Defense", "Howl"]
+        }
+        self.MONSTER_BUFF_LISTS = {
+        "Werewolf" : ["Rage"]
         }
         self.MONSTER_BUFFS = {
         

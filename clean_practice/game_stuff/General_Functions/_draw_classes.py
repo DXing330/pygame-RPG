@@ -138,7 +138,7 @@ class Draw_Heroes:
     def draw_hero(self):
         self.hero.sprite = I.hero_images.get(self.hero.name)
         WIN.blit(self.hero.sprite, (self.width - C.PADDING - (self.hero.sprite.get_width()),
-        (self.height - self.hero.sprite.get_height())))
+        (self.height - self.hero.sprite.get_height() * 2)))
 
     def draw_hero_turn_menu(self):
         attack_text = FONT.render("A: Attack", 1, C.WHITE)
